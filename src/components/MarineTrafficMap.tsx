@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Ship } from '../types/vessel';
-import { Compass, MapPin, Radio, ExternalLink } from 'lucide-react';
+import { Compass, Radio, MapPin } from 'lucide-react';
 
 interface MarineTrafficMapProps {
   ships: Ship[];
@@ -8,43 +10,164 @@ interface MarineTrafficMapProps {
   onSelectShip: (ship: Ship) => void;
 }
 
-// Convert geographic lat/lng to SVG map coordinates (0..800, 0..420)
-function projectCoords(lat: number, lng: number): { x: number; y: number } {
-  const x = ((lng + 180) / 360) * 800;
-  const y = ((85 - lat) / 160) * 420;
-  return { x, y };
-}
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'Underway':
+      return '#38bdf8'; // Sky Blue
+    case 'Moored / In Port':
+      return '#34d399'; // Emerald
+    case 'At Anchor':
+      return '#fbbf24'; // Amber
+    default:
+      return '#c084fc'; // Purple
+  }
+};
 
 export const MarineTrafficMap: React.FC<MarineTrafficMapProps> = ({
   ships,
   focusedShipId,
   onSelectShip,
 }) => {
-  const [hoveredShip, setHoveredShip] = useState<Ship | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<{ [key: string]: L.Marker }>({});
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Underway':
-        return '#38bdf8'; // Sky blue
-      case 'Moored / In Port':
-        return '#34d399'; // Emerald
-      case 'At Anchor':
-        return '#fbbf24'; // Amber
-      default:
-        return '#c084fc';
-    }
-  };
+  // Initialize Leaflet Map once
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+    if (mapRef.current) return;
+
+    // Create map centered on global maritime view
+    const map = L.map(mapContainerRef.current, {
+      center: [10, 30],
+      zoom: 3,
+      zoomControl: true,
+      attributionControl: false,
+    });
+
+    // High-precision Dark Matter tile layer for maritime vessel tracking
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd',
+    }).addTo(map);
+
+    mapRef.current = map;
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  // Sync Markers whenever ships change or focus changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // Clear old markers
+    Object.values(markersRef.current).forEach((marker) => marker.remove());
+    markersRef.current = {};
+
+    ships.forEach((ship) => {
+      const { latitude, longitude, status, speedKnots, headingDegrees, destination, lastAisUpdate } = ship.location;
+      const color = getStatusColor(status);
+      const isFocused = ship.id === focusedShipId;
+
+      // Custom Leaflet DivIcon SVG marker
+      const customIcon = L.divIcon({
+        className: 'custom-ship-marker',
+        html: `
+          <div style="position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <div style="
+              width: ${isFocused ? '36px' : '28px'};
+              height: ${isFocused ? '36px' : '28px'};
+              border-radius: 50%;
+              background-color: ${color}22;
+              border: 2px solid ${color};
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 0 12px ${color}aa;
+              transform: rotate(${headingDegrees}deg);
+              transition: all 0.3s ease;
+            ">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="${color}" stroke="#090d16" stroke-width="2">
+                <polygon points="12,2 19,21 12,17 5,21" />
+              </svg>
+            </div>
+            <div style="
+              position: absolute;
+              left: ${isFocused ? '40px' : '32px'};
+              white-space: nowrap;
+              background-color: rgba(9, 13, 22, 0.9);
+              border: 1px solid ${color}88;
+              color: #ffffff;
+              padding: 2px 8px;
+              border-radius: 6px;
+              font-size: 11px;
+              font-weight: 700;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            ">
+              ${ship.name} (${ship.imo})
+            </div>
+          </div>
+        `,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+      });
+
+      const marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(map);
+
+      // Popup Content
+      const popupContent = `
+        <div style="font-family: sans-serif; padding: 4px; color: #f8fafc;">
+          <div style="font-weight: 800; font-size: 14px; color: #38bdf8; margin-bottom: 2px;">
+            ${ship.name}
+          </div>
+          <div style="font-family: monospace; font-size: 11px; color: #cbd5e1; margin-bottom: 6px;">
+            ${ship.imo} ${ship.type ? '• ' + ship.type : ''}
+          </div>
+          <div style="font-size: 11px; line-height: 1.5; color: #94a3b8;">
+            <div><strong>Status:</strong> <span style="color: ${color}; font-weight: 700;">${status}</span></div>
+            <div><strong>Exact Position:</strong> ${latitude}° N, ${longitude}° E</div>
+            <div><strong>Speed / Heading:</strong> ${speedKnots} kts @ ${headingDegrees}°</div>
+            <div><strong>Destination:</strong> ${destination}</div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 4px;">Last AIS Update: ${lastAisUpdate}</div>
+          </div>
+        </div>
+      `;
+
+      marker.bindPopup(popupContent, {
+        className: 'leaflet-dark-popup',
+      });
+
+      marker.on('click', () => {
+        onSelectShip(ship);
+      });
+
+      markersRef.current[ship.id] = marker;
+
+      // If focused, fly to exact coordinates
+      if (isFocused) {
+        map.flyTo([latitude, longitude], 8, { duration: 1.5 });
+        marker.openPopup();
+      }
+    });
+  }, [ships, focusedShipId]);
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden mb-6 relative shadow-2xl">
       {/* Map Header */}
-      <div className="px-5 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+      <div className="px-5 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
         <div className="flex items-center gap-2">
           <Compass className="w-5 h-5 text-cyan-400" />
-          <h2 className="font-bold text-white text-base">MarineTraffic AIS Global Vessel Map</h2>
+          <h2 className="font-bold text-white text-base">Leaflet MarineTraffic Live AIS Map</h2>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 flex items-center gap-1">
+            <Radio className="w-3 h-3 animate-pulse" /> High Precision Coordinates
+          </span>
         </div>
 
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-4 text-xs">
           <span className="flex items-center gap-1.5 text-slate-300">
             <span className="w-2.5 h-2.5 rounded-full bg-sky-400"></span> Underway
           </span>
@@ -57,137 +180,11 @@ export const MarineTrafficMap: React.FC<MarineTrafficMapProps> = ({
         </div>
       </div>
 
-      {/* SVG Map Canvas */}
-      <div className="relative w-full aspect-[2/1] min-h-[360px] bg-[#070b14] overflow-hidden select-none">
-        <svg className="w-full h-full" viewBox="0 0 800 420">
-          <defs>
-            <pattern id="mapGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" strokeWidth="0.5" strokeDasharray="2,2" />
-            </pattern>
-          </defs>
-
-          {/* Grid */}
-          <rect width="100%" height="100%" fill="#070b14" />
-          <rect width="100%" height="100%" fill="url(#mapGrid)" />
-
-          {/* Equator & Meridian */}
-          <line x1="0" y1="223" x2="800" y2="223" stroke="#334155" strokeWidth="1" strokeDasharray="4,4" />
-          <line x1="400" y1="0" x2="400" y2="420" stroke="#334155" strokeWidth="1" strokeDasharray="4,4" />
-
-          {/* Continents */}
-          <path d="M 120 70 L 220 60 L 250 120 L 190 170 L 140 140 L 90 90 Z" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-          <path d="M 220 185 L 290 200 L 270 310 L 220 340 L 200 230 Z" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-          <path d="M 390 60 L 460 50 L 470 100 L 410 110 L 380 80 Z" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-          <path d="M 380 120 L 470 120 L 510 200 L 460 300 L 400 280 L 370 170 Z" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-          <path d="M 480 40 L 720 40 L 750 160 L 660 190 L 580 140 L 490 110 Z" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-          <path d="M 670 250 L 750 250 L 740 320 L 660 310 Z" fill="#0f172a" stroke="#1e293b" strokeWidth="1" />
-
-          {/* Heading vectors for ships */}
-          {ships.map((ship) => {
-            const pos = projectCoords(ship.location.latitude, ship.location.longitude);
-            if (ship.location.status !== 'Underway') return null;
-
-            const angleRad = ((ship.location.headingDegrees - 90) * Math.PI) / 180;
-            const vecX = pos.x + Math.cos(angleRad) * 26;
-            const vecY = pos.y + Math.sin(angleRad) * 26;
-
-            return (
-              <line
-                key={`vector-${ship.id}`}
-                x1={pos.x}
-                y1={pos.y}
-                x2={vecX}
-                y2={vecY}
-                stroke={getStatusColor(ship.location.status)}
-                strokeWidth="1.5"
-                strokeDasharray="3,2"
-              />
-            );
-          })}
-
-          {/* Ships */}
-          {ships.map((ship) => {
-            const pos = projectCoords(ship.location.latitude, ship.location.longitude);
-            const isFocused = ship.id === focusedShipId;
-            const isHovered = hoveredShip?.id === ship.id;
-            const color = getStatusColor(ship.location.status);
-
-            return (
-              <g
-                key={ship.id}
-                transform={`translate(${pos.x}, ${pos.y})`}
-                className="cursor-pointer transition-all"
-                onClick={() => onSelectShip(ship)}
-                onMouseEnter={() => setHoveredShip(ship)}
-                onMouseLeave={() => setHoveredShip(null)}
-              >
-                {(isFocused || isHovered) && (
-                  <circle
-                    r="14"
-                    fill="none"
-                    stroke={color}
-                    strokeWidth="1.5"
-                    className="animate-ping"
-                  />
-                )}
-
-                {ship.location.status === 'Underway' ? (
-                  <g transform={`rotate(${ship.location.headingDegrees})`}>
-                    <polygon
-                      points="0,-7 5,7 0,4 -5,7"
-                      fill={color}
-                      stroke="#070b14"
-                      strokeWidth="1.5"
-                    />
-                  </g>
-                ) : (
-                  <circle r="6" fill={color} stroke="#070b14" strokeWidth="1.5" />
-                )}
-
-                <text
-                  x="10"
-                  y="3"
-                  fontSize="10"
-                  fontWeight="bold"
-                  fill={isFocused || isHovered ? '#ffffff' : '#cbd5e1'}
-                  style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}
-                >
-                  {ship.name} ({ship.imo})
-                </text>
-              </g>
-            );
-          })}
-        </svg>
-
-        {/* Hover Popup */}
-        {hoveredShip && (
-          <div className="absolute top-4 right-4 bg-slate-900/95 border border-cyan-500/40 rounded-xl p-4 shadow-2xl backdrop-blur-md w-72 text-xs text-slate-200 pointer-events-none z-20">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
-              <div className="font-bold text-sm text-white">{hoveredShip.name}</div>
-              <span className="font-mono text-cyan-400 font-bold text-[10px]">{hoveredShip.imo}</span>
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex justify-between">
-                <span className="text-slate-400">MarineTraffic Status:</span>
-                <span className="font-bold text-emerald-400">{hoveredShip.location.status}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Position:</span>
-                <span className="font-mono text-slate-100">{hoveredShip.location.latitude}° N, {hoveredShip.location.longitude}° E</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Speed / Heading:</span>
-                <span className="font-bold text-white">{hoveredShip.location.speedKnots} kts @ {hoveredShip.location.headingDegrees}°</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Destination:</span>
-                <span className="font-medium text-cyan-300 truncate max-w-[150px]">{hoveredShip.location.destination}</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Leaflet Map Canvas Container */}
+      <div
+        ref={mapContainerRef}
+        className="w-full h-[420px] bg-[#090d16] z-10"
+      />
     </div>
   );
 };
