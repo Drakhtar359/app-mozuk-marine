@@ -442,20 +442,30 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 )}
               </div>
 
-              {/* TREE CONNECTORS (Lines connecting Master to 3 Department Columns) */}
-              <div className="w-full flex flex-col items-center">
-                {/* Vertical Line from Master */}
-                <div className="w-0.5 h-8 bg-gradient-to-b from-amber-500/80 to-[var(--color-primary)]"></div>
-                {/* Horizontal Bar spanning across 3 columns */}
-                <div className="w-2/3 h-0.5 bg-[var(--color-primary)] hidden md:block"></div>
+              {/* PERFECT TREE CONNECTORS (SVG Tree linking Master directly to 3 Department Columns) */}
+              <div className="hidden md:block w-full h-12 my-0 pointer-events-none">
+                <svg className="w-full h-full text-[var(--color-primary)]" viewBox="0 0 100 48" preserveAspectRatio="none">
+                  {/* Trunk line from Master down to center point y=24 */}
+                  <line x1="50" y1="0" x2="50" y2="24" stroke="currentColor" strokeWidth="2.5" />
+                  {/* Horizontal crossbar connecting Deck (16.66%), Engine (50%), and Kitchen (83.33%) */}
+                  <line x1="16.66" y1="24" x2="83.33" y2="24" stroke="currentColor" strokeWidth="2.5" />
+                  {/* Vertical drop line into Deck Dept (16.66%) */}
+                  <line x1="16.66" y1="24" x2="16.66" y2="48" stroke="currentColor" strokeWidth="2.5" />
+                  {/* Vertical drop line into Engine Dept (50%) */}
+                  <line x1="50" y1="24" x2="50" y2="48" stroke="currentColor" strokeWidth="2.5" />
+                  {/* Vertical drop line into Kitchen Dept (83.33%) */}
+                  <line x1="83.33" y1="24" x2="83.33" y2="48" stroke="currentColor" strokeWidth="2.5" />
+                </svg>
               </div>
+
+              {/* Mobile vertical line connector */}
+              <div className="md:hidden w-0.5 h-6 bg-[var(--color-primary)] mx-auto my-1"></div>
             </div>
 
             {/* THREE DEPARTMENT COLUMNS */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 md:pt-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* COLUMN 1: DECK DEPARTMENT */}
               <div className="flex flex-col">
-                <div className="w-0.5 h-6 bg-[var(--color-primary)] mx-auto hidden md:block"></div>
                 <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-cyan-500 flex-1 flex flex-col">
                   {/* Column Header */}
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
@@ -531,7 +541,6 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
               {/* COLUMN 2: ENGINE DEPARTMENT */}
               <div className="flex flex-col">
-                <div className="w-0.5 h-6 bg-[var(--color-primary)] mx-auto hidden md:block"></div>
                 <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-blue-500 flex-1 flex flex-col">
                   {/* Column Header */}
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
@@ -607,7 +616,6 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
               {/* COLUMN 3: KITCHEN / MESS DEPARTMENT */}
               <div className="flex flex-col">
-                <div className="w-0.5 h-6 bg-[var(--color-primary)] mx-auto hidden md:block"></div>
                 <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-emerald-500 flex-1 flex flex-col">
                   {/* Column Header */}
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
