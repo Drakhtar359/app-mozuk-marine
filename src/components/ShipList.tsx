@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Ship } from '../types/vessel';
-import { fetchMarineTrafficLocation } from '../services/marineTraffic';
+import { fetchLiveVesselByImo } from '../services/marineTraffic';
 import { Ship as ShipIcon, Compass, MapPin, RefreshCw, Trash2, ExternalLink, Radio, Calendar, Scale, Anchor } from 'lucide-react';
 
 interface ShipListProps {
@@ -21,8 +21,8 @@ export const ShipList: React.FC<ShipListProps> = ({
   const handleRefreshAIS = async (ship: Ship) => {
     setRefreshingId(ship.id);
     try {
-      const updatedLoc = await fetchMarineTrafficLocation(ship.name, ship.imo);
-      onUpdateShipLocation(ship.id, updatedLoc);
+      const vesselData = await fetchLiveVesselByImo(ship.name, ship.imo);
+      onUpdateShipLocation(ship.id, vesselData.location);
     } catch (err) {
       console.error(err);
     } finally {

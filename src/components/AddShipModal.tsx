@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Ship } from '../types/vessel';
-import { fetchMarineTrafficLocation } from '../services/marineTraffic';
-import { X, Ship as ShipIcon, Radio, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { fetchLiveVesselByImo } from '../services/marineTraffic';
+import { X, Ship as ShipIcon, Radio, Loader2, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 
 interface AddShipModalProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
   const [type, setType] = useState('Container Ship');
   const [builtYear, setBuiltYear] = useState<string>('');
   const [grossTonnage, setGrossTonnage] = useState<string>('');
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,22 +38,22 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
     setIsLoading(true);
 
     try {
-      // Pull exact location from MarineTraffic
-      const locationData = await fetchMarineTrafficLocation(name.trim(), imo.trim());
+      // Pull real live vessel location & metadata from MarineTraffic / VesselFinder
+      const vesselData = await fetchLiveVesselByImo(name.trim(), imo.trim());
 
       const newShip: Ship = {
         id: `ship-${Date.now()}`,
-        name: name.trim(),
-        imo: imo.trim().startsWith('IMO') ? imo.trim() : `IMO ${imo.trim()}`,
-        type: type.trim() || undefined,
-        builtYear: builtYear ? parseInt(builtYear, 10) : undefined,
-        grossTonnage: grossTonnage ? parseInt(grossTonnage, 10) : undefined,
-        location: locationData,
+        name: vesselData.realName || name.trim(),
+        imo: vesselData.imo || (imo.trim().startsWith('IMO') ? imo.trim() : `IMO ${imo.trim()}`),
+        type: type.trim() || vesselData.shipType || undefined,
+        builtYear: builtYear ? parseInt(builtYear, 10) : vesselData.builtYear,
+        grossTonnage: grossTonnage ? parseInt(grossTonnage, 10) : vesselData.grossTonnage,
+        location: vesselData.location,
         addedAt: new Date().toISOString().substring(0, 10),
       };
 
       onAddShip(newShip);
-      
+
       // Reset form
       setName('');
       setImo('');
@@ -62,7 +62,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
       setIsLoading(false);
       onClose();
     } catch (err) {
-      setError('Failed to pull MarineTraffic location. Please try again.');
+      setError('Failed to pull MarineTraffic location. Please check the IMO number.');
       setIsLoading(false);
     }
   };
@@ -77,8 +77,8 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               <ShipIcon className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-extrabold text-white text-base">Add New Ship</h2>
-              <p className="text-xs text-slate-400">Register vessel & pull MarineTraffic live AIS location</p>
+              <h2 className="font-extrabold text-white text-base">Add Ship & Pull MarineTraffic AIS</h2>
+              <p className="text-xs text-slate-400">Enter IMO number to resolve live position & vessel details</p>
             </div>
           </div>
 
@@ -100,6 +100,14 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             </div>
           )}
 
+          {/* Quick Tip for real vessels */}
+          <div className="bg-cyan-950/40 border border-cyan-800/60 text-cyan-200 p-3 rounded-xl flex items-start gap-2 text-[11px]">
+            <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+            <div>
+              <strong>Pro Tip:</strong> Enter real IMO numbers (e.g. <span className="font-mono text-white font-bold">9811000</span> for <em>Ever Given</em>, <span className="font-mono text-white font-bold">9703291</span> for <em>MSC Oscar</em>, or <span className="font-mono text-white font-bold">9632064</span> for <em>Merete Maersk</em>) to pull their exact real-time port location and flag!
+            </div>
+          </div>
+
           {/* 1. Ship Name (Mandatory) */}
           <div>
             <label className="block text-slate-300 font-bold mb-1.5">
@@ -107,7 +115,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             </label>
             <input
               type="text"
-              placeholder="e.g. Mozuk Mariner"
+              placeholder="e.g. EVER GIVEN"
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
@@ -123,7 +131,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             </label>
             <input
               type="text"
-              placeholder="e.g. 9842103"
+              placeholder="e.g. 9811000"
               value={imo}
               onChange={(e) => setImo(e.target.value)}
               disabled={isLoading}
@@ -162,7 +170,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               </label>
               <input
                 type="number"
-                placeholder="e.g. 2021"
+                placeholder="e.g. 2018"
                 value={builtYear}
                 onChange={(e) => setBuiltYear(e.target.value)}
                 disabled={isLoading}
@@ -178,22 +186,13 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               </label>
               <input
                 type="number"
-                placeholder="e.g. 142000"
+                placeholder="e.g. 219000"
                 value={grossTonnage}
                 onChange={(e) => setGrossTonnage(e.target.value)}
                 disabled={isLoading}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
               />
             </div>
-          </div>
-
-          {/* MarineTraffic Live Sync Note */}
-          <div className="bg-slate-950/80 border border-slate-800/80 p-3 rounded-xl flex items-center justify-between text-[11px] text-slate-400">
-            <div className="flex items-center gap-2">
-              <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
-              <span>MarineTraffic Live AIS Lookup will auto-pull location</span>
-            </div>
-            <span className="font-bold text-emerald-400">ONLINE</span>
           </div>
 
           {/* Submit Actions */}
@@ -214,7 +213,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Pulling MarineTraffic AIS...
+                  Fetching MarineTraffic AIS...
                 </>
               ) : (
                 <>
