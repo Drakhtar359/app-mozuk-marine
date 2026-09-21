@@ -442,24 +442,30 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 )}
               </div>
 
-              {/* PERFECT TREE CONNECTORS (SVG Tree linking Master directly to 3 Department Columns) */}
-              <div className="hidden md:block w-full h-12 my-0 pointer-events-none">
-                <svg className="w-full h-full text-[var(--color-primary)]" viewBox="0 0 100 48" preserveAspectRatio="none">
-                  {/* Trunk line from Master down to center point y=24 */}
-                  <line x1="50" y1="0" x2="50" y2="24" stroke="currentColor" strokeWidth="2.5" />
-                  {/* Horizontal crossbar connecting Deck (16.66%), Engine (50%), and Kitchen (83.33%) */}
-                  <line x1="16.66" y1="24" x2="83.33" y2="24" stroke="currentColor" strokeWidth="2.5" />
-                  {/* Vertical drop line into Deck Dept (16.66%) */}
-                  <line x1="16.66" y1="24" x2="16.66" y2="48" stroke="currentColor" strokeWidth="2.5" />
-                  {/* Vertical drop line into Engine Dept (50%) */}
-                  <line x1="50" y1="24" x2="50" y2="48" stroke="currentColor" strokeWidth="2.5" />
-                  {/* Vertical drop line into Kitchen Dept (83.33%) */}
-                  <line x1="83.33" y1="24" x2="83.33" y2="48" stroke="currentColor" strokeWidth="2.5" />
-                </svg>
+              {/* UNIFORM TREE CONNECTORS (Guaranteed exact 2px line thickness across vertical & horizontal lines) */}
+              <div className="hidden md:flex flex-col items-center w-full my-0 pointer-events-none">
+                {/* 1. Trunk Line from Master Card down */}
+                <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+
+                {/* 2. Horizontal Crossbar spanning from center of Column 1 to center of Column 3 */}
+                <div className="w-[66.666%] h-[2px] bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+
+                {/* 3. Drop Lines row into each of the 3 Department Column Cards */}
+                <div className="w-full grid grid-cols-3 gap-6">
+                  <div className="flex justify-center">
+                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+                  </div>
+                  <div className="flex justify-center">
+                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+                  </div>
+                  <div className="flex justify-center">
+                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+                  </div>
+                </div>
               </div>
 
               {/* Mobile vertical line connector */}
-              <div className="md:hidden w-0.5 h-6 bg-[var(--color-primary)] mx-auto my-1"></div>
+              <div className="md:hidden w-[2px] h-6 bg-[var(--color-primary)] mx-auto my-1"></div>
             </div>
 
             {/* THREE DEPARTMENT COLUMNS */}
