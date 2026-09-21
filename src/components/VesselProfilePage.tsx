@@ -205,15 +205,6 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         >
           <ArrowLeft className="w-4 h-4 text-[var(--color-primary)]" /> Back to Fleet Directory
         </button>
-
-        <a
-          href="https://marine.mozuk.net"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-[var(--text-muted)] hover:text-[var(--color-primary)] font-semibold flex items-center gap-1 transition"
-        >
-          Mozuk Marine Engineering <ExternalLink className="w-3 h-3" />
-        </a>
       </div>
 
       {/* Ship Basic Specifications Header Card */}

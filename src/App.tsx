@@ -3,11 +3,11 @@ import { Ship } from './types/vessel';
 import { AddShipModal } from './components/AddShipModal';
 import { ShipList } from './components/ShipList';
 import { VesselProfilePage } from './components/VesselProfilePage';
-import { Anchor, Plus, ExternalLink, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon } from 'lucide-react';
+import { Plus, ExternalLink, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    return (localStorage.getItem('mozuk_theme') as 'dark' | 'light') || 'dark';
+    return (localStorage.getItem('mozuk_theme') as 'dark' | 'light') || 'light';
   });
 
   const [ships, setShips] = useState<Ship[]>([
@@ -240,27 +240,21 @@ export function App() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* Logo & Mozuk Marine Branding */}
           <div className="flex items-center gap-3">
-            <a
-              href="https://marine.mozuk.net"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 group"
+            <div
+              onClick={() => setSelectedShip(null)}
+              className="flex items-center gap-3 cursor-pointer group"
             >
               <img
                 src="https://marine.mozuk.net/images/logo.png"
                 alt="Mozuk Marine Logo"
                 className="h-9 w-auto drop-shadow-[0_0_12px_rgba(0,242,254,0.4)] group-hover:scale-105 transition-transform"
                 onError={(e) => {
-                  // Fallback icon if offline
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
               <div>
                 <div className="flex items-center gap-2">
-                  <h1
-                    onClick={() => setSelectedShip(null)}
-                    className="font-['Space_Grotesk',sans-serif] font-bold text-xl tracking-tight text-[var(--text-main)] cursor-pointer group-hover:text-[var(--color-primary)] transition"
-                  >
+                  <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-xl tracking-tight text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition">
                     MOZUK <span className="text-[var(--color-primary)] font-extrabold">MARINE</span>
                   </h1>
                   <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[rgba(0,242,254,0.1)] border border-[var(--color-glass-border)] text-[var(--color-primary)] tracking-wider uppercase">
@@ -271,22 +265,11 @@ export function App() {
                   Official Vessel Profile & Operations Portal
                 </p>
               </div>
-            </a>
+            </div>
           </div>
 
           {/* Nav Actions */}
           <div className="flex items-center gap-3">
-            {/* Visit Official Mozuk Marine Website Button */}
-            <a
-              href="https://marine.mozuk.net"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full btn-mozuk-secondary text-xs font-semibold"
-            >
-              <span>marine.mozuk.net</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-
             {/* Theme Toggle Button (Light/Dark Mode) */}
             <button
               onClick={toggleTheme}
@@ -342,14 +325,6 @@ export function App() {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <a
-                    href="https://marine.mozuk.net"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2.5 rounded-full btn-mozuk-secondary text-xs font-bold flex items-center gap-1.5"
-                  >
-                    Mozuk Marine Website <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
                   <button
                     onClick={() => setIsAddModalOpen(true)}
                     className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2"
@@ -435,15 +410,6 @@ export function App() {
           </div>
 
           <div className="flex items-center gap-4 text-[var(--text-muted)]">
-            <a
-              href="https://marine.mozuk.net"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[var(--color-primary)] transition flex items-center gap-1"
-            >
-              Company Website <ExternalLink className="w-3 h-3" />
-            </a>
-            <span>•</span>
             <span>BWTS Installation & Compliance</span>
             <span>•</span>
             <span>Fleet Portal</span>
