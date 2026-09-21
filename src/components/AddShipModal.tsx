@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Ship } from '../types/vessel';
-import { fetchLiveVesselByImo } from '../services/marineTraffic';
-import { X, Ship as ShipIcon, Radio, Loader2, CheckCircle2, AlertCircle, Info } from 'lucide-react';
+import { X, Ship as ShipIcon, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface AddShipModalProps {
   isOpen: boolean;
@@ -15,13 +14,12 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
   const [type, setType] = useState('Container Ship');
   const [builtYear, setBuiltYear] = useState<string>('');
   const [grossTonnage, setGrossTonnage] = useState<string>('');
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [flag, setFlag] = useState('Marshall Islands');
   const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -35,36 +33,29 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
       return;
     }
 
-    setIsLoading(true);
+    const newShip: Ship = {
+      id: `ship-${Date.now()}`,
+      name: name.trim(),
+      imo: imo.trim().startsWith('IMO') ? imo.trim() : `IMO ${imo.trim()}`,
+      type: type.trim() || 'Container Ship',
+      builtYear: builtYear ? parseInt(builtYear, 10) : undefined,
+      grossTonnage: grossTonnage ? parseInt(grossTonnage, 10) : undefined,
+      flag: flag.trim() || 'Marshall Islands',
+      crew: [],
+      documents: [],
+      maintenance: [],
+      addedAt: new Date().toISOString().substring(0, 10),
+    };
 
-    try {
-      // Pull real live vessel location & AIS metadata from MarineTraffic / AIS service by IMO number
-      const vesselData = await fetchLiveVesselByImo(name.trim(), imo.trim());
+    onAddShip(newShip);
 
-      const newShip: Ship = {
-        id: `ship-${Date.now()}`,
-        name: vesselData.realName || name.trim(),
-        imo: vesselData.imo || (imo.trim().startsWith('IMO') ? imo.trim() : `IMO ${imo.trim()}`),
-        type: type.trim() || vesselData.shipType || undefined,
-        builtYear: builtYear ? parseInt(builtYear, 10) : vesselData.builtYear,
-        grossTonnage: grossTonnage ? parseInt(grossTonnage, 10) : vesselData.grossTonnage,
-        location: vesselData.location,
-        addedAt: new Date().toISOString().substring(0, 10),
-      };
-
-      onAddShip(newShip);
-
-      // Reset form
-      setName('');
-      setImo('');
-      setBuiltYear('');
-      setGrossTonnage('');
-      setIsLoading(false);
-      onClose();
-    } catch (err) {
-      setError('Failed to pull MarineTraffic location. Please check the IMO number.');
-      setIsLoading(false);
-    }
+    // Reset form
+    setName('');
+    setImo('');
+    setBuiltYear('');
+    setGrossTonnage('');
+    setFlag('Marshall Islands');
+    onClose();
   };
 
   return (
@@ -77,14 +68,13 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               <ShipIcon className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-extrabold text-white text-base">Add New Ship</h2>
-              <p className="text-xs text-slate-400">Position coordinates are pulled automatically by IMO number</p>
+              <h2 className="font-extrabold text-white text-base">Add New Vessel to Fleet</h2>
+              <p className="text-xs text-slate-400">Enter vessel details to create a new ship profile</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            disabled={isLoading}
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
@@ -100,14 +90,6 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             </div>
           )}
 
-          {/* Quick Tip */}
-          <div className="bg-cyan-950/40 border border-cyan-800/60 text-cyan-200 p-3 rounded-xl flex items-start gap-2 text-[11px]">
-            <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-            <div>
-              <strong>MarineTraffic Live AIS Lookup:</strong> Try real IMO numbers such as <span className="font-mono text-white font-bold">9143398</span> (<em>Sirios Bulk II</em> in Aegean Sea), <span className="font-mono text-white font-bold">9811000</span> (<em>Ever Given</em>), or <span className="font-mono text-white font-bold">9703291</span> (<em>MSC Oscar</em>). The exact position coordinates are pulled automatically.
-            </div>
-          </div>
-
           {/* 1. Ship Name (Mandatory) */}
           <div>
             <label className="block text-slate-300 font-bold mb-1.5">
@@ -118,7 +100,6 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               placeholder="e.g. SIRIOS BULK II"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={isLoading}
               required
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
             />
@@ -134,46 +115,54 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               placeholder="e.g. 9143398"
               value={imo}
               onChange={(e) => setImo(e.target.value)}
-              disabled={isLoading}
               required
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
             />
-            <p className="text-[11px] text-slate-400 mt-1">Unique 7-digit IMO number registered with MarineTraffic.</p>
+            <p className="text-[11px] text-slate-400 mt-1">Unique 7-digit IMO number.</p>
           </div>
 
-          {/* 3. Ship Type (Optional) */}
-          <div>
-            <label className="block text-slate-300 font-bold mb-1.5">
-              Ship Type <span className="text-slate-400 font-normal">(Optional)</span>
-            </label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              disabled={isLoading}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 cursor-pointer"
-            >
-              <option value="Container Ship">Container Ship</option>
-              <option value="General Cargo Ship">General Cargo Ship</option>
-              <option value="Oil Tanker">Oil Tanker</option>
-              <option value="Bulk Carrier">Bulk Carrier</option>
-              <option value="LNG Carrier">LNG Carrier</option>
-              <option value="Offshore Support">Offshore Support</option>
-              <option value="Tugboat">Tugboat</option>
-            </select>
+          {/* 3. Ship Type & Flag State */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-slate-300 font-bold mb-1.5">Ship Type</label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 cursor-pointer"
+              >
+                <option value="Container Ship">Container Ship</option>
+                <option value="General Cargo Ship">General Cargo Ship</option>
+                <option value="Oil Tanker">Oil Tanker</option>
+                <option value="Bulk Carrier">Bulk Carrier</option>
+                <option value="LNG Carrier">LNG Carrier</option>
+                <option value="Offshore Support">Offshore Support</option>
+                <option value="Tugboat">Tugboat</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-slate-300 font-bold mb-1.5">Flag State</label>
+              <input
+                type="text"
+                placeholder="e.g. Panama, Liberia"
+                value={flag}
+                onChange={(e) => setFlag(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
+              />
+            </div>
           </div>
 
           {/* 4 & 5. Year of Construction & Gross Tonnage (Optional) */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-300 font-bold mb-1.5">
-                Year of Construction <span className="text-slate-400 font-normal">(Optional)</span>
+                Year Built <span className="text-slate-400 font-normal">(Optional)</span>
               </label>
               <input
                 type="number"
                 placeholder="e.g. 1998"
                 value={builtYear}
                 onChange={(e) => setBuiltYear(e.target.value)}
-                disabled={isLoading}
                 min="1950"
                 max="2030"
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500"
@@ -189,47 +178,26 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
                 placeholder="e.g. 14500"
                 value={grossTonnage}
                 onChange={(e) => setGrossTonnage(e.target.value)}
-                disabled={isLoading}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500"
               />
             </div>
           </div>
 
-          {/* MarineTraffic Live AIS Sync Badge */}
-          <div className="bg-slate-950/80 border border-slate-800/80 p-3 rounded-xl flex items-center justify-between text-[11px] text-slate-400">
-            <div className="flex items-center gap-2">
-              <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
-              <span>MarineTraffic Live AIS position auto-pull enabled</span>
-            </div>
-            <span className="font-bold text-emerald-400">AUTOMATIC</span>
-          </div>
-
           {/* Actions */}
-          <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-800">
+          <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
             <button
               type="button"
               onClick={onClose}
-              disabled={isLoading}
               className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isLoading}
               className="px-5 py-2.5 rounded-xl bg-cyan-600 text-white font-bold hover:bg-cyan-500 shadow-lg shadow-cyan-600/30 transition flex items-center gap-2"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Fetching MarineTraffic AIS...
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="w-4 h-4" />
-                  Add Ship & Pull Location
-                </>
-              )}
+              <CheckCircle2 className="w-4 h-4" />
+              Create Ship Profile
             </button>
           </div>
         </form>
