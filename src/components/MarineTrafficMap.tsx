@@ -45,10 +45,9 @@ export const MarineTrafficMap: React.FC<MarineTrafficMapProps> = ({
       attributionControl: false,
     });
 
-    // High-precision Dark Matter tile layer for maritime vessel tracking
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // Licensed CartoDB Voyager tile layer for high-resolution maritime vessel tracking
+    L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_3s3u_1_405b6a6fd32e5256acc5e566', {
       maxZoom: 19,
-      subdomains: 'abcd',
     }).addTo(map);
 
     mapRef.current = map;
