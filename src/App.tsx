@@ -3,7 +3,7 @@ import { Ship } from './types/vessel';
 import { AddShipModal } from './components/AddShipModal';
 import { ShipList } from './components/ShipList';
 import { VesselProfilePage } from './components/VesselProfilePage';
-import { Plus, ExternalLink, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -21,11 +21,17 @@ export function App() {
       flag: 'Marshall Islands',
       addedAt: '2026-09-21',
       crew: [
-        { id: 'c1', name: 'Capt. Marcus Vance', role: 'Master', nationality: 'British', signOnDate: '2026-01-15' },
-        { id: 'c2', name: 'Dimitrios Pappas', role: 'Chief Engineer', nationality: 'Greek', signOnDate: '2026-02-01' },
-        { id: 'c3', name: 'Alexey Ivanov', role: 'Chief Officer', nationality: 'Ukrainian', signOnDate: '2026-03-10' },
-        { id: 'c4', name: 'Elena Rostova', role: 'Second Engineer', nationality: 'Estonian', signOnDate: '2026-04-05' },
-        { id: 'c5', name: 'Kenji Sato', role: 'Third Engineer', nationality: 'Japanese', signOnDate: '2026-05-12' },
+        { id: 'c1', name: 'Capt. Marcus Vance', role: 'Master / Captain', department: 'master', nationality: 'British', signOnDate: '2026-01-15', seamanBookNo: 'SB-882109' },
+        { id: 'c3', name: 'Alexey Ivanov', role: 'Chief Officer', department: 'deck', nationality: 'Ukrainian', signOnDate: '2026-03-10' },
+        { id: 'c5', name: 'Kenji Sato', role: 'Second Officer', department: 'deck', nationality: 'Japanese', signOnDate: '2026-05-12' },
+        { id: 'c6', name: 'Thomas Miller', role: 'Bosun', department: 'deck', nationality: 'Filipino', signOnDate: '2026-04-01' },
+        { id: 'c7', name: 'Jose Santos', role: 'Able Seaman', department: 'deck', nationality: 'Filipino', signOnDate: '2026-04-15' },
+        { id: 'c2', name: 'Dimitrios Pappas', role: 'Chief Engineer', department: 'engine', nationality: 'Greek', signOnDate: '2026-02-01' },
+        { id: 'c4', name: 'Elena Rostova', role: 'Second Engineer', department: 'engine', nationality: 'Estonian', signOnDate: '2026-04-05' },
+        { id: 'c8', name: 'Viktor Morozov', role: 'Third Engineer', department: 'engine', nationality: 'Latvian', signOnDate: '2026-05-01' },
+        { id: 'c9', name: 'Ahmed Hassan', role: 'Oiler / Motorman', department: 'engine', nationality: 'Egyptian', signOnDate: '2026-05-20' },
+        { id: 'c10', name: 'Giuseppe Rossi', role: 'Chief Cook', department: 'kitchen', nationality: 'Italian', signOnDate: '2026-02-15' },
+        { id: 'c11', name: 'Manny Pacquiao', role: 'Messman / Steward', department: 'kitchen', nationality: 'Filipino', signOnDate: '2026-03-01' },
       ],
       documents: [
         { id: 'd1', title: 'International Load Line Certificate', documentType: 'Statutory Certificate', documentNumber: 'ILLC-98-4412', issueDate: '2022-04-10', expiryDate: '2027-04-09', authority: 'DNV GL', status: 'valid' },
@@ -90,9 +96,13 @@ export function App() {
       flag: 'Panama',
       addedAt: '2026-09-21',
       crew: [
-        { id: 'c201', name: 'Capt. Alexander Wright', role: 'Master', nationality: 'Canadian', signOnDate: '2026-02-10' },
-        { id: 'c202', name: 'Hiroshi Tanaka', role: 'Chief Engineer', nationality: 'Japanese', signOnDate: '2026-03-01' },
-        { id: 'c203', name: 'Carlos Mendez', role: 'Chief Officer', nationality: 'Filipino', signOnDate: '2026-03-15' },
+        { id: 'c201', name: 'Capt. Alexander Wright', role: 'Master / Captain', department: 'master', nationality: 'Canadian', signOnDate: '2026-02-10', seamanBookNo: 'SB-993012' },
+        { id: 'c203', name: 'Carlos Mendez', role: 'Chief Officer', department: 'deck', nationality: 'Filipino', signOnDate: '2026-03-15' },
+        { id: 'c204', name: 'Li Wei', role: 'Second Officer', department: 'deck', nationality: 'Chinese', signOnDate: '2026-04-01' },
+        { id: 'c202', name: 'Hiroshi Tanaka', role: 'Chief Engineer', department: 'engine', nationality: 'Japanese', signOnDate: '2026-03-01' },
+        { id: 'c205', name: 'Lars Hansen', role: 'Second Engineer', department: 'engine', nationality: 'Danish', signOnDate: '2026-03-20' },
+        { id: 'c206', name: 'Francois Dubois', role: 'Chief Cook', department: 'kitchen', nationality: 'French', signOnDate: '2026-02-25' },
+        { id: 'c207', name: 'Pedro Gomez', role: 'Messman', department: 'kitchen', nationality: 'Filipino', signOnDate: '2026-03-10' },
       ],
       documents: [
         { id: 'd201', title: 'Hull & Machinery Class Certificate', documentType: 'Class Certificate', documentNumber: 'NK-18-9921', issueDate: '2023-05-01', expiryDate: '2028-04-30', authority: 'ClassNK', status: 'valid' },
@@ -133,8 +143,11 @@ export function App() {
       flag: 'Panama',
       addedAt: '2026-09-21',
       crew: [
-        { id: 'c301', name: 'Capt. Jean-Luc Picard', role: 'Master', nationality: 'French', signOnDate: '2026-01-20' },
-        { id: 'c302', name: 'Sven Lindqvist', role: 'Chief Engineer', nationality: 'Swedish', signOnDate: '2026-02-15' },
+        { id: 'c301', name: 'Capt. Jean-Luc Picard', role: 'Master / Captain', department: 'master', nationality: 'French', signOnDate: '2026-01-20', seamanBookNo: 'SB-170100' },
+        { id: 'c303', name: 'William Riker', role: 'Chief Officer', department: 'deck', nationality: 'American', signOnDate: '2026-02-01' },
+        { id: 'c302', name: 'Sven Lindqvist', role: 'Chief Engineer', department: 'engine', nationality: 'Swedish', signOnDate: '2026-02-15' },
+        { id: 'c304', name: 'Geordi La Forge', role: 'Electro-Technical Officer (ETO)', department: 'engine', nationality: 'American', signOnDate: '2026-02-20' },
+        { id: 'c305', name: 'Neelix', role: 'Chief Cook', department: 'kitchen', nationality: 'Talaxian', signOnDate: '2026-03-05' },
       ],
       documents: [
         { id: 'd301', title: 'International Sewage Pollution Prevention', documentType: 'Environmental Cert', documentNumber: 'ISPP-14-332', issueDate: '2020-11-10', expiryDate: '2025-11-09', authority: 'DNV GL', status: 'valid' },
@@ -163,9 +176,10 @@ export function App() {
       flag: 'Mozambique',
       addedAt: '2026-09-21',
       crew: [
-        { id: 'c401', name: 'Capt. Joao Silva', role: 'Master', nationality: 'Mozambican', signOnDate: '2026-01-10' },
-        { id: 'c402', name: 'Mateus Nhampossa', role: 'Chief Engineer', nationality: 'Mozambican', signOnDate: '2026-01-12' },
-        { id: 'c403', name: 'Antonio Cossa', role: 'Chief Officer', nationality: 'Mozambican', signOnDate: '2026-02-01' },
+        { id: 'c401', name: 'Capt. Joao Silva', role: 'Master / Captain', department: 'master', nationality: 'Mozambican', signOnDate: '2026-01-10', seamanBookNo: 'SB-MZ-0019' },
+        { id: 'c403', name: 'Antonio Cossa', role: 'Chief Officer', department: 'deck', nationality: 'Mozambican', signOnDate: '2026-02-01' },
+        { id: 'c402', name: 'Mateus Nhampossa', role: 'Chief Engineer', department: 'engine', nationality: 'Mozambican', signOnDate: '2026-01-12' },
+        { id: 'c404', name: 'Inacio Tembe', role: 'Chief Cook', department: 'kitchen', nationality: 'Mozambican', signOnDate: '2026-01-25' },
       ],
       documents: [
         { id: 'd401', title: 'National Certificate of Registry', documentType: 'Statutory Certificate', documentNumber: 'MZ-REG-2021-004', issueDate: '2021-06-01', expiryDate: '2031-05-31', authority: 'INAMAR Mozambique', status: 'valid' },
@@ -320,7 +334,7 @@ export function App() {
                     Ship Owner Fleet Operations Portal
                   </h2>
                   <p className="text-xs text-[var(--text-muted)] mt-1 max-w-2xl leading-relaxed">
-                    Integrated with Mozuk Marine's engineering standards. Select a vessel below to access its crew roster, statutory technical certificates, and maintenance repair logs.
+                    Integrated with Mozuk Marine's engineering standards. Select a vessel below to access its crew command hierarchy, statutory technical certificates, and maintenance repair logs.
                   </p>
                 </div>
 
@@ -342,7 +356,7 @@ export function App() {
                   </div>
                   <div>
                     <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Total Fleet</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalFleetCount} Vessels</div>
+                    <div className="font-[ Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalFleetCount} Vessels</div>
                   </div>
                 </div>
 

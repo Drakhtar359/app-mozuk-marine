@@ -2,6 +2,7 @@ export interface CrewMember {
   id: string;
   name: string;
   role: string;
+  department?: 'master' | 'deck' | 'engine' | 'kitchen';
   nationality: string;
   signOnDate: string;
   seamanBookNo?: string;
@@ -32,11 +33,11 @@ export interface MaintenanceLog {
 
 export interface Ship {
   id: string;
-  name: string; // Mandatory
-  imo: string;  // Mandatory
-  type?: string; // Optional
-  builtYear?: number; // Optional
-  grossTonnage?: number; // Optional
+  name: string;
+  imo: string;
+  type?: string;
+  builtYear?: number;
+  grossTonnage?: number;
   flag?: string;
   classification?: string;
   crew: CrewMember[];

@@ -10,14 +10,17 @@ import {
   CheckCircle2,
   AlertTriangle,
   Clock,
-  Calendar,
-  Shield,
   Trash2,
   Check,
   Play,
   RotateCcw,
   UserPlus,
-  ExternalLink,
+  Crown,
+  Compass,
+  Utensils,
+  Anchor,
+  Shield,
+  ChevronDown,
 } from 'lucide-react';
 
 interface VesselProfilePageProps {
@@ -31,7 +34,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   onBack,
   onUpdateShip,
 }) => {
-  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance'>('maintenance');
+  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance'>('crew');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
 
   // Modal States
@@ -41,7 +44,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
   // New Crew Form State
   const [crewName, setCrewName] = useState('');
-  const [crewRole, setCrewRole] = useState('Master');
+  const [crewDepartment, setCrewDepartment] = useState<'master' | 'deck' | 'engine' | 'kitchen'>('deck');
+  const [crewRole, setCrewRole] = useState('Chief Officer');
   const [crewNationality, setCrewNationality] = useState('');
   const [crewSignOnDate, setCrewSignOnDate] = useState('');
   const [seamanBookNo, setSeamanBookNo] = useState('');
@@ -62,6 +66,40 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [repairDueDate, setRepairDueDate] = useState('');
   const [repairDescription, setRepairDescription] = useState('');
 
+  // Categorize Crew by Command Hierarchy
+  const getCrewDepartment = (member: CrewMember): 'master' | 'deck' | 'engine' | 'kitchen' => {
+    if (member.department) return member.department;
+    const roleLower = member.role.toLowerCase();
+    if (roleLower.includes('master') || roleLower.includes('captain')) {
+      return 'master';
+    }
+    if (
+      roleLower.includes('engineer') ||
+      roleLower.includes('oiler') ||
+      roleLower.includes('motorman') ||
+      roleLower.includes('electrician') ||
+      roleLower.includes('eto') ||
+      roleLower.includes('fitter')
+    ) {
+      return 'engine';
+    }
+    if (
+      roleLower.includes('cook') ||
+      roleLower.includes('mess') ||
+      roleLower.includes('steward') ||
+      roleLower.includes('galley') ||
+      roleLower.includes('catering')
+    ) {
+      return 'kitchen';
+    }
+    return 'deck';
+  };
+
+  const masterCrew = ship.crew.filter((c) => getCrewDepartment(c) === 'master');
+  const deckCrew = ship.crew.filter((c) => getCrewDepartment(c) === 'deck');
+  const engineCrew = ship.crew.filter((c) => getCrewDepartment(c) === 'engine');
+  const kitchenCrew = ship.crew.filter((c) => getCrewDepartment(c) === 'kitchen');
+
   // Crew Handlers
   const handleAddCrew = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +109,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       id: `crew-${Date.now()}`,
       name: crewName.trim(),
       role: crewRole,
+      department: crewDepartment,
       nationality: crewNationality.trim() || 'Mozambican',
       signOnDate: crewSignOnDate || new Date().toISOString().substring(0, 10),
       seamanBookNo: seamanBookNo.trim() || undefined,
@@ -195,6 +234,15 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     return m.status === maintenanceFilter;
   });
 
+  // When Department changes in modal, set default role
+  const handleDepartmentChange = (dept: 'master' | 'deck' | 'engine' | 'kitchen') => {
+    setCrewDepartment(dept);
+    if (dept === 'master') setCrewRole('Master / Captain');
+    else if (dept === 'deck') setCrewRole('Chief Officer');
+    else if (dept === 'engine') setCrewRole('Chief Engineer');
+    else setCrewRole('Chief Cook');
+  };
+
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Top Navigation Back Button */}
@@ -226,16 +274,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
             <h1 className="text-3xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)]">{ship.name}</h1>
             <p className="text-xs text-[var(--text-muted)] mt-1">
-              Registered Mozuk Marine fleet profile & statutory compliance record
+              Registered Mozuk Marine fleet profile & command organization structure
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setIsAddRepairModalOpen(true)}
+              onClick={() => setIsAddCrewModalOpen(true)}
               className="px-4 py-2.5 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"
             >
-              <Wrench className="w-4 h-4" /> Log Repair / Maintenance
+              <UserPlus className="w-4 h-4" /> Add Crew Member
             </button>
           </div>
         </div>
@@ -279,6 +327,18 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       {/* 3 Main Sections Tabs Bar */}
       <div className="flex border border-[var(--color-glass-border)] bg-[var(--color-surface)] rounded-2xl p-1.5 overflow-x-auto gap-2">
         <button
+          onClick={() => setActiveTab('crew')}
+          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
+            activeTab === 'crew'
+              ? 'btn-mozuk-primary shadow-lg'
+              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          Crew Command Hierarchy ({ship.crew.length})
+        </button>
+
+        <button
           onClick={() => setActiveTab('maintenance')}
           className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
             activeTab === 'maintenance'
@@ -288,18 +348,6 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         >
           <Wrench className="w-4 h-4" />
           Maintenance & Repair Log ({ship.maintenance.length})
-        </button>
-
-        <button
-          onClick={() => setActiveTab('crew')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
-            activeTab === 'crew'
-              ? 'btn-mozuk-primary shadow-lg'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          Crew Complement ({ship.crew.length})
         </button>
 
         <button
@@ -315,7 +363,329 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </button>
       </div>
 
-      {/* SECTION 1: MAINTENANCE & REPAIR LOG */}
+      {/* SECTION 1: CREW COMMAND TREE HIERARCHY */}
+      {activeTab === 'crew' && (
+        <div className="space-y-8">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
+            <div>
+              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <Crown className="w-5 h-5 text-amber-400" />
+                Vessel Command Organization Tree
+              </h2>
+              <p className="text-xs text-[var(--text-muted)] mt-1">
+                Hierarchy structure led by the Master commanding Deck, Engine, and Kitchen/Mess departments.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setIsAddCrewModalOpen(true)}
+              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0"
+            >
+              <UserPlus className="w-4 h-4" /> Add Crew Member
+            </button>
+          </div>
+
+          {/* COMMAND TREE CONTAINER */}
+          <div className="relative">
+            {/* TOP COMMAND NODE: MASTER / CAPTAIN */}
+            <div className="flex flex-col items-center">
+              <div className="w-full max-w-md mozuk-glass-card rounded-2xl p-5 border-2 border-amber-500/50 shadow-2xl relative bg-gradient-to-b from-amber-500/10 via-[var(--color-surface)] to-[var(--color-surface)]">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 font-extrabold text-[10px] tracking-widest px-3 py-0.5 rounded-full uppercase flex items-center gap-1 shadow-md">
+                  <Crown className="w-3 h-3 fill-slate-950" /> VESSEL COMMANDING OFFICER
+                </div>
+
+                {masterCrew.length > 0 ? (
+                  masterCrew.map((master) => (
+                    <div key={master.id} className="pt-2 text-center relative group">
+                      <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-400 font-extrabold text-xl mx-auto mb-2 shadow-lg">
+                        {master.name.charAt(0)}
+                      </div>
+                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)]">
+                        {master.name}
+                      </h3>
+                      <div className="text-xs text-amber-400 font-bold uppercase tracking-wider mt-0.5">
+                        {master.role}
+                      </div>
+                      <div className="text-[11px] text-[var(--text-muted)] mt-1 flex items-center justify-center gap-3">
+                        <span>Nationality: <strong className="text-[var(--text-main)]">{master.nationality}</strong></span>
+                        <span>Signed On: <strong className="text-[var(--text-main)]">{master.signOnDate}</strong></span>
+                      </div>
+                      {master.seamanBookNo && (
+                        <div className="text-[10px] font-mono text-[var(--text-muted)] mt-1">
+                          Seaman Book: {master.seamanBookNo}
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => handleRemoveCrew(master.id)}
+                        className="absolute top-0 right-0 p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                        title="Remove Master"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-4 text-center">
+                    <p className="text-xs text-[var(--text-muted)] mb-3">No Master / Captain assigned to this vessel</p>
+                    <button
+                      onClick={() => {
+                        handleDepartmentChange('master');
+                        setIsAddCrewModalOpen(true);
+                      }}
+                      className="px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 shadow-md"
+                    >
+                      <UserPlus className="w-4 h-4" /> Assign Master / Captain
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* TREE CONNECTORS (Lines connecting Master to 3 Department Columns) */}
+              <div className="w-full flex flex-col items-center">
+                {/* Vertical Line from Master */}
+                <div className="w-0.5 h-8 bg-gradient-to-b from-amber-500/80 to-[var(--color-primary)]"></div>
+                {/* Horizontal Bar spanning across 3 columns */}
+                <div className="w-2/3 h-0.5 bg-[var(--color-primary)] hidden md:block"></div>
+              </div>
+            </div>
+
+            {/* THREE DEPARTMENT COLUMNS */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 md:pt-0">
+              {/* COLUMN 1: DECK DEPARTMENT */}
+              <div className="flex flex-col">
+                <div className="w-0.5 h-6 bg-[var(--color-primary)] mx-auto hidden md:block"></div>
+                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-cyan-500 flex-1 flex flex-col">
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-xl bg-cyan-950/60 text-cyan-400 border border-cyan-800/60">
+                        <Compass className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                          Deck Department
+                        </h3>
+                        <span className="text-[11px] text-[var(--text-muted)] font-medium">
+                          Navigation & Cargo Ops
+                        </span>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/60 text-cyan-400 font-bold text-xs border border-cyan-800/60">
+                      {deckCrew.length}
+                    </span>
+                  </div>
+
+                  {/* Deck Crew List */}
+                  <div className="space-y-3 flex-1">
+                    {deckCrew.length === 0 ? (
+                      <div className="py-8 text-center text-[var(--text-muted)] text-xs">
+                        No deck officers or crew assigned.
+                      </div>
+                    ) : (
+                      deckCrew.map((member) => (
+                        <div
+                          key={member.id}
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-cyan-500/50 transition group"
+                        >
+                          <div className="flex items-start gap-2.5">
+                            <div className="w-9 h-9 rounded-lg bg-cyan-950/80 border border-cyan-800/80 flex items-center justify-center text-cyan-400 font-bold text-xs shrink-0 mt-0.5">
+                              {member.name.charAt(0)}
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-[var(--text-main)] text-xs">{member.name}</h4>
+                              <span className="inline-block px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 font-semibold text-[10px] mt-0.5 border border-cyan-800/40">
+                                {member.role}
+                              </span>
+                              <div className="text-[11px] text-[var(--text-muted)] mt-1">
+                                {member.nationality} • Signed on: {member.signOnDate}
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleRemoveCrew(member.id)}
+                            className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                            title="Remove crew member"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Quick Add Button */}
+                  <button
+                    onClick={() => {
+                      handleDepartmentChange('deck');
+                      setIsAddCrewModalOpen(true);
+                    }}
+                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-cyan-800/80 text-cyan-400 hover:bg-cyan-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Deck Crew
+                  </button>
+                </div>
+              </div>
+
+              {/* COLUMN 2: ENGINE DEPARTMENT */}
+              <div className="flex flex-col">
+                <div className="w-0.5 h-6 bg-[var(--color-primary)] mx-auto hidden md:block"></div>
+                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-blue-500 flex-1 flex flex-col">
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-xl bg-blue-950/60 text-blue-400 border border-blue-800/60">
+                        <Wrench className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                          Engine Department
+                        </h3>
+                        <span className="text-[11px] text-[var(--text-muted)] font-medium">
+                          Propulsion & Technical
+                        </span>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-blue-950/60 text-blue-400 font-bold text-xs border border-blue-800/60">
+                      {engineCrew.length}
+                    </span>
+                  </div>
+
+                  {/* Engine Crew List */}
+                  <div className="space-y-3 flex-1">
+                    {engineCrew.length === 0 ? (
+                      <div className="py-8 text-center text-[var(--text-muted)] text-xs">
+                        No engine officers or crew assigned.
+                      </div>
+                    ) : (
+                      engineCrew.map((member) => (
+                        <div
+                          key={member.id}
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-blue-500/50 transition group"
+                        >
+                          <div className="flex items-start gap-2.5">
+                            <div className="w-9 h-9 rounded-lg bg-blue-950/80 border border-blue-800/80 flex items-center justify-center text-blue-400 font-bold text-xs shrink-0 mt-0.5">
+                              {member.name.charAt(0)}
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-[var(--text-main)] text-xs">{member.name}</h4>
+                              <span className="inline-block px-2 py-0.5 rounded bg-blue-950/60 text-blue-300 font-semibold text-[10px] mt-0.5 border border-blue-800/40">
+                                {member.role}
+                              </span>
+                              <div className="text-[11px] text-[var(--text-muted)] mt-1">
+                                {member.nationality} • Signed on: {member.signOnDate}
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleRemoveCrew(member.id)}
+                            className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                            title="Remove crew member"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Quick Add Button */}
+                  <button
+                    onClick={() => {
+                      handleDepartmentChange('engine');
+                      setIsAddCrewModalOpen(true);
+                    }}
+                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-blue-800/80 text-blue-400 hover:bg-blue-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Engine Crew
+                  </button>
+                </div>
+              </div>
+
+              {/* COLUMN 3: KITCHEN / MESS DEPARTMENT */}
+              <div className="flex flex-col">
+                <div className="w-0.5 h-6 bg-[var(--color-primary)] mx-auto hidden md:block"></div>
+                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-emerald-500 flex-1 flex flex-col">
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-xl bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
+                        <Utensils className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                          Kitchen / Mess Dept
+                        </h3>
+                        <span className="text-[11px] text-[var(--text-muted)] font-medium">
+                          Catering & Galley
+                        </span>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 font-bold text-xs border border-emerald-800/60">
+                      {kitchenCrew.length}
+                    </span>
+                  </div>
+
+                  {/* Kitchen Crew List */}
+                  <div className="space-y-3 flex-1">
+                    {kitchenCrew.length === 0 ? (
+                      <div className="py-8 text-center text-[var(--text-muted)] text-xs">
+                        No galley staff or mess crew assigned.
+                      </div>
+                    ) : (
+                      kitchenCrew.map((member) => (
+                        <div
+                          key={member.id}
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-emerald-500/50 transition group"
+                        >
+                          <div className="flex items-start gap-2.5">
+                            <div className="w-9 h-9 rounded-lg bg-emerald-950/80 border border-emerald-800/80 flex items-center justify-center text-emerald-400 font-bold text-xs shrink-0 mt-0.5">
+                              {member.name.charAt(0)}
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-[var(--text-main)] text-xs">{member.name}</h4>
+                              <span className="inline-block px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300 font-semibold text-[10px] mt-0.5 border border-emerald-800/40">
+                                {member.role}
+                              </span>
+                              <div className="text-[11px] text-[var(--text-muted)] mt-1">
+                                {member.nationality} • Signed on: {member.signOnDate}
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleRemoveCrew(member.id)}
+                            className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                            title="Remove crew member"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Quick Add Button */}
+                  <button
+                    onClick={() => {
+                      handleDepartmentChange('kitchen');
+                      setIsAddCrewModalOpen(true);
+                    }}
+                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-emerald-800/80 text-emerald-400 hover:bg-emerald-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Kitchen / Mess Staff
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 2: MAINTENANCE & REPAIR LOG */}
       {activeTab === 'maintenance' && (
         <div className="space-y-5">
           {/* Maintenance KPIs */}
@@ -486,54 +856,6 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
       )}
 
-      {/* SECTION 2: CREW COMPLEMENT */}
-      {activeTab === 'crew' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-base">Active Manning & Officers Roster</h2>
-              <p className="text-xs text-[var(--text-muted)]">Current crew signed on board {ship.name}</p>
-            </div>
-            <button
-              onClick={() => setIsAddCrewModalOpen(true)}
-              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"
-            >
-              <UserPlus className="w-4 h-4" /> Add Crew Member
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {ship.crew.map((member) => (
-              <div
-                key={member.id}
-                className="mozuk-glass-card rounded-2xl p-4 flex items-center justify-between shadow-xl"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[rgba(0,242,254,0.1)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--color-primary)] font-extrabold text-sm">
-                    {member.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[var(--text-main)] text-sm">{member.name}</h3>
-                    <div className="text-xs text-[var(--color-primary)] font-semibold">{member.role}</div>
-                    <div className="text-[11px] text-[var(--text-muted)] mt-0.5">
-                      Nationality: <strong className="text-[var(--text-main)]">{member.nationality}</strong> • Signed on: <strong className="text-[var(--text-main)]">{member.signOnDate}</strong>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => handleRemoveCrew(member.id)}
-                  className="p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
-                  title="Remove crew member"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* SECTION 3: TECHNICAL DOCUMENTS */}
       {activeTab === 'documents' && (
         <div className="space-y-4">
@@ -632,20 +954,61 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </div>
 
               <div>
+                <label className="block text-[var(--text-main)] font-bold mb-1">Department Branch *</label>
+                <select
+                  value={crewDepartment}
+                  onChange={(e) => handleDepartmentChange(e.target.value as any)}
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold"
+                >
+                  <option value="master">Vessel Command (Master / Captain)</option>
+                  <option value="deck">Deck Department (Navigation & Cargo)</option>
+                  <option value="engine">Engine Department (Propulsion & Electrical)</option>
+                  <option value="kitchen">Kitchen / Mess Department (Catering & Galley)</option>
+                </select>
+              </div>
+
+              <div>
                 <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Role *</label>
                 <select
                   value={crewRole}
                   onChange={(e) => setCrewRole(e.target.value)}
                   className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                 >
-                  <option value="Master">Master / Captain</option>
-                  <option value="Chief Engineer">Chief Engineer</option>
-                  <option value="Chief Officer">Chief Officer</option>
-                  <option value="Second Engineer">Second Engineer</option>
-                  <option value="Second Officer">Second Officer</option>
-                  <option value="Third Engineer">Third Engineer</option>
-                  <option value="Bosun">Bosun</option>
-                  <option value="Able Seaman">Able Seaman</option>
+                  {crewDepartment === 'master' && (
+                    <option value="Master / Captain">Master / Captain</option>
+                  )}
+                  {crewDepartment === 'deck' && (
+                    <>
+                      <option value="Chief Officer">Chief Officer</option>
+                      <option value="Second Officer">Second Officer</option>
+                      <option value="Third Officer">Third Officer</option>
+                      <option value="Bosun">Bosun</option>
+                      <option value="Able Seaman">Able Seaman</option>
+                      <option value="Ordinary Seaman">Ordinary Seaman</option>
+                      <option value="Deck Cadet">Deck Cadet</option>
+                    </>
+                  )}
+                  {crewDepartment === 'engine' && (
+                    <>
+                      <option value="Chief Engineer">Chief Engineer</option>
+                      <option value="Second Engineer">Second Engineer</option>
+                      <option value="Third Engineer">Third Engineer</option>
+                      <option value="Fourth Engineer">Fourth Engineer</option>
+                      <option value="Electro-Technical Officer (ETO)">Electro-Technical Officer (ETO)</option>
+                      <option value="Oiler / Motorman">Oiler / Motorman</option>
+                      <option value="Fitter">Fitter</option>
+                      <option value="Engine Cadet">Engine Cadet</option>
+                    </>
+                  )}
+                  {crewDepartment === 'kitchen' && (
+                    <>
+                      <option value="Chief Cook">Chief Cook</option>
+                      <option value="Second Cook">Second Cook</option>
+                      <option value="Chief Steward">Chief Steward</option>
+                      <option value="Messman">Messman</option>
+                      <option value="Galley Hand">Galley Hand</option>
+                    </>
+                  )}
                 </select>
               </div>
 
@@ -670,6 +1033,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-main)] font-bold mb-1">Seaman's Book No. (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. SB-884920"
+                  value={seamanBookNo}
+                  onChange={(e) => setSeamanBookNo(e.target.value)}
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                />
               </div>
 
               <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
