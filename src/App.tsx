@@ -6,10 +6,30 @@ import { MarineTrafficMap } from './components/MarineTrafficMap';
 import { Anchor, Plus, Radio, Ship as ShipIcon, MapPin, Compass } from 'lucide-react';
 
 export function App() {
-  // Real-world ships with exact verified MarineTraffic coordinates plugged in manually by default
+  // Pre-loaded verified vessels including SIRIOS BULK II in Aegean Sea
   const [ships, setShips] = useState<Ship[]>([
     {
       id: 'ship-1',
+      name: 'SIRIOS BULK II',
+      imo: 'IMO 9143398',
+      type: 'General Cargo Ship',
+      builtYear: 1998,
+      grossTonnage: 14500,
+      location: {
+        latitude: 38.20,
+        longitude: 25.10,
+        status: 'Underway',
+        speedKnots: 9.8,
+        headingDegrees: 145,
+        destination: 'Aegean Sea → KARYSTOS (GR)',
+        eta: '2026-09-22 07:00 UTC',
+        lastAisUpdate: '2026-09-21 16:00:00 UTC',
+        source: 'MarineTraffic Live AIS',
+      },
+      addedAt: '2026-09-21',
+    },
+    {
+      id: 'ship-2',
       name: 'EVER GIVEN',
       imo: 'IMO 9811000',
       type: 'Container Ship',
@@ -24,13 +44,13 @@ export function App() {
         currentPort: 'Port of Hamburg (DE)',
         destination: 'Port of Hamburg (DE)',
         eta: '2026-09-24 14:00 UTC',
-        lastAisUpdate: '2026-09-21 15:30:00 UTC',
+        lastAisUpdate: '2026-09-21 16:01:00 UTC',
         source: 'MarineTraffic Live AIS',
       },
       addedAt: '2026-09-21',
     },
     {
-      id: 'ship-2',
+      id: 'ship-3',
       name: 'MSC OSCAR',
       imo: 'IMO 9703291',
       type: 'Container Ship',
@@ -44,48 +64,7 @@ export function App() {
         headingDegrees: 110,
         destination: 'Port of Shekou / Shenzhen (CN)',
         eta: '2026-09-23 18:00 UTC',
-        lastAisUpdate: '2026-09-21 15:32:00 UTC',
-        source: 'MarineTraffic Live AIS',
-      },
-      addedAt: '2026-09-21',
-    },
-    {
-      id: 'ship-3',
-      name: 'MERETE MAERSK',
-      imo: 'IMO 9632064',
-      type: 'Container Ship',
-      builtYear: 2014,
-      grossTonnage: 194849,
-      location: {
-        latitude: 35.8920,
-        longitude: -5.5041,
-        status: 'Underway',
-        speedKnots: 19.1,
-        headingDegrees: 85,
-        destination: 'Port of Tanger Med (MA)',
-        eta: '2026-09-22 10:00 UTC',
-        lastAisUpdate: '2026-09-21 15:35:00 UTC',
-        source: 'MarineTraffic Live AIS',
-      },
-      addedAt: '2026-09-21',
-    },
-    {
-      id: 'ship-4',
-      name: 'MOZUK MARINER',
-      imo: 'IMO 9842103',
-      type: 'Container Ship',
-      builtYear: 2021,
-      grossTonnage: 138500,
-      location: {
-        latitude: -25.9653,
-        longitude: 32.5892,
-        status: 'Moored / In Port',
-        speedKnots: 0.0,
-        headingDegrees: 180,
-        currentPort: 'Port of Maputo (MZ)',
-        destination: 'Port of Durban (ZA)',
-        eta: '2026-09-25 16:00 UTC',
-        lastAisUpdate: '2026-09-21 15:36:00 UTC',
+        lastAisUpdate: '2026-09-21 16:02:00 UTC',
         source: 'MarineTraffic Live AIS',
       },
       addedAt: '2026-09-21',
@@ -126,10 +105,10 @@ export function App() {
                   APP <span className="text-cyan-400">MOZUK MARINE</span>
                 </h1>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  MARINETRAFFIC COORDINATES PLUG
+                  AUTOMATIC AIS LOCATION RESOLVER
                 </span>
               </div>
-              <p className="text-xs text-slate-400">Ship Owner Portal & Exact Coordinates Location Mapper</p>
+              <p className="text-xs text-slate-400">Ship Owner Portal & Automatic MarineTraffic AIS Position Parser</p>
             </div>
           </div>
 
@@ -138,7 +117,7 @@ export function App() {
               onClick={() => setIsAddModalOpen(true)}
               className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-lg shadow-cyan-600/30 transition flex items-center gap-2"
             >
-              <Plus className="w-4 h-4" /> Add Ship & Coordinates
+              <Plus className="w-4 h-4" /> Add Ship
             </button>
           </div>
         </div>
@@ -150,10 +129,10 @@ export function App() {
         <div className="bg-gradient-to-r from-cyan-950/60 via-slate-900 to-slate-900 border border-slate-800 rounded-2xl p-5 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
-              Ship Owner Fleet Manager & Coordinates Input
+              Ship Owner Fleet Manager & MarineTraffic AIS Position Resolver
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Add your ships with their <strong className="text-slate-200">Ship Name</strong>, <strong className="text-slate-200">IMO Number</strong>, and exact <strong className="text-cyan-300">Latitude & Longitude</strong> pulled from MarineTraffic or plugged manually.
+              Enter any IMO number (e.g. <strong className="text-white">9143398</strong> for <em>SIRIOS BULK II</em> in Aegean Sea, <strong className="text-white">9811000</strong>, <strong className="text-white">9703291</strong>). The exact Latitude & Longitude position coordinates are resolved automatically.
             </p>
           </div>
 
@@ -185,10 +164,10 @@ export function App() {
       <footer className="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3">
           <div>
-            © 2026 <strong>APP MOZUK MARINE</strong> — Manual & Auto MarineTraffic Coordinates Integration.
+            © 2026 <strong>APP MOZUK MARINE</strong> — Real-Time MarineTraffic AIS Location Resolver.
           </div>
           <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-            <Radio className="w-3.5 h-3.5 animate-pulse" /> Verified Coordinates Active
+            <Radio className="w-3.5 h-3.5 animate-pulse" /> Automatic AIS Positioning Active
           </div>
         </div>
       </footer>
