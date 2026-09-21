@@ -1,55 +1,166 @@
 @import "tailwindcss";
 
-@layer base {
-  body {
-    background-color: #090d16;
-    color: #f1f5f9;
-  }
+:root,
+[data-theme="dark"] {
+  /* Color Palette - Cyber Marine Dark Mode from marine.mozuk.net */
+  --color-bg: #050b14;
+  --color-bg-alt: #0a1322;
+  --color-surface: rgba(13, 25, 44, 0.75);
+  --color-surface-hover: rgba(20, 38, 66, 0.9);
+  --color-glass-border: rgba(0, 242, 254, 0.15);
+  --color-glass-border-hover: rgba(0, 242, 254, 0.4);
+
+  /* Primary Cyber Cyan & Blue Gradients */
+  --color-primary: #00f2fe;
+  --color-primary-dark: #00c6ff;
+  --color-secondary: #3a7bd5;
+  --color-accent: #00ffc3;
+
+  /* Text Colors */
+  --text-main: #f0f6fc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  /* Shadows & Effects */
+  --shadow-glow: 0 0 30px rgba(0, 242, 254, 0.25);
+  --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4);
+  --glass-blur: blur(16px);
 }
 
-/* Custom Scrollbar for marine portal dashboards */
+[data-theme="light"] {
+  /* Color Palette - Marine Light Mode from marine.mozuk.net */
+  --color-bg: #f8fafc;
+  --color-bg-alt: #f1f5f9;
+  --color-surface: rgba(255, 255, 255, 0.9);
+  --color-surface-hover: rgba(255, 255, 255, 0.98);
+  --color-glass-border: rgba(0, 102, 204, 0.15);
+  --color-glass-border-hover: rgba(0, 102, 204, 0.35);
+
+  /* Ocean Blue Accents */
+  --color-primary: #0066cc;
+  --color-primary-dark: #004b99;
+  --color-secondary: #0284c7;
+  --color-accent: #0284c7;
+
+  /* Text Colors */
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+
+  /* Shadows & Effects */
+  --shadow-glow: 0 10px 30px rgba(0, 102, 204, 0.15);
+  --shadow-card: 0 15px 35px rgba(15, 23, 42, 0.08);
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+}
+
+h1, h2, h3, .font-heading {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Background Cyber Radial Glow Overlay */
+.bg-mozuk-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 80% 80%, rgba(58, 123, 213, 0.06) 0%, transparent 50%);
+}
+
+[data-theme="light"] .bg-mozuk-overlay {
+  background: radial-gradient(circle at 50% 0%, rgba(0, 102, 204, 0.06) 0%, transparent 60%),
+              radial-gradient(circle at 80% 80%, rgba(2, 132, 199, 0.05) 0%, transparent 50%);
+}
+
+/* Glassmorphic Surfaces */
+.mozuk-glass-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-glass-border);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s ease;
+}
+
+.mozuk-glass-card:hover {
+  border-color: var(--color-glass-border-hover);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+/* Gradient Primary Button */
+.btn-mozuk-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: #050b14;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+  transition: all 0.3s ease;
+}
+
+[data-theme="light"] .btn-mozuk-primary {
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.25);
+}
+
+.btn-mozuk-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 242, 254, 0.45);
+}
+
+[data-theme="light"] .btn-mozuk-primary:hover {
+  box-shadow: 0 8px 25px rgba(0, 102, 204, 0.4);
+}
+
+/* Glass Secondary Button */
+.btn-mozuk-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-glass-border);
+  color: var(--text-main);
+  backdrop-filter: var(--glass-blur);
+  transition: all 0.3s ease;
+}
+
+.btn-mozuk-secondary:hover {
+  background: rgba(0, 242, 254, 0.1);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+[data-theme="light"] .btn-mozuk-secondary {
+  background: rgba(0, 102, 204, 0.06);
+  border-color: rgba(0, 102, 204, 0.2);
+  color: #0f172a;
+}
+
+[data-theme="light"] .btn-mozuk-secondary:hover {
+  background: rgba(0, 102, 204, 0.12);
+  border-color: #0066cc;
+  color: #0066cc;
+}
+
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: var(--color-bg-alt);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: var(--color-glass-border-hover);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-}
-
-/* Leaflet Dark Theme Overrides */
-.leaflet-container {
-  background-color: #070b14 !important;
-  font-family: inherit;
-}
-
-.leaflet-popup-content-wrapper {
-  background-color: #0f172a !important;
-  border: 1px solid #1e293b !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8) !important;
-  color: #f8fafc !important;
-}
-
-.leaflet-popup-tip {
-  background-color: #0f172a !important;
-  border: 1px solid #1e293b !important;
-}
-
-.leaflet-container a.leaflet-popup-close-button {
-  color: #94a3b8 !important;
-  padding: 4px 8px 0 0 !important;
-}
-
-.leaflet-container a.leaflet-popup-close-button:hover {
-  color: #ffffff !important;
+  background: var(--color-primary);
 }

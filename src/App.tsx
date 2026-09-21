@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Ship } from './types/vessel';
 import { AddShipModal } from './components/AddShipModal';
 import { ShipList } from './components/ShipList';
 import { VesselProfilePage } from './components/VesselProfilePage';
-import { Anchor, Plus, Ship as ShipIcon, ShieldCheck, Wrench, Users, FileCheck } from 'lucide-react';
+import { Anchor, Plus, ExternalLink, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon } from 'lucide-react';
 
 export function App() {
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    return (localStorage.getItem('mozuk_theme') as 'dark' | 'light') || 'dark';
+  });
+
   const [ships, setShips] = useState<Ship[]>([
     {
       id: 'ship-1',
@@ -186,10 +190,19 @@ export function App() {
   const [selectedShip, setSelectedShip] = useState<Ship | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  // Handlers
+  // Sync theme changes to html element & localStorage
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('mozuk_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   const handleAddShip = (newShip: Ship) => {
     setShips((prev) => [newShip, ...prev]);
-    setSelectedShip(newShip); // Open profile for newly created ship immediately
+    setSelectedShip(newShip);
   };
 
   const handleRemoveShip = (shipId: string) => {
@@ -208,7 +221,7 @@ export function App() {
     }
   };
 
-  // Metrics for Top Header Banner
+  // Fleet Overview Metrics
   const totalFleetCount = ships.length;
   const totalCrewCount = ships.reduce((acc, s) => acc + s.crew.length, 0);
   const totalDocsCount = ships.reduce((acc, s) => acc + s.documents.length, 0);
@@ -218,50 +231,89 @@ export function App() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#090d16] text-slate-100 font-sans selection:bg-cyan-500 selection:text-white">
-      {/* Header */}
-      <header className="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-8 py-4">
+    <div className="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white transition-colors duration-300">
+      {/* Background Cyber Gradient Overlay */}
+      <div className="bg-mozuk-overlay" />
+
+      {/* Header matching marine.mozuk.net */}
+      <header className="header-nav sticky top-0 z-30 px-4 lg:px-8 py-3.5 border-b border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] shadow-lg">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          {/* Logo & Mozuk Marine Branding */}
           <div className="flex items-center gap-3">
-            <div
-              onClick={() => setSelectedShip(null)}
-              className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white cursor-pointer hover:scale-105 transition"
+            <a
+              href="https://marine.mozuk.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 group"
             >
-              <Anchor className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1
-                  onClick={() => setSelectedShip(null)}
-                  className="font-extrabold text-xl tracking-tight text-white cursor-pointer hover:text-cyan-400 transition"
-                >
-                  APP <span className="text-cyan-400">MOZUK MARINE</span>
-                </h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">
-                  VESSEL PROFILE & OPERATIONS PORTAL
-                </span>
+              <img
+                src="https://marine.mozuk.net/images/logo.png"
+                alt="Mozuk Marine Logo"
+                className="h-9 w-auto drop-shadow-[0_0_12px_rgba(0,242,254,0.4)] group-hover:scale-105 transition-transform"
+                onError={(e) => {
+                  // Fallback icon if offline
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1
+                    onClick={() => setSelectedShip(null)}
+                    className="font-['Space_Grotesk',sans-serif] font-bold text-xl tracking-tight text-[var(--text-main)] cursor-pointer group-hover:text-[var(--color-primary)] transition"
+                  >
+                    MOZUK <span className="text-[var(--color-primary)] font-extrabold">MARINE</span>
+                  </h1>
+                  <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[rgba(0,242,254,0.1)] border border-[var(--color-glass-border)] text-[var(--color-primary)] tracking-wider uppercase">
+                    FLEET PORTAL
+                  </span>
+                </div>
+                <p className="text-[11px] text-[var(--text-muted)] font-medium">
+                  Official Vessel Profile & Operations Portal
+                </p>
               </div>
-              <p className="text-xs text-slate-400">
-                Ship Owner Operations Portal — Manning, Technical Documentation & Maintenance Repair Logs
-              </p>
-            </div>
+            </a>
           </div>
 
+          {/* Nav Actions */}
           <div className="flex items-center gap-3">
+            {/* Visit Official Mozuk Marine Website Button */}
+            <a
+              href="https://marine.mozuk.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full btn-mozuk-secondary text-xs font-semibold"
+            >
+              <span>marine.mozuk.net</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+
+            {/* Theme Toggle Button (Light/Dark Mode) */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full btn-mozuk-secondary text-[var(--text-main)] hover:rotate-12 transition"
+              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-cyan-600" />
+              )}
+            </button>
+
             {selectedShip && (
               <button
                 onClick={() => setSelectedShip(null)}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition"
+                className="px-3.5 py-2 rounded-full btn-mozuk-secondary font-bold text-xs"
               >
-                ← Back to Fleet Directory
+                ← Back to Fleet
               </button>
             )}
 
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-lg shadow-cyan-600/30 transition flex items-center gap-2"
+              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"
             >
-              <Plus className="w-4 h-4" /> Add Ship
+              <Plus className="w-4 h-4" /> Register Vessel
             </button>
           </div>
         </div>
@@ -269,69 +321,83 @@ export function App() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6">
-        {/* If no ship selected: Fleet Overview & Directory */}
         {!selectedShip ? (
           <div>
-            {/* Fleet Overview Banner */}
-            <div className="bg-gradient-to-r from-cyan-950/60 via-slate-900 to-slate-900 border border-slate-800 rounded-2xl p-6 mb-6 shadow-2xl">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4 mb-5">
+            {/* Mozuk Marine Fleet Banner */}
+            <div className="mozuk-glass-card rounded-2xl p-6 mb-6 relative overflow-hidden">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4 mb-5">
                 <div>
-                  <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-cyan-400" />
-                    Ship Owner Fleet Operations Hub
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)] font-extrabold text-[10px] uppercase border border-[var(--color-glass-border)]">
+                      MOZUK MARINE FLEET OPERATIONS
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] flex items-center gap-2">
+                    <ShieldCheck className="w-6 h-6 text-[var(--color-primary)]" />
+                    Ship Owner Fleet Operations Portal
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Select any vessel below to access its dedicated Vessel Profile page, crew roster, statutory technical certificates, and maintenance repair logs.
+                  <p className="text-xs text-[var(--text-muted)] mt-1 max-w-2xl leading-relaxed">
+                    Integrated with Mozuk Marine's engineering standards. Select a vessel below to access its crew roster, statutory technical certificates, and maintenance repair logs.
                   </p>
                 </div>
 
-                <button
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-lg shadow-cyan-600/30 transition flex items-center gap-2 shrink-0"
-                >
-                  <Plus className="w-4 h-4" /> Register New Vessel
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href="https://marine.mozuk.net"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2.5 rounded-full btn-mozuk-secondary text-xs font-bold flex items-center gap-1.5"
+                  >
+                    Mozuk Marine Website <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                  <button
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" /> Add Ship
+                  </button>
+                </div>
               </div>
 
-              {/* Top Level Fleet Metrics */}
+              {/* Fleet Metric Counters Bar */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3.5 flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-cyan-950 border border-cyan-800 text-cyan-400">
+                <div className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)]">
                     <ShipIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-slate-400 text-[10px] font-bold uppercase">Total Fleet</div>
-                    <div className="font-extrabold text-white text-lg">{totalFleetCount} Vessels</div>
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Total Fleet</div>
+                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalFleetCount} Vessels</div>
                   </div>
                 </div>
 
-                <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3.5 flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-400">
+                <div className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-emerald-950/40 text-emerald-400">
                     <Users className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-slate-400 text-[10px] font-bold uppercase">Total Crew</div>
-                    <div className="font-extrabold text-white text-lg">{totalCrewCount} Active</div>
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Total Crew</div>
+                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalCrewCount} Active</div>
                   </div>
                 </div>
 
-                <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3.5 flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-blue-950 border border-blue-800 text-blue-400">
+                <div className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-blue-950/40 text-blue-400">
                     <FileCheck className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-slate-400 text-[10px] font-bold uppercase">Tech Certificates</div>
-                    <div className="font-extrabold text-white text-lg">{totalDocsCount} On File</div>
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Tech Certificates</div>
+                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalDocsCount} Valid</div>
                   </div>
                 </div>
 
-                <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3.5 flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-amber-950 border border-amber-800 text-amber-400">
+                <div className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-amber-950/40 text-amber-400">
                     <Wrench className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-slate-400 text-[10px] font-bold uppercase">Open Work Orders</div>
-                    <div className="font-extrabold text-amber-400 text-lg">{totalOpenRepairsCount} Pending</div>
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Open Work Orders</div>
+                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-amber-400 text-xl">{totalOpenRepairsCount} Pending</div>
                   </div>
                 </div>
               </div>
@@ -345,7 +411,6 @@ export function App() {
             />
           </div>
         ) : (
-          /* If ship selected: Vessel Profile Page */
           <VesselProfilePage
             ship={selectedShip}
             onBack={() => setSelectedShip(null)}
@@ -354,14 +419,34 @@ export function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div>
-            © 2026 <strong>APP MOZUK MARINE</strong> — Vessel Profile & Fleet Operations Portal.
+      {/* Footer matching marine.mozuk.net */}
+      <footer className="border-t border-[var(--color-glass-border)] bg-[var(--color-bg-alt)] py-8 text-xs text-[var(--text-muted)]">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <img
+              src="https://marine.mozuk.net/images/logo.png"
+              alt="Mozuk Marine"
+              className="h-7 w-auto opacity-80"
+              onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+            />
+            <div>
+              © 2026 <strong className="text-[var(--text-main)]">MOZUK MARINE</strong> — Premier BWTS Solutions & Maritime Engineering.
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-slate-400 font-medium">
-            Manning • Technical Documentation • Maintenance & Repair Logging
+
+          <div className="flex items-center gap-4 text-[var(--text-muted)]">
+            <a
+              href="https://marine.mozuk.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[var(--color-primary)] transition flex items-center gap-1"
+            >
+              Company Website <ExternalLink className="w-3 h-3" />
+            </a>
+            <span>•</span>
+            <span>BWTS Installation & Compliance</span>
+            <span>•</span>
+            <span>Fleet Portal</span>
           </div>
         </div>
       </footer>

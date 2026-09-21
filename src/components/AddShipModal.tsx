@@ -60,22 +60,24 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col">
+      <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+        <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400">
+            <div className="w-9 h-9 rounded-xl bg-[rgba(0,242,254,0.1)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--color-primary)]">
               <ShipIcon className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-extrabold text-white text-base">Add New Vessel to Fleet</h2>
-              <p className="text-xs text-slate-400">Enter vessel details to create a new ship profile</p>
+              <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base">
+                Register New Vessel to Mozuk Fleet
+              </h2>
+              <p className="text-xs text-[var(--text-muted)]">Enter vessel specs to create a dedicated profile page</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -92,7 +94,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
 
           {/* 1. Ship Name (Mandatory) */}
           <div>
-            <label className="block text-slate-300 font-bold mb-1.5">
+            <label className="block text-[var(--text-main)] font-bold mb-1.5">
               Ship Name <span className="text-rose-400">*</span>
             </label>
             <input
@@ -101,13 +103,13 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
+              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-sm text-[var(--text-main)] placeholder-slate-500 focus:outline-none focus:border-[var(--color-primary)] transition"
             />
           </div>
 
           {/* 2. IMO Number (Mandatory) */}
           <div>
-            <label className="block text-slate-300 font-bold mb-1.5">
+            <label className="block text-[var(--text-main)] font-bold mb-1.5">
               IMO Number <span className="text-rose-400">*</span>
             </label>
             <input
@@ -116,19 +118,19 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               value={imo}
               onChange={(e) => setImo(e.target.value)}
               required
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
+              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-sm font-mono text-[var(--text-main)] placeholder-slate-500 focus:outline-none focus:border-[var(--color-primary)] transition"
             />
-            <p className="text-[11px] text-slate-400 mt-1">Unique 7-digit IMO number.</p>
+            <p className="text-[11px] text-[var(--text-muted)] mt-1">Unique 7-digit IMO number.</p>
           </div>
 
           {/* 3. Ship Type & Flag State */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-300 font-bold mb-1.5">Ship Type</label>
+              <label className="block text-[var(--text-main)] font-bold mb-1.5">Ship Type</label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 cursor-pointer"
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
               >
                 <option value="Container Ship">Container Ship</option>
                 <option value="General Cargo Ship">General Cargo Ship</option>
@@ -141,13 +143,13 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             </div>
 
             <div>
-              <label className="block text-slate-300 font-bold mb-1.5">Flag State</label>
+              <label className="block text-[var(--text-main)] font-bold mb-1.5">Flag State</label>
               <input
                 type="text"
                 placeholder="e.g. Panama, Liberia"
                 value={flag}
                 onChange={(e) => setFlag(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] placeholder-slate-500 focus:outline-none focus:border-[var(--color-primary)] transition"
               />
             </div>
           </div>
@@ -155,8 +157,8 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
           {/* 4 & 5. Year of Construction & Gross Tonnage (Optional) */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-300 font-bold mb-1.5">
-                Year Built <span className="text-slate-400 font-normal">(Optional)</span>
+              <label className="block text-[var(--text-main)] font-bold mb-1.5">
+                Year Built <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
               </label>
               <input
                 type="number"
@@ -165,36 +167,36 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
                 onChange={(e) => setBuiltYear(e.target.value)}
                 min="1950"
                 max="2030"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500"
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] placeholder-slate-500"
               />
             </div>
 
             <div>
-              <label className="block text-slate-300 font-bold mb-1.5">
-                Gross Tonnage <span className="text-slate-400 font-normal">(Optional)</span>
+              <label className="block text-[var(--text-main)] font-bold mb-1.5">
+                Gross Tonnage <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
               </label>
               <input
                 type="number"
                 placeholder="e.g. 14500"
                 value={grossTonnage}
                 onChange={(e) => setGrossTonnage(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500"
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] placeholder-slate-500"
               />
             </div>
           </div>
 
           {/* Actions */}
-          <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+          <div className="pt-4 flex items-center justify-end gap-3 border-t border-[var(--color-glass-border)]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 transition"
+              className="px-4 py-2.5 rounded-full btn-mozuk-secondary font-bold text-xs"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-cyan-600 text-white font-bold hover:bg-cyan-500 shadow-lg shadow-cyan-600/30 transition flex items-center gap-2"
+              className="px-5 py-2.5 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"
             >
               <CheckCircle2 className="w-4 h-4" />
               Create Ship Profile
