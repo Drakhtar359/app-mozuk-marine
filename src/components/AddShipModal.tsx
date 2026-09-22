@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Ship } from '../types/vessel';
 import { X, Ship as ShipIcon, CheckCircle2, AlertCircle } from 'lucide-react';
+import { getTodayDDMMYYYY } from '../utils/dateFormatter';
 
 interface AddShipModalProps {
   isOpen: boolean;
@@ -46,7 +47,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
       crew: [],
       documents: [],
       maintenance: [],
-      addedAt: new Date().toISOString().substring(0, 10),
+      addedAt: getTodayDDMMYYYY(),
     };
 
     onAddShip(newShip);

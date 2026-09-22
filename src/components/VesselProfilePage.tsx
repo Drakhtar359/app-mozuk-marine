@@ -27,6 +27,7 @@ import {
   FileText,
   Folder,
 } from 'lucide-react';
+import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 
 interface VesselProfilePageProps {
   ship: Ship;
@@ -209,7 +210,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       role: crewRole,
       department: crewDepartment,
       nationality: crewNationality.trim() || 'Mozambican',
-      signOnDate: crewSignOnDate || new Date().toISOString().substring(0, 10),
+      signOnDate: formatDate(crewSignOnDate || getTodayDDMMYYYY()),
       seamanBookNo: seamanBookNo.trim() || undefined,
     };
 
@@ -237,15 +238,22 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     e.preventDefault();
     if (!docTitle.trim() || !docExpiryDate) return;
 
-    const expiryDateObj = new Date(docExpiryDate);
-    const today = new Date();
-    const daysRemaining = Math.ceil((expiryDateObj.getTime() - today.getTime()) / (1000 * 3600 * 24));
+    const formattedExpiryDate = formatDate(docExpiryDate);
+    const formattedIssueDate = formatDate(docIssueDate || getTodayDDMMYYYY());
 
     let status: TechnicalDoc['status'] = 'valid';
-    if (daysRemaining <= 0) {
-      status = 'expired';
-    } else if (daysRemaining <= 30) {
-      status = 'expiring';
+    // Calculate days remaining
+    const parts = docExpiryDate.split('-');
+    if (parts.length === 3) {
+      const [year, month, day] = parts;
+      const expiryDateObj = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
+      const today = new Date();
+      const daysRemaining = Math.ceil((expiryDateObj.getTime() - today.getTime()) / (1000 * 3600 * 24));
+      if (daysRemaining <= 0) {
+        status = 'expired';
+      } else if (daysRemaining <= 30) {
+        status = 'expiring';
+      }
     }
 
     const newDoc: TechnicalDoc = {
@@ -253,8 +261,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       title: docTitle.trim(),
       documentType: docType,
       documentNumber: docNumber.trim() || `CERT-${Date.now().toString().slice(-6)}`,
-      issueDate: docIssueDate || new Date().toISOString().substring(0, 10),
-      expiryDate: docExpiryDate,
+      issueDate: formattedIssueDate,
+      expiryDate: formattedExpiryDate,
       authority: docAuthority.trim() || 'Maritime Authority',
       status,
       category: docCategory,
@@ -297,8 +305,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       title: repairTitle.trim(),
       category: repairCategory,
       priority: repairPriority,
-      loggedDate: new Date().toISOString().substring(0, 10),
-      dueDate: repairDueDate || new Date().toISOString().substring(0, 10),
+      loggedDate: getTodayDDMMYYYY(),
+      dueDate: formatDate(repairDueDate || getTodayDDMMYYYY()),
       reportedBy: repairReportedBy.trim() || 'Chief Engineer',
       description: repairDescription.trim() || 'Maintenance repair logged for vessel operations.',
       status: 'open',
@@ -523,7 +531,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       </div>
                       <div className="text-[11px] text-[var(--text-muted)] mt-1 flex items-center justify-center gap-3">
                         <span>Nationality: <strong className="text-[var(--text-main)]">{master.nationality}</strong></span>
-                        <span>Signed On: <strong className="text-[var(--text-main)]">{master.signOnDate}</strong></span>
+                        <span>Signed On: <strong className="text-[var(--text-main)]">{formatDate(master.signOnDate)}</strong></span>
                       </div>
                       {master.seamanBookNo && (
                         <div className="text-[10px] font-mono text-[var(--text-muted)] mt-1">
@@ -629,7 +637,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
-                                {member.nationality} • Signed on: {member.signOnDate}
+                                {member.nationality} • Signed on: {formatDate(member.signOnDate)}
                               </div>
                             </div>
                           </div>
@@ -704,7 +712,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
-                                {member.nationality} • Signed on: {member.signOnDate}
+                                {member.nationality} • Signed on: {formatDate(member.signOnDate)}
                               </div>
                             </div>
                           </div>
@@ -779,7 +787,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
-                                {member.nationality} • Signed on: {member.signOnDate}
+                                {member.nationality} • Signed on: {formatDate(member.signOnDate)}
                               </div>
                             </div>
                           </div>
@@ -934,8 +942,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     <p className="text-xs text-[var(--text-muted)] leading-relaxed">{log.description}</p>
 
                     <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)] pt-1">
-                      <span>Logged: <strong className="text-[var(--text-main)]">{log.loggedDate}</strong></span>
-                      <span>Target Due: <strong className="text-[var(--text-main)]">{log.dueDate}</strong></span>
+                      <span>Logged: <strong className="text-[var(--text-main)]">{formatDate(log.loggedDate)}</strong></span>
+                      <span>Target Due: <strong className="text-[var(--text-main)]">{formatDate(log.dueDate)}</strong></span>
                       <span>Reported by: <strong className="text-[var(--color-primary)]">{log.reportedBy}</strong></span>
                     </div>
                   </div>
@@ -1056,8 +1064,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
                           <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
                           <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.issueDate}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.expiryDate}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
                           <td className="py-3 px-4 text-right">
                             {doc.status === 'valid' && (
                               <span className="px-2.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold text-[10px]">
@@ -1142,8 +1150,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
                           <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
                           <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.issueDate}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.expiryDate}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
                           <td className="py-3 px-4 text-right">
                             <span className="px-2.5 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-800/60 font-bold text-[10px]">
                               ACTIVE MANUAL
@@ -1216,8 +1224,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
                           <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
                           <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.issueDate}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.expiryDate}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
                           <td className="py-3 px-4 text-right">
                             <span className="px-2.5 py-0.5 rounded bg-purple-950/60 text-purple-400 border border-purple-800/60 font-bold text-[10px]">
                               FILED RECORD
