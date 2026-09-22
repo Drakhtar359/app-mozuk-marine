@@ -259,13 +259,20 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       <div className="mozuk-glass-card rounded-2xl p-6 relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5 mb-5">
           <div>
-            <div className="text-xs font-semibold text-[var(--color-primary)] mb-1">
-              {ship.type || 'Container Ship'} • <span className="font-mono">{ship.imo}</span> {ship.flag && `• 🇲🇿 ${ship.flag}`}
+            {/* 1. Ship Type stays where it is (above ship name) */}
+            <div className="text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wide mb-0.5">
+              {ship.type || 'Container Ship'}
             </div>
-            <h1 className="text-3xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)]">{ship.name}</h1>
-            <p className="text-xs text-[var(--text-muted)] mt-1">
-              Registered Mozuk Marine fleet profile & command organization structure
-            </p>
+
+            {/* 2. Ship Name */}
+            <h1 className="text-3xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] leading-tight">
+              {ship.name}
+            </h1>
+
+            {/* 3. IMO Number goes UNDER the ship name */}
+            <div className="font-mono text-xs font-bold text-[var(--text-muted)] mt-1">
+              {ship.imo}
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -279,37 +286,42 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
 
         {/* Basic Information Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-xs">
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
             <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">IMO Number</div>
-            <div className="font-mono text-[var(--text-main)] font-extrabold text-sm mt-0.5">{ship.imo}</div>
+            <div className="font-mono text-[var(--text-main)] font-extrabold text-xs mt-0.5">{ship.imo}</div>
           </div>
 
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Year of Build</div>
-            <div className="font-extrabold text-[var(--text-main)] text-sm mt-0.5">{ship.builtYear || 'N/A'}</div>
+            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Flag State</div>
+            <div className="font-extrabold text-[var(--text-main)] text-xs mt-0.5">{ship.flag || 'Marshall Islands'}</div>
+          </div>
+
+          <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Class Society</div>
+            <div className="font-extrabold text-[var(--color-primary)] text-xs mt-0.5">{ship.classification || 'DNV GL'}</div>
+          </div>
+
+          <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Year Built</div>
+            <div className="font-extrabold text-[var(--text-main)] text-xs mt-0.5">{ship.builtYear || 'N/A'}</div>
           </div>
 
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
             <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Gross Tonnage</div>
-            <div className="font-extrabold text-[var(--text-main)] text-sm mt-0.5">
+            <div className="font-extrabold text-[var(--text-main)] text-xs mt-0.5">
               {ship.grossTonnage ? `${ship.grossTonnage.toLocaleString()} GT` : 'N/A'}
             </div>
           </div>
 
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
             <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Active Crew</div>
-            <div className="font-extrabold text-[var(--color-primary)] text-sm mt-0.5">{ship.crew.length} Members</div>
+            <div className="font-extrabold text-[var(--color-primary)] text-xs mt-0.5">{ship.crew.length} Members</div>
           </div>
 
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Tech Documents</div>
-            <div className="font-extrabold text-emerald-400 text-sm mt-0.5">{ship.documents.length} Certificates</div>
-          </div>
-
-          <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Open Maintenance</div>
-            <div className="font-extrabold text-amber-400 text-sm mt-0.5">{openRepairsCount + inProgressCount} Pending</div>
+            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Tech Certs</div>
+            <div className="font-extrabold text-emerald-400 text-xs mt-0.5">{ship.documents.length} Valid</div>
           </div>
         </div>
       </div>

@@ -15,6 +15,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
   const [builtYear, setBuiltYear] = useState<string>('');
   const [grossTonnage, setGrossTonnage] = useState<string>('');
   const [flag, setFlag] = useState('Marshall Islands');
+  const [classification, setClassification] = useState('DNV GL');
   const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -41,6 +42,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
       builtYear: builtYear ? parseInt(builtYear, 10) : undefined,
       grossTonnage: grossTonnage ? parseInt(grossTonnage, 10) : undefined,
       flag: flag.trim() || 'Marshall Islands',
+      classification: classification.trim() || 'DNV GL',
       crew: [],
       documents: [],
       maintenance: [],
@@ -55,6 +57,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
     setBuiltYear('');
     setGrossTonnage('');
     setFlag('Marshall Islands');
+    setClassification('DNV GL');
     onClose();
   };
 
@@ -143,10 +146,10 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             </div>
 
             <div>
-              <label className="block text-[var(--text-main)] font-bold mb-1.5">Flag State</label>
+              <label className="block text-[var(--text-main)] font-bold mb-1.5">Flag State (Text Only)</label>
               <input
                 type="text"
-                placeholder="e.g. Panama, Liberia"
+                placeholder="e.g. Marshall Islands, Panama"
                 value={flag}
                 onChange={(e) => setFlag(e.target.value)}
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] placeholder-slate-500 focus:outline-none focus:border-[var(--color-primary)] transition"
@@ -154,8 +157,19 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             </div>
           </div>
 
-          {/* 4 & 5. Year of Construction & Gross Tonnage (Optional) */}
+          {/* Classification Society & Year Built */}
           <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[var(--text-main)] font-bold mb-1.5">Classification Society</label>
+              <input
+                type="text"
+                placeholder="e.g. DNV GL, ClassNK, ABS, Lloyds"
+                value={classification}
+                onChange={(e) => setClassification(e.target.value)}
+                className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] placeholder-slate-500 focus:outline-none focus:border-[var(--color-primary)] transition"
+              />
+            </div>
+
             <div>
               <label className="block text-[var(--text-main)] font-bold mb-1.5">
                 Year Built <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
@@ -170,19 +184,20 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
                 className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] placeholder-slate-500"
               />
             </div>
+          </div>
 
-            <div>
-              <label className="block text-[var(--text-main)] font-bold mb-1.5">
-                Gross Tonnage <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
-              </label>
-              <input
-                type="number"
-                placeholder="e.g. 14500"
-                value={grossTonnage}
-                onChange={(e) => setGrossTonnage(e.target.value)}
-                className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] placeholder-slate-500"
-              />
-            </div>
+          {/* Gross Tonnage */}
+          <div>
+            <label className="block text-[var(--text-main)] font-bold mb-1.5">
+              Gross Tonnage <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
+            </label>
+            <input
+              type="number"
+              placeholder="e.g. 14500"
+              value={grossTonnage}
+              onChange={(e) => setGrossTonnage(e.target.value)}
+              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] placeholder-slate-500"
+            />
           </div>
 
           {/* Actions */}

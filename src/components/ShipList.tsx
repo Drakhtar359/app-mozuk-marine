@@ -1,6 +1,6 @@
 import React from 'react';
 import { Ship } from '../types/vessel';
-import { Ship as ShipIcon, Calendar, Scale, Trash2, Users, FileCheck, Wrench, ChevronRight, Anchor } from 'lucide-react';
+import { Ship as ShipIcon, Calendar, Scale, Trash2, Users, FileCheck, Wrench, ChevronRight, Anchor, Shield } from 'lucide-react';
 
 interface ShipListProps {
   ships: Ship[];
@@ -50,37 +50,42 @@ export const ShipList: React.FC<ShipListProps> = ({
             >
               {/* Card Header */}
               <div>
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition">
-                        {ship.name}
-                      </h3>
-                      <span className="font-mono text-[var(--color-primary)] font-bold text-xs">
-                        {ship.imo}
-                      </span>
-                      {ship.flag && (
-                        <span className="text-[var(--text-muted)] font-medium text-xs">
-                          • 🇲🇿 {ship.flag}
-                        </span>
-                      )}
-                    </div>
+                <div className="mb-3">
+                  {/* 1. Ship Type stays where it is (above ship name) */}
+                  <div className="text-xs font-semibold text-[var(--color-primary)] mb-0.5 uppercase tracking-wide">
+                    {ship.type || 'Container Ship'}
+                  </div>
 
-                    <div className="text-xs text-[var(--text-muted)] font-medium flex items-center gap-3 mt-1.5 flex-wrap">
-                      {ship.type && (
-                        <span className="text-[var(--text-main)] font-semibold">{ship.type}</span>
-                      )}
-                      {ship.builtYear && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-[var(--text-dim)]" /> Built {ship.builtYear}
-                        </span>
-                      )}
-                      {ship.grossTonnage && (
-                        <span className="flex items-center gap-1">
-                          <Scale className="w-3 h-3 text-[var(--text-dim)]" /> {ship.grossTonnage.toLocaleString()} GT
-                        </span>
-                      )}
-                    </div>
+                  {/* 2. Ship Name */}
+                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-2xl text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition leading-tight">
+                    {ship.name}
+                  </h3>
+
+                  {/* 3. IMO Number goes UNDER the ship name */}
+                  <div className="font-mono text-xs font-bold text-[var(--text-muted)] mt-1">
+                    {ship.imo}
+                  </div>
+
+                  {/* Vessel Metadata Line (Flag text only & Class Society) */}
+                  <div className="text-xs text-[var(--text-muted)] font-medium flex items-center gap-3 mt-2 flex-wrap">
+                    {ship.flag && (
+                      <span>Flag: <strong className="text-[var(--text-main)]">{ship.flag}</strong></span>
+                    )}
+                    {ship.classification && (
+                      <span className="flex items-center gap-1">
+                        <Shield className="w-3 h-3 text-[var(--color-primary)]" /> Class: <strong className="text-[var(--text-main)]">{ship.classification}</strong>
+                      </span>
+                    )}
+                    {ship.builtYear && (
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-[var(--text-dim)]" /> Built {ship.builtYear}
+                      </span>
+                    )}
+                    {ship.grossTonnage && (
+                      <span className="flex items-center gap-1">
+                        <Scale className="w-3 h-3 text-[var(--text-dim)]" /> {ship.grossTonnage.toLocaleString()} GT
+                      </span>
+                    )}
                   </div>
                 </div>
 

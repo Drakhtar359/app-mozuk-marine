@@ -19,6 +19,7 @@ export function App() {
       builtYear: 1998,
       grossTonnage: 14500,
       flag: 'Marshall Islands',
+      classification: 'DNV GL',
       addedAt: '2026-09-21',
       crew: [
         { id: 'c1', name: 'Capt. Marcus Vance', role: 'Master / Captain', department: 'master', nationality: 'British', signOnDate: '2026-01-15', seamanBookNo: 'SB-882109' },
@@ -94,6 +95,7 @@ export function App() {
       builtYear: 2018,
       grossTonnage: 219079,
       flag: 'Panama',
+      classification: 'ClassNK',
       addedAt: '2026-09-21',
       crew: [
         { id: 'c201', name: 'Capt. Alexander Wright', role: 'Master / Captain', department: 'master', nationality: 'Canadian', signOnDate: '2026-02-10', seamanBookNo: 'SB-993012' },
@@ -141,6 +143,7 @@ export function App() {
       builtYear: 2014,
       grossTonnage: 193000,
       flag: 'Panama',
+      classification: 'Bureau Veritas',
       addedAt: '2026-09-21',
       crew: [
         { id: 'c301', name: 'Capt. Jean-Luc Picard', role: 'Master / Captain', department: 'master', nationality: 'French', signOnDate: '2026-01-20', seamanBookNo: 'SB-170100' },
@@ -174,6 +177,7 @@ export function App() {
       builtYear: 2021,
       grossTonnage: 45000,
       flag: 'Mozambique',
+      classification: 'American Bureau of Shipping (ABS)',
       addedAt: '2026-09-21',
       crew: [
         { id: 'c401', name: 'Capt. Joao Silva', role: 'Master / Captain', department: 'master', nationality: 'Mozambican', signOnDate: '2026-01-10', seamanBookNo: 'SB-MZ-0019' },
