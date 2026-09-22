@@ -23,6 +23,9 @@ import {
   ChevronDown,
   Navigation,
   ExternalLink,
+  ShieldCheck,
+  FileText,
+  Folder,
 } from 'lucide-react';
 
 interface VesselProfilePageProps {
@@ -44,7 +47,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [isAddDocModalOpen, setIsAddDocModalOpen] = useState(false);
   const [isAddRepairModalOpen, setIsAddRepairModalOpen] = useState(false);
 
-  // New Crew Form State
+  // Form states for Crew Member
   const [crewName, setCrewName] = useState('');
   const [crewDepartment, setCrewDepartment] = useState<'master' | 'deck' | 'engine' | 'kitchen'>('deck');
   const [crewRole, setCrewRole] = useState('Chief Officer');
@@ -52,23 +55,109 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [crewSignOnDate, setCrewSignOnDate] = useState('');
   const [seamanBookNo, setSeamanBookNo] = useState('');
 
-  // New Technical Doc Form State
+  // Form states for Technical Document
   const [docTitle, setDocTitle] = useState('');
   const [docType, setDocType] = useState('Statutory Certificate');
   const [docNumber, setDocNumber] = useState('');
   const [docIssueDate, setDocIssueDate] = useState('');
   const [docExpiryDate, setDocExpiryDate] = useState('');
-  const [docAuthority, setDocAuthority] = useState('DNV GL');
+  const [docAuthority, setDocAuthority] = useState('');
+  const [docCategory, setDocCategory] = useState<'certifications' | 'technical_documentation' | 'misc'>('certifications');
 
-  // New Repair / Maintenance Form State
+  // Form states for Maintenance Repair
   const [repairTitle, setRepairTitle] = useState('');
   const [repairCategory, setRepairCategory] = useState<MaintenanceLog['category']>('Machinery');
-  const [repairPriority, setRepairPriority] = useState<MaintenanceLog['priority']>('high');
-  const [repairReportedBy, setRepairReportedBy] = useState('Chief Engineer');
+  const [repairPriority, setRepairPriority] = useState<MaintenanceLog['priority']>('medium');
   const [repairDueDate, setRepairDueDate] = useState('');
+  const [repairReportedBy, setRepairReportedBy] = useState('');
   const [repairDescription, setRepairDescription] = useState('');
 
-  // Categorize Crew by Command Hierarchy
+  // Maritime Crew Hierarchy Rank Weight
+  const getCrewRankWeight = (role: string): number => {
+    const r = (role || '').toLowerCase();
+    
+    // Master / Captain
+    if (r.includes('master') || r.includes('captain')) return 1;
+
+    // Deck Department Ranks
+    if (r.includes('chief officer') || r.includes('first mate') || r.includes('1st mate')) return 10;
+    if (r.includes('second officer') || r.includes('2nd officer') || r.includes('2nd mate')) return 11;
+    if (r.includes('third officer') || r.includes('3rd officer') || r.includes('3rd mate')) return 12;
+    if (r.includes('deck officer') || r.includes('junior officer')) return 13;
+    if (r.includes('cadet')) return 14;
+    if (r.includes('bosun') || r.includes('boatswain')) return 20;
+    if (r.includes('able seaman') || r.includes('ab ') || r.includes('ab/')) return 21;
+    if (r.includes('ordinary seaman') || r.includes('os ') || r.includes('os/')) return 22;
+    if (r.includes('deckhand') || r.includes('deck crew')) return 23;
+
+    // Engine Department Ranks
+    if (r.includes('chief engineer')) return 10;
+    if (r.includes('second engineer') || r.includes('2nd engineer')) return 11;
+    if (r.includes('third engineer') || r.includes('3rd engineer')) return 12;
+    if (r.includes('fourth engineer') || r.includes('4th engineer')) return 13;
+    if (r.includes('electro-technical') || r.includes('eto') || r.includes('electrician')) return 14;
+    if (r.includes('engine cadet')) return 15;
+    if (r.includes('motorman') || r.includes('oiler')) return 20;
+    if (r.includes('fitter') || r.includes('welder') || r.includes('machinist')) return 21;
+    if (r.includes('wiper') || r.includes('engine hand')) return 22;
+
+    // Kitchen / Mess Department Ranks
+    if (r.includes('chief cook') || r.includes('head cook') || r.includes('chef')) return 10;
+    if (r.includes('second cook') || r.includes('2nd cook') || r.includes('cook')) return 11;
+    if (r.includes('chief steward') || r.includes('stewardess')) return 12;
+    if (r.includes('messman') || r.includes('mess boy') || r.includes('steward')) return 20;
+    if (r.includes('galley') || r.includes('utility')) return 21;
+
+    return 50;
+  };
+
+  const sortByHierarchy = (crewList: CrewMember[]): CrewMember[] => {
+    return [...crewList].sort((a, b) => getCrewRankWeight(a.role) - getCrewRankWeight(b.role));
+  };
+
+  // Document Category Resolver
+  const getDocCategory = (doc: TechnicalDoc): 'certifications' | 'technical_documentation' | 'misc' => {
+    if (doc.category) return doc.category;
+    
+    const typeLower = (doc.documentType || '').toLowerCase();
+    const titleLower = (doc.title || '').toLowerCase();
+    
+    if (
+      typeLower.includes('manual') ||
+      typeLower.includes('drawing') ||
+      typeLower.includes('schematic') ||
+      typeLower.includes('spec') ||
+      titleLower.includes('manual') ||
+      titleLower.includes('plan') ||
+      titleLower.includes('schematic') ||
+      titleLower.includes('blueprint') ||
+      titleLower.includes('drawing')
+    ) {
+      return 'technical_documentation';
+    }
+
+    if (
+      typeLower.includes('invoice') ||
+      typeLower.includes('order') ||
+      typeLower.includes('charter') ||
+      typeLower.includes('permit') ||
+      typeLower.includes('pass') ||
+      typeLower.includes('bunker') ||
+      typeLower.includes('receipt') ||
+      typeLower.includes('misc') ||
+      titleLower.includes('invoice') ||
+      titleLower.includes('permit') ||
+      titleLower.includes('charter') ||
+      titleLower.includes('clearance') ||
+      titleLower.includes('bunker')
+    ) {
+      return 'misc';
+    }
+
+    return 'certifications';
+  };
+
+  // Helper for resolving Crew Department
   const getCrewDepartment = (member: CrewMember): 'master' | 'deck' | 'engine' | 'kitchen' => {
     if (member.department) return member.department;
     const roleLower = member.role.toLowerCase();
@@ -161,6 +250,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       expiryDate: docExpiryDate,
       authority: docAuthority.trim() || 'Maritime Authority',
       status,
+      category: docCategory,
     };
 
     onUpdateShip({
@@ -173,6 +263,14 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     setDocIssueDate('');
     setDocExpiryDate('');
     setIsAddDocModalOpen(false);
+  };
+
+  const openAddDocModal = (category: 'certifications' | 'technical_documentation' | 'misc' = 'certifications') => {
+    setDocCategory(category);
+    if (category === 'certifications') setDocType('Class Certificate');
+    else if (category === 'technical_documentation') setDocType('Technical Manual');
+    else setDocType('Commercial Invoice');
+    setIsAddDocModalOpen(true);
   };
 
   const handleRemoveDocument = (docId: string) => {
@@ -293,13 +391,6 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <span>Track on MarineTraffic</span>
               <ExternalLink className="w-3.5 h-3.5 opacity-70" />
             </a>
-
-            <button
-              onClick={() => setIsAddCrewModalOpen(true)}
-              className="px-4 py-2.5 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"
-            >
-              <UserPlus className="w-4 h-4" /> Add Crew Member
-            </button>
           </div>
         </div>
 
@@ -317,7 +408,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
             <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Class Society</div>
-            <div className="font-extrabold text-[var(--color-primary)] text-xs mt-0.5">{ship.classification || 'DNV GL'}</div>
+            <div className="font-extrabold text-[var(--text-main)] text-xs mt-0.5">{ship.classification || 'DNV GL'}</div>
           </div>
 
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
@@ -334,12 +425,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
             <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Active Crew</div>
-            <div className="font-extrabold text-[var(--color-primary)] text-xs mt-0.5">{ship.crew.length} Members</div>
+            <div className="font-extrabold text-[var(--text-main)] text-xs mt-0.5">{ship.crew.length} Members</div>
           </div>
 
           <div className="bg-[var(--color-bg-alt)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Tech Certs</div>
-            <div className="font-extrabold text-emerald-400 text-xs mt-0.5">{ship.documents.length} Valid</div>
+            <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase font-mono">Tech Certs</div>
+            <div className="font-extrabold text-[var(--text-main)] text-xs mt-0.5">{ship.documents.length} Valid</div>
           </div>
         </div>
       </div>
@@ -886,73 +977,260 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
       )}
 
-      {/* SECTION 3: TECHNICAL DOCUMENTS */}
+      {/* SECTION 3: TECHNICAL DOCUMENTS (3 SECTIONS) */}
       {activeTab === 'documents' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="space-y-8">
+          {/* Main Tab Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
             <div>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-base">Statutory Certificates & Technical Documents</h2>
-              <p className="text-xs text-[var(--text-muted)]">Class certificates, safety management, and statutory filings</p>
+              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <FileCheck className="w-5 h-5 text-[var(--color-primary)]" />
+                Vessel Documentation Repository
+              </h2>
+              <p className="text-xs text-[var(--text-muted)] mt-1">
+                Class & statutory certificates, technical engineering manuals, and commercial/misc operational filings.
+              </p>
             </div>
             <button
-              onClick={() => setIsAddDocModalOpen(true)}
-              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"
+              onClick={() => openAddDocModal('certifications')}
+              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0"
             >
-              <Plus className="w-4 h-4" /> Add Technical Document
+              <Plus className="w-4 h-4" /> Add Document
             </button>
           </div>
 
-          <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-xl">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
-                <tr>
-                  <th className="py-3.5 px-4">Document Title</th>
-                  <th className="py-3.5 px-4">Type / Code</th>
-                  <th className="py-3.5 px-4">Authority</th>
-                  <th className="py-3.5 px-4">Issue Date</th>
-                  <th className="py-3.5 px-4">Expiry Date</th>
-                  <th className="py-3.5 px-4 text-right">Status</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--color-glass-border)]">
-                {ship.documents.map((doc) => (
-                  <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
-                    <td className="py-3.5 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
-                    <td className="py-3.5 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
-                    <td className="py-3.5 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                    <td className="py-3.5 px-4 text-[var(--text-muted)]">{doc.issueDate}</td>
-                    <td className="py-3.5 px-4 text-[var(--text-muted)]">{doc.expiryDate}</td>
-                    <td className="py-3.5 px-4 text-right">
-                      {doc.status === 'valid' && (
-                        <span className="px-2.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold text-[10px]">
-                          VALID
-                        </span>
-                      )}
-                      {doc.status === 'expiring' && (
-                        <span className="px-2.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-800/60 font-bold text-[10px]">
-                          EXPIRING SOON
-                        </span>
-                      )}
-                      {doc.status === 'expired' && (
-                        <span className="px-2.5 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/60 font-bold text-[10px]">
-                          EXPIRED
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() => handleRemoveDocument(doc.id)}
-                        className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
-                        title="Delete document"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
+          {/* SECTION 1: CERTIFICATIONS */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                  Certifications (Class, Flag, Statutory & ISM)
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs border border-emerald-500/20">
+                  {ship.documents.filter((d) => getDocCategory(d) === 'certifications').length}
+                </span>
+              </div>
+              <button
+                onClick={() => openAddDocModal('certifications')}
+                className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5" /> Add Certification
+              </button>
+            </div>
+
+            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
+                  <tr>
+                    <th className="py-3 px-4">Certificate Title</th>
+                    <th className="py-3 px-4">Doc / Reg Number</th>
+                    <th className="py-3 px-4">Issuing Authority</th>
+                    <th className="py-3 px-4">Issue Date</th>
+                    <th className="py-3 px-4">Expiry Date</th>
+                    <th className="py-3 px-4 text-right">Status</th>
+                    <th className="py-3 px-4 text-right">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-glass-border)]">
+                  {ship.documents.filter((d) => getDocCategory(d) === 'certifications').length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
+                        No statutory or class certificates logged yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    ship.documents
+                      .filter((d) => getDocCategory(d) === 'certifications')
+                      .map((doc) => (
+                        <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
+                          <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
+                          <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.issueDate}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.expiryDate}</td>
+                          <td className="py-3 px-4 text-right">
+                            {doc.status === 'valid' && (
+                              <span className="px-2.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold text-[10px]">
+                                VALID
+                              </span>
+                            )}
+                            {doc.status === 'expiring' && (
+                              <span className="px-2.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-800/60 font-bold text-[10px]">
+                                EXPIRING SOON
+                              </span>
+                            )}
+                            {doc.status === 'expired' && (
+                              <span className="px-2.5 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/60 font-bold text-[10px]">
+                                EXPIRED
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              onClick={() => handleRemoveDocument(doc.id)}
+                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                              title="Delete document"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* SECTION 2: TECHNICAL DOCUMENTATION */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                  Technical Documentation (Manuals, Schematics & Drawings)
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-xs border border-blue-500/20">
+                  {ship.documents.filter((d) => getDocCategory(d) === 'technical_documentation').length}
+                </span>
+              </div>
+              <button
+                onClick={() => openAddDocModal('technical_documentation')}
+                className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5" /> Add Technical Doc
+              </button>
+            </div>
+
+            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
+                  <tr>
+                    <th className="py-3 px-4">Document / Manual Title</th>
+                    <th className="py-3 px-4">Drawing / Manual ID</th>
+                    <th className="py-3 px-4">OEM / Authority</th>
+                    <th className="py-3 px-4">Registered Date</th>
+                    <th className="py-3 px-4">Revision Expiry</th>
+                    <th className="py-3 px-4 text-right">Status</th>
+                    <th className="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-glass-border)]">
+                  {ship.documents.filter((d) => getDocCategory(d) === 'technical_documentation').length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
+                        No technical manuals or engineering schematics registered.
+                      </td>
+                    </tr>
+                  ) : (
+                    ship.documents
+                      .filter((d) => getDocCategory(d) === 'technical_documentation')
+                      .map((doc) => (
+                        <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
+                          <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
+                          <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.issueDate}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.expiryDate}</td>
+                          <td className="py-3 px-4 text-right">
+                            <span className="px-2.5 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-800/60 font-bold text-[10px]">
+                              ACTIVE MANUAL
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              onClick={() => handleRemoveDocument(doc.id)}
+                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                              title="Delete document"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* SECTION 3: MISCELLANEOUS */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                  <Folder className="w-4 h-4" />
+                </div>
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                  Miscellaneous (Invoices, Cargo Chartering Orders, Port Access & Contracts)
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-xs border border-purple-500/20">
+                  {ship.documents.filter((d) => getDocCategory(d) === 'misc').length}
+                </span>
+              </div>
+              <button
+                onClick={() => openAddDocModal('misc')}
+                className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5" /> Add Misc Record
+              </button>
+            </div>
+
+            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
+                  <tr>
+                    <th className="py-3 px-4">Record Title</th>
+                    <th className="py-3 px-4">Reference / Invoice No</th>
+                    <th className="py-3 px-4">Issuing Party / Agency</th>
+                    <th className="py-3 px-4">Filing Date</th>
+                    <th className="py-3 px-4">Valid / Due Until</th>
+                    <th className="py-3 px-4 text-right">Status</th>
+                    <th className="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-glass-border)]">
+                  {ship.documents.filter((d) => getDocCategory(d) === 'misc').length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
+                        No invoices, charter party orders, or port permits filed yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    ship.documents
+                      .filter((d) => getDocCategory(d) === 'misc')
+                      .map((doc) => (
+                        <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
+                          <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
+                          <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.issueDate}</td>
+                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.expiryDate}</td>
+                          <td className="py-3 px-4 text-right">
+                            <span className="px-2.5 py-0.5 rounded bg-purple-950/60 text-purple-400 border border-purple-800/60 font-bold text-[10px]">
+                              FILED RECORD
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              onClick={() => handleRemoveDocument(doc.id)}
+                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                              title="Delete record"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -1110,6 +1388,19 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
 
             <form onSubmit={handleAddDocument} className="p-6 space-y-4 text-xs">
+              <div>
+                <label className="block text-[var(--text-main)] font-bold mb-1">Document Section / Category *</label>
+                <select
+                  value={docCategory}
+                  onChange={(e) => setDocCategory(e.target.value as any)}
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold"
+                >
+                  <option value="certifications">Certifications (Class, Flag, Statutory & ISM)</option>
+                  <option value="technical_documentation">Technical Documentation (Manuals, Schematics & Drawings)</option>
+                  <option value="misc">Misc (Invoices, Chartering Orders, Port Access & Contracts)</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block text-[var(--text-main)] font-bold mb-1">Document Title *</label>
                 <input

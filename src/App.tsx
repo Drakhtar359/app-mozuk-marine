@@ -35,10 +35,14 @@ export function App() {
         { id: 'c11', name: 'Manny Pacquiao', role: 'Messman / Steward', department: 'kitchen', nationality: 'Filipino', signOnDate: '2026-03-01' },
       ],
       documents: [
-        { id: 'd1', title: 'International Load Line Certificate', documentType: 'Statutory Certificate', documentNumber: 'ILLC-98-4412', issueDate: '2022-04-10', expiryDate: '2027-04-09', authority: 'DNV GL', status: 'valid' },
-        { id: 'd2', title: 'Safety Management Certificate (SMC)', documentType: 'ISM Code Cert', documentNumber: 'SMC-2023-887', issueDate: '2023-01-15', expiryDate: '2028-01-14', authority: 'Lloyds Register', status: 'valid' },
-        { id: 'd3', title: 'Marpol Air Pollution Prevention (IAPP)', documentType: 'Environmental Cert', documentNumber: 'IAPP-2021-09', issueDate: '2021-10-01', expiryDate: '2026-10-01', authority: 'Bureau Veritas', status: 'expiring' },
-        { id: 'd4', title: 'Cargo Ship Safety Radio Certificate', documentType: 'Safety Cert', documentNumber: 'CSSR-2024-11', issueDate: '2024-02-20', expiryDate: '2029-02-19', authority: 'DNV GL', status: 'valid' },
+        { id: 'd1', title: 'International Load Line Certificate', documentType: 'Statutory Certificate', documentNumber: 'ILLC-98-4412', issueDate: '2022-04-10', expiryDate: '2027-04-09', authority: 'DNV GL', status: 'valid', category: 'certifications' },
+        { id: 'd2', title: 'Safety Management Certificate (SMC)', documentType: 'ISM Code Cert', documentNumber: 'SMC-2023-887', issueDate: '2023-01-15', expiryDate: '2028-01-14', authority: 'Lloyds Register', status: 'valid', category: 'certifications' },
+        { id: 'd3', title: 'Marpol Air Pollution Prevention (IAPP)', documentType: 'Environmental Cert', documentNumber: 'IAPP-2021-09', issueDate: '2021-10-01', expiryDate: '2026-10-01', authority: 'Bureau Veritas', status: 'expiring', category: 'certifications' },
+        { id: 'd4', title: 'Cargo Ship Safety Radio Certificate', documentType: 'Safety Cert', documentNumber: 'CSSR-2024-11', issueDate: '2024-02-20', expiryDate: '2029-02-19', authority: 'DNV GL', status: 'valid', category: 'certifications' },
+        { id: 'd5', title: 'MAN B&W 6S50MC Engine Operation & Service Manual', documentType: 'Technical Manual', documentNumber: 'MAN-MANUAL-6S50', issueDate: '2020-05-10', expiryDate: '2030-05-10', authority: 'MAN Energy Solutions', status: 'valid', category: 'technical_documentation' },
+        { id: 'd6', title: 'General Arrangement & Hold Capacity Plan', documentType: 'Ship Drawing', documentNumber: 'DWG-SB2-001', issueDate: '1998-03-15', expiryDate: '2035-03-15', authority: 'Shipyard Design Office', status: 'valid', category: 'technical_documentation' },
+        { id: 'd7', title: 'Port of Rotterdam Entry Permit & Berth Clearance', documentType: 'Port Access Permit', documentNumber: 'RTM-PERMIT-2026', issueDate: '2026-09-01', expiryDate: '2026-10-01', authority: 'Port of Rotterdam Authority', status: 'valid', category: 'misc' },
+        { id: 'd8', title: 'Bunker Delivery Note & Fuel Quality Invoice', documentType: 'Commercial Invoice', documentNumber: 'BDN-2026-0941', issueDate: '2026-09-12', expiryDate: '2026-12-31', authority: 'Shell Marine Fuels', status: 'valid', category: 'misc' },
       ],
       maintenance: [
         {
@@ -107,8 +111,10 @@ export function App() {
         { id: 'c207', name: 'Pedro Gomez', role: 'Messman', department: 'kitchen', nationality: 'Filipino', signOnDate: '2026-03-10' },
       ],
       documents: [
-        { id: 'd201', title: 'Hull & Machinery Class Certificate', documentType: 'Class Certificate', documentNumber: 'NK-18-9921', issueDate: '2023-05-01', expiryDate: '2028-04-30', authority: 'ClassNK', status: 'valid' },
-        { id: 'd202', title: 'ISM Code Document of Compliance', documentType: 'Safety Cert', documentNumber: 'DOC-2022-771', issueDate: '2022-08-12', expiryDate: '2027-08-11', authority: 'Panama Maritime', status: 'valid' },
+        { id: 'd201', title: 'Hull & Machinery Class Certificate', documentType: 'Class Certificate', documentNumber: 'NK-18-9921', issueDate: '2023-05-01', expiryDate: '2028-04-30', authority: 'ClassNK', status: 'valid', category: 'certifications' },
+        { id: 'd202', title: 'ISM Code Document of Compliance', documentType: 'Safety Cert', documentNumber: 'DOC-2022-771', issueDate: '2022-08-12', expiryDate: '2027-08-11', authority: 'Panama Maritime', status: 'valid', category: 'certifications' },
+        { id: 'd203', title: 'Container Lashing & Securing Manual', documentType: 'Technical Manual', documentNumber: 'EG-LASH-2018', issueDate: '2018-09-01', expiryDate: '2028-09-01', authority: 'Imabari Shipbuilding', status: 'valid', category: 'technical_documentation' },
+        { id: 'd204', title: 'Suez Canal Transit Clearance & Toll Invoice', documentType: 'Port Clearance & Invoice', documentNumber: 'SCA-INV-2026-88', issueDate: '2026-09-15', expiryDate: '2026-10-15', authority: 'Suez Canal Authority', status: 'valid', category: 'misc' },
       ],
       maintenance: [
         {
@@ -153,7 +159,9 @@ export function App() {
         { id: 'c305', name: 'Neelix', role: 'Chief Cook', department: 'kitchen', nationality: 'Talaxian', signOnDate: '2026-03-05' },
       ],
       documents: [
-        { id: 'd301', title: 'International Sewage Pollution Prevention', documentType: 'Environmental Cert', documentNumber: 'ISPP-14-332', issueDate: '2020-11-10', expiryDate: '2025-11-09', authority: 'DNV GL', status: 'valid' },
+        { id: 'd301', title: 'International Sewage Pollution Prevention', documentType: 'Environmental Cert', documentNumber: 'ISPP-14-332', issueDate: '2020-11-10', expiryDate: '2025-11-09', authority: 'DNV GL', status: 'valid', category: 'certifications' },
+        { id: 'd302', title: 'MAN B&W 11S90ME Main Engine Electrical Wiring Schematic', documentType: 'Electrical Schematic', documentNumber: 'DWG-ME-11S90', issueDate: '2015-01-20', expiryDate: '2030-01-20', authority: 'MAN Energy Solutions', status: 'valid', category: 'technical_documentation' },
+        { id: 'd303', title: 'Charterer Voyage Instructions & Port Access Permit', documentType: 'Charterer Order', documentNumber: 'VOY-2026-992', issueDate: '2026-09-10', expiryDate: '2026-10-10', authority: 'MSC Line Chartering', status: 'valid', category: 'misc' },
       ],
       maintenance: [
         {
@@ -186,8 +194,10 @@ export function App() {
         { id: 'c404', name: 'Inacio Tembe', role: 'Chief Cook', department: 'kitchen', nationality: 'Mozambican', signOnDate: '2026-01-25' },
       ],
       documents: [
-        { id: 'd401', title: 'National Certificate of Registry', documentType: 'Statutory Certificate', documentNumber: 'MZ-REG-2021-004', issueDate: '2021-06-01', expiryDate: '2031-05-31', authority: 'INAMAR Mozambique', status: 'valid' },
-        { id: 'd402', title: 'Cargo Ship Safety Construction Certificate', documentType: 'Safety Cert', documentNumber: 'CSSC-MZ-2021-88', issueDate: '2021-06-15', expiryDate: '2026-06-14', authority: 'ABS Class', status: 'valid' },
+        { id: 'd401', title: 'National Certificate of Registry', documentType: 'Statutory Certificate', documentNumber: 'MZ-REG-2021-004', issueDate: '2021-06-01', expiryDate: '2031-05-31', authority: 'INAMAR Mozambique', status: 'valid', category: 'certifications' },
+        { id: 'd402', title: 'Cargo Ship Safety Construction Certificate', documentType: 'Safety Cert', documentNumber: 'CSSC-MZ-2021-88', issueDate: '2021-06-15', expiryDate: '2026-06-14', authority: 'ABS Class', status: 'valid', category: 'certifications' },
+        { id: 'd403', title: 'Cargo Hold Hatch Cover Hydraulic System Drawing', documentType: 'Technical Drawing', documentNumber: 'DWG-HC-MZ401', issueDate: '2021-05-01', expiryDate: '2031-05-01', authority: 'Mozambique Shipyard', status: 'valid', category: 'technical_documentation' },
+        { id: 'd404', title: 'Maputo Port Berth Access Pass & Agency Invoice', documentType: 'Port Access & Invoice', documentNumber: 'MPT-INV-2026-04', issueDate: '2026-09-18', expiryDate: '2026-10-18', authority: 'Maputo Port Development Co', status: 'valid', category: 'misc' },
       ],
       maintenance: [
         {

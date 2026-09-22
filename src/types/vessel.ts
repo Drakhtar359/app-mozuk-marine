@@ -17,6 +17,7 @@ export interface TechnicalDoc {
   expiryDate: string;
   authority: string;
   status: 'valid' | 'expiring' | 'expired';
+  category?: 'certifications' | 'technical_documentation' | 'misc';
 }
 
 export interface MaintenanceLog {
