@@ -112,7 +112,14 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   };
 
   const sortByHierarchy = (crewList: CrewMember[]): CrewMember[] => {
-    return [...crewList].sort((a, b) => getCrewRankWeight(a.role) - getCrewRankWeight(b.role));
+    return [...crewList].sort((a, b) => {
+      const weightA = getCrewRankWeight(a.role);
+      const weightB = getCrewRankWeight(b.role);
+      if (weightA !== weightB) {
+        return weightA - weightB;
+      }
+      return a.name.localeCompare(b.name);
+    });
   };
 
   // Document Category Resolver
@@ -186,10 +193,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     return 'deck';
   };
 
-  const masterCrew = ship.crew.filter((c) => getCrewDepartment(c) === 'master');
-  const deckCrew = ship.crew.filter((c) => getCrewDepartment(c) === 'deck');
-  const engineCrew = ship.crew.filter((c) => getCrewDepartment(c) === 'engine');
-  const kitchenCrew = ship.crew.filter((c) => getCrewDepartment(c) === 'kitchen');
+  const masterCrew = sortByHierarchy(ship.crew.filter((c) => getCrewDepartment(c) === 'master'));
+  const deckCrew = sortByHierarchy(ship.crew.filter((c) => getCrewDepartment(c) === 'deck'));
+  const engineCrew = sortByHierarchy(ship.crew.filter((c) => getCrewDepartment(c) === 'engine'));
+  const kitchenCrew = sortByHierarchy(ship.crew.filter((c) => getCrewDepartment(c) === 'kitchen'));
 
   // Crew Handlers
   const handleAddCrew = (e: React.FormEvent) => {
