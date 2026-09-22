@@ -259,18 +259,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       <div className="mozuk-glass-card rounded-2xl p-6 relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5 mb-5">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded-full bg-[rgba(0,242,254,0.1)] border border-[var(--color-glass-border)] text-[var(--color-primary)] font-bold text-xs uppercase">
-                {ship.type || 'Container Ship'}
-              </span>
-              <span className="px-2.5 py-0.5 rounded-md bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-mono text-[var(--color-primary)] font-bold text-xs">
-                {ship.imo}
-              </span>
-              {ship.flag && (
-                <span className="px-2.5 py-0.5 rounded-md bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-[var(--text-muted)] font-medium text-xs">
-                  🇲🇿 {ship.flag}
-                </span>
-              )}
+            <div className="text-xs font-semibold text-[var(--color-primary)] mb-1">
+              {ship.type || 'Container Ship'} • <span className="font-mono">{ship.imo}</span> {ship.flag && `• 🇲🇿 ${ship.flag}`}
             </div>
             <h1 className="text-3xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)]">{ship.name}</h1>
             <p className="text-xs text-[var(--text-muted)] mt-1">
@@ -390,11 +380,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           <div className="relative">
             {/* TOP COMMAND NODE: MASTER / CAPTAIN */}
             <div className="flex flex-col items-center">
-              <div className="w-full max-w-md mozuk-glass-card rounded-2xl p-5 border-2 border-amber-500/50 shadow-2xl relative bg-gradient-to-b from-amber-500/10 via-[var(--color-surface)] to-[var(--color-surface)]">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 font-extrabold text-[10px] tracking-widest px-3 py-0.5 rounded-full uppercase flex items-center gap-1 shadow-md">
-                  <Crown className="w-3 h-3 fill-slate-950" /> VESSEL COMMANDING OFFICER
-                </div>
-
+              <div className="w-full max-w-md mozuk-glass-card rounded-2xl p-5 border border-amber-500/40 shadow-xl relative">
                 {masterCrew.length > 0 ? (
                   masterCrew.map((master) => (
                     <div key={master.id} className="pt-2 text-center relative group">

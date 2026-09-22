@@ -267,16 +267,11 @@ export function App() {
                 }}
               />
               <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-xl tracking-tight text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition">
-                    MOZUK <span className="text-[var(--color-primary)] font-extrabold">MARINE</span>
-                  </h1>
-                  <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[rgba(0,242,254,0.1)] border border-[var(--color-glass-border)] text-[var(--color-primary)] tracking-wider uppercase">
-                    FLEET PORTAL
-                  </span>
-                </div>
+                <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-xl tracking-tight text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition">
+                  MOZUK <span className="text-[var(--color-primary)] font-extrabold">MARINE</span>
+                </h1>
                 <p className="text-[11px] text-[var(--text-muted)] font-medium">
-                  Official Vessel Profile & Operations Portal
+                  Vessel Profile & Operations Portal
                 </p>
               </div>
             </div>
@@ -324,11 +319,6 @@ export function App() {
             <div className="mozuk-glass-card rounded-2xl p-6 mb-6 relative overflow-hidden">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4 mb-5">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)] font-extrabold text-[10px] uppercase border border-[var(--color-glass-border)]">
-                      MOZUK MARINE FLEET OPERATIONS
-                    </span>
-                  </div>
                   <h2 className="text-2xl font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] flex items-center gap-2">
                     <ShieldCheck className="w-6 h-6 text-[var(--color-primary)]" />
                     Ship Owner Fleet Operations Portal
@@ -356,7 +346,7 @@ export function App() {
                   </div>
                   <div>
                     <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Total Fleet</div>
-                    <div className="font-[ Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalFleetCount} Vessels</div>
+                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalFleetCount} Vessels</div>
                   </div>
                 </div>
 

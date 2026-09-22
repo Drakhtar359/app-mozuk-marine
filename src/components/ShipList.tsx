@@ -33,9 +33,6 @@ export const ShipList: React.FC<ShipListProps> = ({
         <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-xl flex items-center gap-2">
           <Anchor className="w-5 h-5 text-[var(--color-primary)]" />
           Registered Fleet Directory
-          <span className="text-xs px-2.5 py-0.5 rounded-full bg-[var(--color-bg-alt)] text-[var(--text-muted)] font-semibold border border-[var(--color-glass-border)]">
-            {ships.length} {ships.length === 1 ? 'Vessel' : 'Vessels'}
-          </span>
         </h2>
         <span className="text-xs text-[var(--text-muted)] hidden sm:inline">Select a vessel to view its profile, crew & maintenance</span>
       </div>
@@ -59,12 +56,12 @@ export const ShipList: React.FC<ShipListProps> = ({
                       <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition">
                         {ship.name}
                       </h3>
-                      <span className="px-2.5 py-0.5 rounded-md bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-mono text-[var(--color-primary)] font-bold text-xs">
+                      <span className="font-mono text-[var(--color-primary)] font-bold text-xs">
                         {ship.imo}
                       </span>
                       {ship.flag && (
-                        <span className="px-2 py-0.5 rounded-md bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-[var(--text-muted)] font-medium text-xs">
-                          🇲🇿 {ship.flag}
+                        <span className="text-[var(--text-muted)] font-medium text-xs">
+                          • 🇲🇿 {ship.flag}
                         </span>
                       )}
                     </div>
