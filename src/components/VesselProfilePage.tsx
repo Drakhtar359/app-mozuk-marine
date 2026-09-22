@@ -21,6 +21,8 @@ import {
   Anchor,
   Shield,
   ChevronDown,
+  Navigation,
+  ExternalLink,
 } from 'lucide-react';
 
 interface VesselProfilePageProps {
@@ -275,7 +277,23 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <a
+              href={
+                ship.imo
+                  ? `https://www.marinetraffic.com/en/ais/details/ships/imo:${ship.imo.replace(/\D/g, '')}`
+                  : `https://www.marinetraffic.com/en/ais/index/ships/all/keyword:${encodeURIComponent(ship.name)}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2.5 rounded-full bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-bold text-xs flex items-center gap-2 transition"
+              title={`Track ${ship.name} (${ship.imo}) on MarineTraffic`}
+            >
+              <Navigation className="w-4 h-4 text-blue-500 fill-blue-500/20" />
+              <span>Track on MarineTraffic</span>
+              <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+            </a>
+
             <button
               onClick={() => setIsAddCrewModalOpen(true)}
               className="px-4 py-2.5 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"

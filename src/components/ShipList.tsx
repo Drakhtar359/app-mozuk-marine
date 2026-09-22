@@ -1,6 +1,6 @@
 import React from 'react';
 import { Ship } from '../types/vessel';
-import { Ship as ShipIcon, Calendar, Scale, Trash2, Users, FileCheck, Wrench, ChevronRight, Anchor, Shield } from 'lucide-react';
+import { Ship as ShipIcon, Calendar, Scale, Trash2, Users, FileCheck, Wrench, ChevronRight, Anchor, Navigation, ExternalLink } from 'lucide-react';
 
 interface ShipListProps {
   ships: Ship[];
@@ -41,6 +41,10 @@ export const ShipList: React.FC<ShipListProps> = ({
         {ships.map((ship) => {
           const openRepairsCount = ship.maintenance.filter((m) => m.status !== 'completed').length;
           const urgentRepairsCount = ship.maintenance.filter((m) => m.status !== 'completed' && m.priority === 'urgent').length;
+          const imoDigits = ship.imo ? ship.imo.replace(/\D/g, '') : '';
+          const marineTrafficUrl = imoDigits
+            ? `https://www.marinetraffic.com/en/ais/details/ships/imo:${imoDigits}`
+            : `https://www.marinetraffic.com/en/ais/index/ships/all/keyword:${encodeURIComponent(ship.name)}`;
 
           return (
             <div
@@ -51,29 +55,47 @@ export const ShipList: React.FC<ShipListProps> = ({
               {/* Card Header */}
               <div>
                 <div className="mb-3">
-                  {/* 1. Ship Type stays where it is (above ship name) */}
-                  <div className="text-xs font-semibold text-[var(--color-primary)] mb-0.5 uppercase tracking-wide">
-                    {ship.type || 'Container Ship'}
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      {/* 1. Ship Type stays where it is (above ship name) */}
+                      <div className="text-xs font-semibold text-[var(--color-primary)] mb-0.5 uppercase tracking-wide">
+                        {ship.type || 'Container Ship'}
+                      </div>
+
+                      {/* 2. Ship Name */}
+                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-2xl text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition leading-tight">
+                        {ship.name}
+                      </h3>
+
+                      {/* 3. IMO Number goes UNDER the ship name */}
+                      <div className="font-mono text-xs font-bold text-[var(--text-muted)] mt-1">
+                        {ship.imo}
+                      </div>
+                    </div>
+
+                    {/* Track Button on top right of the card linking to MarineTraffic */}
+                    <a
+                      href={marineTrafficUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-xs font-bold transition shrink-0 mt-0.5 shadow-sm"
+                      title={`Track ${ship.name} (${ship.imo}) on MarineTraffic`}
+                    >
+                      <Navigation className="w-3.5 h-3.5 text-blue-500 fill-blue-500/20" />
+                      <span>Track</span>
+                      <ExternalLink className="w-3 h-3 opacity-70" />
+                    </a>
                   </div>
 
-                  {/* 2. Ship Name */}
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-2xl text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition leading-tight">
-                    {ship.name}
-                  </h3>
-
-                  {/* 3. IMO Number goes UNDER the ship name */}
-                  <div className="font-mono text-xs font-bold text-[var(--text-muted)] mt-1">
-                    {ship.imo}
-                  </div>
-
-                  {/* Vessel Metadata Line (Flag text only & Class Society) */}
+                  {/* Vessel Metadata Line (Flag text only & Class Society without shield) */}
                   <div className="text-xs text-[var(--text-muted)] font-medium flex items-center gap-3 mt-2 flex-wrap">
                     {ship.flag && (
                       <span>Flag: <strong className="text-[var(--text-main)]">{ship.flag}</strong></span>
                     )}
                     {ship.classification && (
-                      <span className="flex items-center gap-1">
-                        <Shield className="w-3 h-3 text-[var(--color-primary)]" /> Class: <strong className="text-[var(--text-main)]">{ship.classification}</strong>
+                      <span>
+                        Class: <strong className="text-[var(--text-main)]">{ship.classification}</strong>
                       </span>
                     )}
                     {ship.builtYear && (
