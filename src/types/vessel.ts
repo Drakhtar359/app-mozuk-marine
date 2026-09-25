@@ -1,3 +1,10 @@
+export interface VesselHistoryEntry {
+  shipName: string;
+  role: string;
+  startDate: string;
+  endDate?: string;
+}
+
 export interface CrewMember {
   id: string;
   name: string;
@@ -5,7 +12,13 @@ export interface CrewMember {
   department?: 'master' | 'deck' | 'engine' | 'kitchen';
   nationality: string;
   signOnDate: string;
+  signOnLocation?: string;
+  dateOfBirth?: string;
+  passportNumber?: string;
+  passportExpiry?: string;
   seamanBookNo?: string;
+  seamanBookExpiry?: string;
+  vesselHistory?: VesselHistoryEntry[];
 }
 
 export interface TechnicalDoc {

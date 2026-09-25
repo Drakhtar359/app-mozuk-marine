@@ -26,6 +26,13 @@ import {
   ShieldCheck,
   FileText,
   Folder,
+  Globe,
+  Calendar,
+  MapPin,
+  BookOpen,
+  Briefcase,
+  History,
+  UserCheck,
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 
@@ -43,8 +50,9 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance'>('crew');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
 
-  // Modal States
+  // Modal & Detail States
   const [isAddCrewModalOpen, setIsAddCrewModalOpen] = useState(false);
+  const [selectedCrewMember, setSelectedCrewMember] = useState<CrewMember | null>(null);
   const [isAddDocModalOpen, setIsAddDocModalOpen] = useState(false);
   const [isAddRepairModalOpen, setIsAddRepairModalOpen] = useState(false);
 
@@ -55,6 +63,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [crewNationality, setCrewNationality] = useState('');
   const [crewSignOnDate, setCrewSignOnDate] = useState('');
   const [seamanBookNo, setSeamanBookNo] = useState('');
+  const [crewDateOfBirth, setCrewDateOfBirth] = useState('');
+  const [crewPassportNumber, setCrewPassportNumber] = useState('');
+  const [crewPassportExpiry, setCrewPassportExpiry] = useState('');
+  const [crewSeamanBookExpiry, setCrewSeamanBookExpiry] = useState('');
+  const [crewSignOnLocation, setCrewSignOnLocation] = useState('');
 
   // Form states for Technical Document
   const [docTitle, setDocTitle] = useState('');
@@ -204,14 +217,28 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     e.preventDefault();
     if (!crewName.trim()) return;
 
+    const formattedSignOn = formatDate(crewSignOnDate || getTodayDDMMYYYY());
+
     const newCrewMember: CrewMember = {
       id: `crew-${Date.now()}`,
       name: crewName.trim(),
       role: crewRole,
       department: crewDepartment,
       nationality: crewNationality.trim() || 'Mozambican',
-      signOnDate: formatDate(crewSignOnDate || getTodayDDMMYYYY()),
+      signOnDate: formattedSignOn,
+      signOnLocation: crewSignOnLocation.trim() || undefined,
+      dateOfBirth: crewDateOfBirth ? formatDate(crewDateOfBirth) : undefined,
+      passportNumber: crewPassportNumber.trim() || undefined,
+      passportExpiry: crewPassportExpiry ? formatDate(crewPassportExpiry) : undefined,
       seamanBookNo: seamanBookNo.trim() || undefined,
+      seamanBookExpiry: crewSeamanBookExpiry ? formatDate(crewSeamanBookExpiry) : undefined,
+      vesselHistory: [
+        {
+          shipName: ship.name,
+          role: crewRole,
+          startDate: formattedSignOn,
+        },
+      ],
     };
 
     onUpdateShip({
@@ -223,6 +250,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     setCrewNationality('');
     setCrewSignOnDate('');
     setSeamanBookNo('');
+    setCrewDateOfBirth('');
+    setCrewPassportNumber('');
+    setCrewPassportExpiry('');
+    setCrewSeamanBookExpiry('');
+    setCrewSignOnLocation('');
     setIsAddCrewModalOpen(false);
   };
 
@@ -519,11 +551,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <div className="w-full max-w-md mozuk-glass-card rounded-2xl p-5 border border-amber-500/40 shadow-xl relative">
                 {masterCrew.length > 0 ? (
                   masterCrew.map((master) => (
-                    <div key={master.id} className="pt-2 text-center relative group">
-                      <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-400 font-extrabold text-xl mx-auto mb-2 shadow-lg">
+                    <div
+                      key={master.id}
+                      onClick={() => setSelectedCrewMember(master)}
+                      className="pt-2 text-center relative group cursor-pointer hover:bg-[var(--color-bg-alt)]/60 rounded-xl p-3 transition border border-transparent hover:border-amber-400/50 shadow-sm"
+                      title="Click to view full crew profile"
+                    >
+                      <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-400 font-extrabold text-xl mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform">
                         {master.name.charAt(0)}
                       </div>
-                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)]">
+                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-amber-400 transition">
                         {master.name}
                       </h3>
                       <div className="text-xs text-amber-400 font-bold uppercase tracking-wider mt-0.5">
@@ -538,10 +575,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           Seaman Book: {master.seamanBookNo}
                         </div>
                       )}
+                      <div className="text-[10px] text-amber-400/80 font-semibold mt-2 opacity-0 group-hover:opacity-100 transition">
+                        🔍 Click to open full profile
+                      </div>
 
                       <button
-                        onClick={() => handleRemoveCrew(master.id)}
-                        className="absolute top-0 right-0 p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveCrew(master.id);
+                        }}
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
                         title="Remove Master"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -625,14 +668,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       deckCrew.map((member) => (
                         <div
                           key={member.id}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-cyan-500/50 transition group"
+                          onClick={() => setSelectedCrewMember(member)}
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-cyan-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
+                          title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-cyan-950/80 border border-cyan-800/80 flex items-center justify-center text-cyan-400 font-bold text-xs shrink-0 mt-0.5">
+                            <div className="w-9 h-9 rounded-lg bg-cyan-950/80 border border-cyan-800/80 flex items-center justify-center text-cyan-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs">{member.name}</h4>
+                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-cyan-400 transition">{member.name}</h4>
                               <span className="inline-block px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 font-semibold text-[10px] mt-0.5 border border-cyan-800/40">
                                 {member.role}
                               </span>
@@ -643,7 +688,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           </div>
 
                           <button
-                            onClick={() => handleRemoveCrew(member.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveCrew(member.id);
+                            }}
                             className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
@@ -700,14 +748,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       engineCrew.map((member) => (
                         <div
                           key={member.id}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-blue-500/50 transition group"
+                          onClick={() => setSelectedCrewMember(member)}
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-blue-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
+                          title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-blue-950/80 border border-blue-800/80 flex items-center justify-center text-blue-400 font-bold text-xs shrink-0 mt-0.5">
+                            <div className="w-9 h-9 rounded-lg bg-blue-950/80 border border-blue-800/80 flex items-center justify-center text-blue-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs">{member.name}</h4>
+                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-blue-400 transition">{member.name}</h4>
                               <span className="inline-block px-2 py-0.5 rounded bg-blue-950/60 text-blue-300 font-semibold text-[10px] mt-0.5 border border-blue-800/40">
                                 {member.role}
                               </span>
@@ -718,7 +768,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           </div>
 
                           <button
-                            onClick={() => handleRemoveCrew(member.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveCrew(member.id);
+                            }}
                             className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
@@ -775,14 +828,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       kitchenCrew.map((member) => (
                         <div
                           key={member.id}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-emerald-500/50 transition group"
+                          onClick={() => setSelectedCrewMember(member)}
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-emerald-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
+                          title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-emerald-950/80 border border-emerald-800/80 flex items-center justify-center text-emerald-400 font-bold text-xs shrink-0 mt-0.5">
+                            <div className="w-9 h-9 rounded-lg bg-emerald-950/80 border border-emerald-800/80 flex items-center justify-center text-emerald-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs">{member.name}</h4>
+                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-emerald-400 transition">{member.name}</h4>
                               <span className="inline-block px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300 font-semibold text-[10px] mt-0.5 border border-emerald-800/40">
                                 {member.role}
                               </span>
@@ -793,7 +848,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           </div>
 
                           <button
-                            onClick={() => handleRemoveCrew(member.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveCrew(member.id);
+                            }}
                             className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
@@ -1348,6 +1406,64 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 </div>
 
                 <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Date of Birth</label>
+                  <input
+                    type="date"
+                    value={crewDateOfBirth}
+                    onChange={(e) => setCrewDateOfBirth(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Passport Number</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. GB-99482019"
+                    value={crewPassportNumber}
+                    onChange={(e) => setCrewPassportNumber(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Passport Expiry</label>
+                  <input
+                    type="date"
+                    value={crewPassportExpiry}
+                    onChange={(e) => setCrewPassportExpiry(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Seaman's Book No.</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. SB-884920"
+                    value={seamanBookNo}
+                    onChange={(e) => setSeamanBookNo(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Seaman Book Expiry</label>
+                  <input
+                    type="date"
+                    value={crewSeamanBookExpiry}
+                    onChange={(e) => setCrewSeamanBookExpiry(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On Date</label>
                   <input
                     type="date"
@@ -1356,17 +1472,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1">Seaman's Book No. (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. SB-884920"
-                  value={seamanBookNo}
-                  onChange={(e) => setSeamanBookNo(e.target.value)}
-                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
-                />
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On City / Port</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Rotterdam"
+                    value={crewSignOnLocation}
+                    onChange={(e) => setCrewSignOnLocation(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
               </div>
 
               <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
@@ -1602,6 +1718,184 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: CREW MEMBER PROFILE */}
+      {selectedCrewMember && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+            {/* Profile Header */}
+            <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary)]/20 border-2 border-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary)] font-extrabold text-2xl shadow-md">
+                  {selectedCrewMember.name.charAt(0)}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">
+                      {selectedCrewMember.name}
+                    </h3>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold text-[10px] uppercase border border-[var(--color-primary)]/30">
+                      {selectedCrewMember.department || getCrewDepartment(selectedCrewMember)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--color-primary)] font-bold uppercase tracking-wider mt-0.5">
+                    {selectedCrewMember.role}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedCrewMember(null)}
+                className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Profile Content Body */}
+            <div className="p-6 space-y-6 overflow-y-auto flex-1 text-xs">
+              {/* 8 Field Identity Cards Grid */}
+              <div>
+                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-2 border-b border-[var(--color-glass-border)] pb-2">
+                  <UserCheck className="w-4 h-4 text-[var(--color-primary)]" /> Personal & Maritime Credentials
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {/* 1. Nationality */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Globe className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Nationality
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {selectedCrewMember.nationality || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* 2. Date of Birth */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Date of Birth
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {formatDate(selectedCrewMember.dateOfBirth)}
+                    </div>
+                  </div>
+
+                  {/* 3. Passport Number */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <FileText className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Passport No.
+                    </div>
+                    <div className="font-mono font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {selectedCrewMember.passportNumber || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* 4. Passport Expiry */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Passport Expiry
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {formatDate(selectedCrewMember.passportExpiry)}
+                    </div>
+                  </div>
+
+                  {/* 5. Seaman Book Number */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <BookOpen className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Seaman Book No.
+                    </div>
+                    <div className="font-mono font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {selectedCrewMember.seamanBookNo || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* 6. Seaman Book Expiry */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Seaman Book Expiry
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {formatDate(selectedCrewMember.seamanBookExpiry)}
+                    </div>
+                  </div>
+
+                  {/* 7. Signed On Date */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Anchor className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Signed On Date
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {formatDate(selectedCrewMember.signOnDate)}
+                    </div>
+                  </div>
+
+                  {/* 8. Signed On Location (City) */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Sign-On City
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {selectedCrewMember.signOnLocation || 'N/A'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 9. History of Ships Worked On */}
+              <div>
+                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-2 border-b border-[var(--color-glass-border)] pb-2">
+                  <History className="w-4 h-4 text-[var(--color-primary)]" /> Company Vessel Service History
+                </h4>
+
+                {(!selectedCrewMember.vesselHistory || selectedCrewMember.vesselHistory.length === 0) ? (
+                  <div className="bg-[var(--color-surface)] rounded-xl p-4 text-center text-[var(--text-muted)] text-xs border border-[var(--color-glass-border)]">
+                    Current vessel ({ship.name}) is the first recorded assignment in company fleet.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {selectedCrewMember.vesselHistory.map((entry, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold">
+                            <Briefcase className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <h5 className="font-bold text-[var(--text-main)] text-xs">{entry.shipName}</h5>
+                            <span className="text-[11px] text-[var(--color-primary)] font-semibold">{entry.role}</span>
+                          </div>
+                        </div>
+
+                        <div className="text-[11px] text-[var(--text-muted)] font-mono sm:text-right">
+                          <span>{formatDate(entry.startDate)}</span>
+                          <span className="mx-1.5">→</span>
+                          <span className={!entry.endDate ? 'text-emerald-500 font-bold' : ''}>
+                            {entry.endDate ? formatDate(entry.endDate) : 'Present (Current Assignment)'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-3 border-t border-[var(--color-glass-border)] bg-[var(--color-surface)] flex justify-end shrink-0">
+              <button
+                onClick={() => setSelectedCrewMember(null)}
+                className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs"
+              >
+                Close Profile
+              </button>
+            </div>
           </div>
         </div>
       )}
