@@ -37,6 +37,7 @@ import {
   Building2,
   LogOut,
   LogIn,
+  Filter,
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 
@@ -82,6 +83,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [visitorTimeIn, setVisitorTimeIn] = useState('');
   const [visitorTimeOut, setVisitorTimeOut] = useState('');
   const [visitorLocation, setVisitorLocation] = useState('');
+
+  // Filter states for Visitor Logbook
+  const [visitorFilterDateFrom, setVisitorFilterDateFrom] = useState('');
+  const [visitorFilterDateTo, setVisitorFilterDateTo] = useState('');
+  const [visitorFilterLocation, setVisitorFilterLocation] = useState('all');
+  const [visitorFilterCompany, setVisitorFilterCompany] = useState('all');
 
   // Form states for Technical Document
   const [docTitle, setDocTitle] = useState('');
@@ -1417,164 +1424,277 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       )}
 
       {/* SECTION 4: VISITOR LOGBOOK */}
-      {activeTab === 'visitors' && (
-        <div className="space-y-6">
-          {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
-            <div>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
-                <ClipboardList className="w-5 h-5 text-[var(--color-primary)]" />
-                Vessel Visitor Logbook & Physical Registry
-              </h2>
-              <p className="text-xs text-[var(--text-muted)] mt-1">
-                Official physical logbook entries for shore inspectors, auditors, service technicians, and port agents.
-              </p>
+      {activeTab === 'visitors' && (() => {
+        const allVisitors = ship.visitors || [];
+
+        const uniqueLocations = Array.from(
+          new Set(allVisitors.map((v) => v.location?.trim()).filter(Boolean))
+        );
+
+        const uniqueCompanies = Array.from(
+          new Set(allVisitors.map((v) => v.company?.trim()).filter(Boolean))
+        );
+
+        const currentlyOnboardCount = allVisitors.filter(
+          (v) => !v.timeOut || v.timeOut.trim() === ''
+        ).length;
+
+        const filteredVisitors = allVisitors.filter((visitor) => {
+          // Date From Filter
+          if (visitorFilterDateFrom) {
+            const fromTime = parseDDMMYYYY(visitorFilterDateFrom);
+            const visTime = parseDDMMYYYY(visitor.date);
+            if (visTime < fromTime) return false;
+          }
+          // Date To Filter
+          if (visitorFilterDateTo) {
+            const toTime = parseDDMMYYYY(visitorFilterDateTo);
+            const visTime = parseDDMMYYYY(visitor.date);
+            if (visTime > toTime) return false;
+          }
+          // Location Filter
+          if (visitorFilterLocation !== 'all') {
+            if ((visitor.location || '').toLowerCase() !== visitorFilterLocation.toLowerCase()) {
+              return false;
+            }
+          }
+          // Company Filter
+          if (visitorFilterCompany !== 'all') {
+            if ((visitor.company || '').toLowerCase() !== visitorFilterCompany.toLowerCase()) {
+              return false;
+            }
+          }
+          return true;
+        });
+
+        const resetVisitorFilters = () => {
+          setVisitorFilterDateFrom('');
+          setVisitorFilterDateTo('');
+          setVisitorFilterLocation('all');
+          setVisitorFilterCompany('all');
+        };
+
+        const hasActiveFilters =
+          visitorFilterDateFrom !== '' ||
+          visitorFilterDateTo !== '' ||
+          visitorFilterLocation !== 'all' ||
+          visitorFilterCompany !== 'all';
+
+        return (
+          <div className="space-y-6">
+            {/* Section Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
+              <div>
+                <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                  <ClipboardList className="w-5 h-5 text-[var(--color-primary)]" />
+                  Vessel Visitor Logbook & Physical Registry
+                </h2>
+                <p className="text-xs text-[var(--text-muted)] mt-1">
+                  Official physical logbook entries for shore inspectors, auditors, service technicians, and port agents.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                {/* 3. Small "Currently On Board" pill next to Log New Visitor */}
+                <div className="px-3.5 py-2 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 font-extrabold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>On Board: <strong className="text-white ml-0.5">{currentlyOnboardCount}</strong></span>
+                </div>
+
+                <button
+                  onClick={() => setIsAddVisitorModalOpen(true)}
+                  className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0 whitespace-nowrap"
+                >
+                  <Plus className="w-4 h-4" /> Log New Visitor
+                </button>
+              </div>
             </div>
 
-            <button
-              onClick={() => setIsAddVisitorModalOpen(true)}
-              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0"
-            >
-              <Plus className="w-4 h-4" /> Log New Visitor
-            </button>
-          </div>
+            {/* 5. Filter Options Bar (Date From-To, Location, Company) */}
+            <div className="mozuk-glass-card rounded-2xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 text-xs">
+              <div className="flex flex-wrap items-center gap-3 flex-1">
+                <div className="flex items-center gap-1.5 font-bold text-[var(--text-main)] shrink-0">
+                  <Filter className="w-4 h-4 text-[var(--color-primary)]" />
+                  <span>Filters:</span>
+                </div>
 
-          {/* Visitor KPIs */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
-              <div>
-                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">Total Logged Visitors</div>
-                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] mt-1">
-                  {(ship.visitors || []).length}
+                {/* Date From */}
+                <div className="flex items-center gap-1.5 bg-[var(--color-bg-alt)] px-3 py-1.5 rounded-xl border border-[var(--color-glass-border)]">
+                  <span className="text-[var(--text-muted)] text-[11px] font-semibold whitespace-nowrap">From:</span>
+                  <input
+                    type="date"
+                    value={visitorFilterDateFrom}
+                    onChange={(e) => setVisitorFilterDateFrom(e.target.value)}
+                    className="bg-transparent text-[var(--text-main)] font-mono text-xs focus:outline-none cursor-pointer"
+                  />
+                </div>
+
+                {/* Date To */}
+                <div className="flex items-center gap-1.5 bg-[var(--color-bg-alt)] px-3 py-1.5 rounded-xl border border-[var(--color-glass-border)]">
+                  <span className="text-[var(--text-muted)] text-[11px] font-semibold whitespace-nowrap">To:</span>
+                  <input
+                    type="date"
+                    value={visitorFilterDateTo}
+                    onChange={(e) => setVisitorFilterDateTo(e.target.value)}
+                    className="bg-transparent text-[var(--text-main)] font-mono text-xs focus:outline-none cursor-pointer"
+                  />
+                </div>
+
+                {/* Location Filter */}
+                <div className="flex items-center gap-1.5 bg-[var(--color-bg-alt)] px-3 py-1.5 rounded-xl border border-[var(--color-glass-border)]">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <select
+                    value={visitorFilterLocation}
+                    onChange={(e) => setVisitorFilterLocation(e.target.value)}
+                    className="bg-transparent text-[var(--text-main)] text-xs font-semibold focus:outline-none cursor-pointer"
+                  >
+                    <option value="all">All Locations</option>
+                    {uniqueLocations.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Company Filter */}
+                <div className="flex items-center gap-1.5 bg-[var(--color-bg-alt)] px-3 py-1.5 rounded-xl border border-[var(--color-glass-border)]">
+                  <Building2 className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
+                  <select
+                    value={visitorFilterCompany}
+                    onChange={(e) => setVisitorFilterCompany(e.target.value)}
+                    className="bg-transparent text-[var(--text-main)] text-xs font-semibold focus:outline-none cursor-pointer"
+                  >
+                    <option value="all">All Companies</option>
+                    {uniqueCompanies.map((comp) => (
+                      <option key={comp} value={comp}>
+                        {comp}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
-              <div className="p-3 rounded-xl bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)] border border-[rgba(0,242,254,0.2)]">
-                <ClipboardList className="w-5 h-5" />
-              </div>
+
+              {/* Reset Filters */}
+              {hasActiveFilters && (
+                <button
+                  onClick={resetVisitorFilters}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-bold text-xs flex items-center gap-1.5 transition shrink-0 whitespace-nowrap"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Clear Filters
+                </button>
+              )}
             </div>
 
-            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
-              <div>
-                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">Currently On Board</div>
-                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-emerald-400 mt-1">
-                  {(ship.visitors || []).filter((v) => !v.timeOut || v.timeOut.trim() === '').length}
-                </div>
-              </div>
-              <div className="p-3 rounded-xl bg-emerald-950/40 text-emerald-400 border border-emerald-800/40">
-                <LogIn className="w-5 h-5" />
-              </div>
-            </div>
-
-            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
-              <div>
-                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">Signed Out / Departed</div>
-                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-muted)] mt-1">
-                  {(ship.visitors || []).filter((v) => v.timeOut && v.timeOut.trim() !== '').length}
-                </div>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-800/40 text-slate-400 border border-slate-700/40">
-                <LogOut className="w-5 h-5" />
-              </div>
-            </div>
-          </div>
-
-          {/* Visitor Logbook Table */}
-          <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
-                <tr>
-                  <th className="py-3.5 px-4">Date</th>
-                  <th className="py-3.5 px-4">Visitor Full Name</th>
-                  <th className="py-3.5 px-4">Company / Organization</th>
-                  <th className="py-3.5 px-4">Reason of Visit</th>
-                  <th className="py-3.5 px-4">Location / Berth</th>
-                  <th className="py-3.5 px-4">Time In</th>
-                  <th className="py-3.5 px-4">Time Out</th>
-                  <th className="py-3.5 px-4 text-center">Status</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--color-glass-border)]">
-                {(!ship.visitors || ship.visitors.length === 0) ? (
+            {/* Visitor Logbook Table */}
+            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
                   <tr>
-                    <td colSpan={9} className="py-8 text-center text-[var(--text-muted)] text-xs">
-                      No visitors logged for this vessel yet. Click "Log New Visitor" to record ship visits.
-                    </td>
+                    <th className="py-3 px-4">Date</th>
+                    <th className="py-3 px-4">Visitor Full Name</th>
+                    <th className="py-3 px-4">Company / Organization</th>
+                    <th className="py-3 px-4">Reason of Visit</th>
+                    <th className="py-3 px-4">Location / Berth</th>
+                    <th className="py-3 px-4">Time In</th>
+                    <th className="py-3 px-4">Time Out</th>
+                    <th className="py-3 px-4 text-center">Status</th>
+                    <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
-                ) : (
-                  ship.visitors.map((visitor) => {
-                    const isOnboard = !visitor.timeOut || visitor.timeOut.trim() === '';
-                    return (
-                      <tr key={visitor.id} className="hover:bg-[var(--color-glass-border)] transition">
-                        <td className="py-3.5 px-4 font-extrabold text-[var(--text-main)] font-mono">
-                          {formatDate(visitor.date)}
-                        </td>
-                        <td className="py-3.5 px-4 font-bold text-[var(--text-main)] flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center font-extrabold text-xs shrink-0">
-                            {visitor.fullName.charAt(0)}
-                          </div>
-                          <span>{visitor.fullName}</span>
-                        </td>
-                        <td className="py-3.5 px-4 text-[var(--text-muted)] font-medium">
-                          <span className="flex items-center gap-1.5">
-                            <Building2 className="w-3.5 h-3.5 text-[var(--color-primary)]" />
-                            {visitor.company}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-[var(--text-main)] max-w-xs truncate">
-                          {visitor.reason}
-                        </td>
-                        <td className="py-3.5 px-4 text-[var(--text-muted)] flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                          <span>{visitor.location}</span>
-                        </td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-emerald-400">
-                          {visitor.timeIn}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-muted)]">
-                          {visitor.timeOut || '—'}
-                        </td>
-                        <td className="py-3.5 px-4 text-center">
-                          {isOnboard ? (
-                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-extrabold text-[10px] inline-flex items-center gap-1 animate-pulse">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                              ON BOARD
-                            </span>
-                          ) : (
-                            <span className="px-2.5 py-0.5 rounded bg-slate-800/60 text-slate-400 border border-slate-700/60 font-bold text-[10px]">
-                              DEPARTED
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            {isOnboard && (
-                              <button
-                                onClick={() => handleSignOutVisitor(visitor.id)}
-                                className="px-2.5 py-1 rounded bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/80 text-[11px] font-bold transition flex items-center gap-1"
-                                title="Sign out visitor at current time"
-                              >
-                                <LogOut className="w-3 h-3" /> Sign Out
-                              </button>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-glass-border)]">
+                  {filteredVisitors.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="py-8 text-center text-[var(--text-muted)] text-xs">
+                        {hasActiveFilters
+                          ? 'No visitor records match the selected filters.'
+                          : 'No visitors logged for this vessel yet. Click "Log New Visitor" to record ship visits.'}
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredVisitors.map((visitor) => {
+                      const isOnboard = !visitor.timeOut || visitor.timeOut.trim() === '';
+                      return (
+                        <tr key={visitor.id} className="hover:bg-[var(--color-glass-border)] transition">
+                          <td className="py-3 px-4 font-extrabold text-[var(--text-main)] font-mono whitespace-nowrap align-middle">
+                            {formatDate(visitor.date)}
+                          </td>
+
+                          {/* 2. Full Name without logo initials */}
+                          <td className="py-3 px-4 font-bold text-[var(--text-main)] text-xs whitespace-nowrap align-middle">
+                            {visitor.fullName}
+                          </td>
+
+                          {/* 1. Company Name with shrink-0 icon to prevent squashing */}
+                          <td className="py-3 px-4 text-[var(--text-muted)] font-medium align-middle">
+                            <div className="flex items-center gap-1.5 whitespace-nowrap">
+                              <Building2 className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
+                              <span className="text-xs text-[var(--text-main)]">{visitor.company}</span>
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-4 text-[var(--text-main)] max-w-xs truncate align-middle">
+                            {visitor.reason}
+                          </td>
+                          
+                          <td className="py-3 px-4 text-[var(--text-muted)] align-middle">
+                            <div className="flex items-center gap-1 whitespace-nowrap">
+                              <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                              <span>{visitor.location}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 font-mono font-bold text-emerald-400 whitespace-nowrap align-middle">
+                            {visitor.timeIn}
+                          </td>
+                          <td className="py-3 px-4 font-mono font-bold text-[var(--text-muted)] whitespace-nowrap align-middle">
+                            {visitor.timeOut || '—'}
+                          </td>
+
+                          {/* 4. Single-line status badge */}
+                          <td className="py-3 px-4 text-center align-middle whitespace-nowrap">
+                            {isOnboard ? (
+                              <span className="px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-extrabold text-[10px] inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                                ON BOARD
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 rounded bg-slate-800/60 text-slate-400 border border-slate-700/60 font-bold text-[10px] inline-flex items-center whitespace-nowrap shrink-0">
+                                DEPARTED
+                              </span>
                             )}
-                            <button
-                              onClick={() => handleRemoveVisitor(visitor.id)}
-                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
-                              title="Delete log entry"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                          </td>
+
+                          {/* 4. Single-line action buttons */}
+                          <td className="py-3 px-4 text-right align-middle whitespace-nowrap">
+                            <div className="flex items-center justify-end gap-2 whitespace-nowrap">
+                              {isOnboard && (
+                                <button
+                                  onClick={() => handleSignOutVisitor(visitor.id)}
+                                  className="px-2.5 py-1 rounded bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/80 text-[11px] font-bold transition inline-flex items-center gap-1 whitespace-nowrap shrink-0"
+                                  title="Sign out visitor at current time"
+                                >
+                                  <LogOut className="w-3 h-3 shrink-0" /> Sign Out
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleRemoveVisitor(visitor.id)}
+                                className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center shrink-0"
+                                title="Delete log entry"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* MODAL 1: ADD CREW MEMBER */}
       {isAddCrewModalOpen && (
