@@ -2,29 +2,25 @@
  * Utility function to format any date string into dd/mm/yyyy format.
  */
 export function formatDate(dateStr?: string | null): string {
-  if (!dateStr) return 'N/A';
+  if (!dateStr) return '';
   const trimmed = dateStr.trim();
+  if (!trimmed) return '';
 
-  // If already in DD/MM/YYYY format (e.g. 21/09/2026)
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) {
-    return trimmed;
+  // If already in DD/MM/YYYY format (e.g. 21/09/2026 or 5/9/2026)
+  const dmyMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (dmyMatch) {
+    const [, d, m, y] = dmyMatch;
+    return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
   }
 
-  // Handle YYYY-MM-DD (e.g. 2026-09-21 -> 21/09/2026)
-  const ymdMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  // Handle YYYY-MM-DD or YYYY/MM/DD (e.g. 2026-09-21 -> 21/09/2026)
+  const ymdMatch = trimmed.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
   if (ymdMatch) {
     const [, y, m, d] = ymdMatch;
-    return `${d}/${m}/${y}`;
+    return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
   }
 
-  // Handle YYYY/MM/DD (e.g. 2026/09/21 -> 21/09/2026)
-  const ymdSlashMatch = trimmed.match(/^(\d{4})\/(\d{2})\/(\d{2})/);
-  if (ymdSlashMatch) {
-    const [, y, m, d] = ymdSlashMatch;
-    return `${d}/${m}/${y}`;
-  }
-
-  // Handle MM/DD/YYYY or other JS Date strings
+  // Fallback for JS Date strings
   const parsed = new Date(trimmed);
   if (isNaN(parsed.getTime())) {
     return dateStr;
@@ -46,4 +42,23 @@ export function getTodayDDMMYYYY(): string {
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const year = d.getFullYear();
   return `${day}/${month}/${year}`;
+}
+
+/**
+ * Converts a dd/mm/yyyy date string to yyyy-mm-dd for native date pickers.
+ */
+export function toInputDateFormat(dateStr?: string | null): string {
+  if (!dateStr) return '';
+  const trimmed = dateStr.trim();
+  const dmyMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (dmyMatch) {
+    const [, d, m, y] = dmyMatch;
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  }
+  const ymdMatch = trimmed.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
+  if (ymdMatch) {
+    const [, y, m, d] = ymdMatch;
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  }
+  return '';
 }

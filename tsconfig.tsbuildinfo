@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/components/addshipmodal.tsx","./src/components/shiplist.tsx","./src/components/vesselprofilepage.tsx","./src/types/vessel.ts","./src/utils/dateformatter.ts"],"version":"5.7.3"}
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/addshipmodal.tsx","./src/components/dateinput.tsx","./src/components/shiplist.tsx","./src/components/vesselprofilepage.tsx","./src/types/vessel.ts","./src/utils/dateformatter.ts"],"version":"5.7.3"}

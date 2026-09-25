@@ -40,6 +40,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
+import { DateInput } from './DateInput';
 
 interface VesselProfilePageProps {
   ship: Ship;
@@ -1521,22 +1522,22 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 {/* Date From */}
                 <div className="flex items-center gap-1.5 bg-[var(--color-bg-alt)] px-3 py-1.5 rounded-xl border border-[var(--color-glass-border)]">
                   <span className="text-[var(--text-muted)] text-[11px] font-semibold whitespace-nowrap">From:</span>
-                  <input
-                    type="date"
+                  <DateInput
                     value={visitorFilterDateFrom}
-                    onChange={(e) => setVisitorFilterDateFrom(e.target.value)}
-                    className="bg-transparent text-[var(--text-main)] font-mono text-xs focus:outline-none cursor-pointer"
+                    onChange={(val) => setVisitorFilterDateFrom(val)}
+                    placeholder="dd/mm/yyyy"
+                    inputClassName="bg-transparent w-24"
                   />
                 </div>
 
                 {/* Date To */}
                 <div className="flex items-center gap-1.5 bg-[var(--color-bg-alt)] px-3 py-1.5 rounded-xl border border-[var(--color-glass-border)]">
                   <span className="text-[var(--text-muted)] text-[11px] font-semibold whitespace-nowrap">To:</span>
-                  <input
-                    type="date"
+                  <DateInput
                     value={visitorFilterDateTo}
-                    onChange={(e) => setVisitorFilterDateTo(e.target.value)}
-                    className="bg-transparent text-[var(--text-main)] font-mono text-xs focus:outline-none cursor-pointer"
+                    onChange={(val) => setVisitorFilterDateTo(val)}
+                    placeholder="dd/mm/yyyy"
+                    inputClassName="bg-transparent w-24"
                   />
                 </div>
 
@@ -1795,11 +1796,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Date of Birth</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={crewDateOfBirth}
-                    onChange={(e) => setCrewDateOfBirth(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    onChange={(val) => setCrewDateOfBirth(val)}
+                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
               </div>
@@ -1818,11 +1818,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Passport Expiry</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={crewPassportExpiry}
-                    onChange={(e) => setCrewPassportExpiry(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    onChange={(val) => setCrewPassportExpiry(val)}
+                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
               </div>
@@ -1841,11 +1840,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Seaman Book Expiry</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={crewSeamanBookExpiry}
-                    onChange={(e) => setCrewSeamanBookExpiry(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    onChange={(val) => setCrewSeamanBookExpiry(val)}
+                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
               </div>
@@ -1853,11 +1851,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On Date</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={crewSignOnDate}
-                    onChange={(e) => setCrewSignOnDate(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    onChange={(val) => setCrewSignOnDate(val)}
+                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
 
@@ -1959,22 +1956,20 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Issue Date</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={docIssueDate}
-                    onChange={(e) => setDocIssueDate(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    onChange={(val) => setDocIssueDate(val)}
+                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
 
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Expiry Date *</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={docExpiryDate}
-                    onChange={(e) => setDocExpiryDate(e.target.value)}
+                    onChange={(val) => setDocExpiryDate(val)}
                     required
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
               </div>
@@ -2070,11 +2065,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Target Due Date</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={repairDueDate}
-                    onChange={(e) => setRepairDueDate(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    onChange={(val) => setRepairDueDate(val)}
+                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
               </div>
@@ -2305,11 +2299,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Visit Date *</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={visitorDate}
-                    onChange={(e) => setVisitorDate(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    onChange={(val) => setVisitorDate(val)}
+                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
 
