@@ -45,6 +45,17 @@ export interface MaintenanceLog {
   status: 'open' | 'in_progress' | 'completed';
 }
 
+export interface VisitorLog {
+  id: string;
+  date: string;
+  fullName: string;
+  company: string;
+  reason: string;
+  timeIn: string;
+  timeOut?: string;
+  location: string;
+}
+
 export interface Ship {
   id: string;
   name: string;
@@ -57,5 +68,6 @@ export interface Ship {
   crew: CrewMember[];
   documents: TechnicalDoc[];
   maintenance: MaintenanceLog[];
+  visitors?: VisitorLog[];
   addedAt: string;
 }

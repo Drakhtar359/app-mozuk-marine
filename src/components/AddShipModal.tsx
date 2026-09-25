@@ -47,6 +47,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
       crew: [],
       documents: [],
       maintenance: [],
+      visitors: [],
       addedAt: getTodayDDMMYYYY(),
     };
 

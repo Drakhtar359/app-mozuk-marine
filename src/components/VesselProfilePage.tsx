@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry } from '../types/vessel';
+import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog } from '../types/vessel';
 import {
   ArrowLeft,
   Users,
@@ -33,6 +33,10 @@ import {
   Briefcase,
   History,
   UserCheck,
+  ClipboardList,
+  Building2,
+  LogOut,
+  LogIn,
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 
@@ -47,7 +51,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   onBack,
   onUpdateShip,
 }) => {
-  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance'>('crew');
+  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'visitors'>('crew');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
 
   // Modal & Detail States
@@ -55,6 +59,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [selectedCrewMember, setSelectedCrewMember] = useState<CrewMember | null>(null);
   const [isAddDocModalOpen, setIsAddDocModalOpen] = useState(false);
   const [isAddRepairModalOpen, setIsAddRepairModalOpen] = useState(false);
+  const [isAddVisitorModalOpen, setIsAddVisitorModalOpen] = useState(false);
 
   // Form states for Crew Member
   const [crewName, setCrewName] = useState('');
@@ -68,6 +73,15 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [crewPassportExpiry, setCrewPassportExpiry] = useState('');
   const [crewSeamanBookExpiry, setCrewSeamanBookExpiry] = useState('');
   const [crewSignOnLocation, setCrewSignOnLocation] = useState('');
+
+  // Form states for Visitor Log
+  const [visitorDate, setVisitorDate] = useState('');
+  const [visitorFullName, setVisitorFullName] = useState('');
+  const [visitorCompany, setVisitorCompany] = useState('');
+  const [visitorReason, setVisitorReason] = useState('');
+  const [visitorTimeIn, setVisitorTimeIn] = useState('');
+  const [visitorTimeOut, setVisitorTimeOut] = useState('');
+  const [visitorLocation, setVisitorLocation] = useState('');
 
   // Form states for Technical Document
   const [docTitle, setDocTitle] = useState('');
@@ -401,6 +415,58 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     });
   };
 
+  // Visitor Logbook Handlers
+  const handleAddVisitor = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!visitorFullName.trim() || !visitorCompany.trim()) return;
+
+    const newVisitor: VisitorLog = {
+      id: `vis-${Date.now()}`,
+      date: formatDate(visitorDate || getTodayDDMMYYYY()),
+      fullName: visitorFullName.trim(),
+      company: visitorCompany.trim(),
+      reason: visitorReason.trim() || 'General Inspection / Visit',
+      timeIn: visitorTimeIn.trim() || '09:00',
+      timeOut: visitorTimeOut.trim() || undefined,
+      location: visitorLocation.trim() || ship.name,
+    };
+
+    onUpdateShip({
+      ...ship,
+      visitors: [newVisitor, ...(ship.visitors || [])],
+    });
+
+    setVisitorDate('');
+    setVisitorFullName('');
+    setVisitorCompany('');
+    setVisitorReason('');
+    setVisitorTimeIn('');
+    setVisitorTimeOut('');
+    setVisitorLocation('');
+    setIsAddVisitorModalOpen(false);
+  };
+
+  const handleSignOutVisitor = (visitorId: string) => {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const currentTimeStr = `${hours}:${minutes}`;
+
+    onUpdateShip({
+      ...ship,
+      visitors: (ship.visitors || []).map((v) =>
+        v.id === visitorId ? { ...v, timeOut: currentTimeStr } : v
+      ),
+    });
+  };
+
+  const handleRemoveVisitor = (visitorId: string) => {
+    onUpdateShip({
+      ...ship,
+      visitors: (ship.visitors || []).filter((v) => v.id !== visitorId),
+    });
+  };
+
   // Maintenance Counters
   const openRepairsCount = ship.maintenance.filter((m) => m.status === 'open').length;
   const inProgressCount = ship.maintenance.filter((m) => m.status === 'in_progress').length;
@@ -548,6 +614,18 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         >
           <FileCheck className="w-4 h-4" />
           Technical Documents ({ship.documents.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('visitors')}
+          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
+            activeTab === 'visitors'
+              ? 'btn-mozuk-primary shadow-lg'
+              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+          }`}
+        >
+          <ClipboardList className="w-4 h-4" />
+          Visitor Logbook ({(ship.visitors || []).length})
         </button>
       </div>
 
@@ -1338,6 +1416,166 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
       )}
 
+      {/* SECTION 4: VISITOR LOGBOOK */}
+      {activeTab === 'visitors' && (
+        <div className="space-y-6">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
+            <div>
+              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <ClipboardList className="w-5 h-5 text-[var(--color-primary)]" />
+                Vessel Visitor Logbook & Physical Registry
+              </h2>
+              <p className="text-xs text-[var(--text-muted)] mt-1">
+                Official physical logbook entries for shore inspectors, auditors, service technicians, and port agents.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setIsAddVisitorModalOpen(true)}
+              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0"
+            >
+              <Plus className="w-4 h-4" /> Log New Visitor
+            </button>
+          </div>
+
+          {/* Visitor KPIs */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
+              <div>
+                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">Total Logged Visitors</div>
+                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] mt-1">
+                  {(ship.visitors || []).length}
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)] border border-[rgba(0,242,254,0.2)]">
+                <ClipboardList className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
+              <div>
+                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">Currently On Board</div>
+                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-emerald-400 mt-1">
+                  {(ship.visitors || []).filter((v) => !v.timeOut || v.timeOut.trim() === '').length}
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-950/40 text-emerald-400 border border-emerald-800/40">
+                <LogIn className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
+              <div>
+                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">Signed Out / Departed</div>
+                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-muted)] mt-1">
+                  {(ship.visitors || []).filter((v) => v.timeOut && v.timeOut.trim() !== '').length}
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-800/40 text-slate-400 border border-slate-700/40">
+                <LogOut className="w-5 h-5" />
+              </div>
+            </div>
+          </div>
+
+          {/* Visitor Logbook Table */}
+          <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
+                <tr>
+                  <th className="py-3.5 px-4">Date</th>
+                  <th className="py-3.5 px-4">Visitor Full Name</th>
+                  <th className="py-3.5 px-4">Company / Organization</th>
+                  <th className="py-3.5 px-4">Reason of Visit</th>
+                  <th className="py-3.5 px-4">Location / Berth</th>
+                  <th className="py-3.5 px-4">Time In</th>
+                  <th className="py-3.5 px-4">Time Out</th>
+                  <th className="py-3.5 px-4 text-center">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--color-glass-border)]">
+                {(!ship.visitors || ship.visitors.length === 0) ? (
+                  <tr>
+                    <td colSpan={9} className="py-8 text-center text-[var(--text-muted)] text-xs">
+                      No visitors logged for this vessel yet. Click "Log New Visitor" to record ship visits.
+                    </td>
+                  </tr>
+                ) : (
+                  ship.visitors.map((visitor) => {
+                    const isOnboard = !visitor.timeOut || visitor.timeOut.trim() === '';
+                    return (
+                      <tr key={visitor.id} className="hover:bg-[var(--color-glass-border)] transition">
+                        <td className="py-3.5 px-4 font-extrabold text-[var(--text-main)] font-mono">
+                          {formatDate(visitor.date)}
+                        </td>
+                        <td className="py-3.5 px-4 font-bold text-[var(--text-main)] flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center font-extrabold text-xs shrink-0">
+                            {visitor.fullName.charAt(0)}
+                          </div>
+                          <span>{visitor.fullName}</span>
+                        </td>
+                        <td className="py-3.5 px-4 text-[var(--text-muted)] font-medium">
+                          <span className="flex items-center gap-1.5">
+                            <Building2 className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+                            {visitor.company}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-[var(--text-main)] max-w-xs truncate">
+                          {visitor.reason}
+                        </td>
+                        <td className="py-3.5 px-4 text-[var(--text-muted)] flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                          <span>{visitor.location}</span>
+                        </td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-emerald-400">
+                          {visitor.timeIn}
+                        </td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-muted)]">
+                          {visitor.timeOut || '—'}
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          {isOnboard ? (
+                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-extrabold text-[10px] inline-flex items-center gap-1 animate-pulse">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                              ON BOARD
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-0.5 rounded bg-slate-800/60 text-slate-400 border border-slate-700/60 font-bold text-[10px]">
+                              DEPARTED
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {isOnboard && (
+                              <button
+                                onClick={() => handleSignOutVisitor(visitor.id)}
+                                className="px-2.5 py-1 rounded bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/80 text-[11px] font-bold transition flex items-center gap-1"
+                                title="Sign out visitor at current time"
+                              >
+                                <LogOut className="w-3 h-3" /> Sign Out
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleRemoveVisitor(visitor.id)}
+                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                              title="Delete log entry"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* MODAL 1: ADD CREW MEMBER */}
       {isAddCrewModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
@@ -1926,6 +2164,122 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 Close Profile
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 5: LOG NEW SHIP VISITOR */}
+      {isAddVisitorModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                <ClipboardList className="w-4 h-4 text-[var(--color-primary)]" /> Log New Visitor to {ship.name}
+              </h3>
+              <button onClick={() => setIsAddVisitorModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddVisitor} className="p-6 space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Visit Date *</label>
+                  <input
+                    type="date"
+                    value={visitorDate}
+                    onChange={(e) => setVisitorDate(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Port / Berth Location</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Rotterdam Port, Berth 4"
+                    value={visitorLocation}
+                    onChange={(e) => setVisitorLocation(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-main)] font-bold mb-1">Visitor Full Name *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Johnathan Miller"
+                  value={visitorFullName}
+                  onChange={(e) => setVisitorFullName(e.target.value)}
+                  required
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-main)] font-bold mb-1">Company / Organization *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. DNV / Port State Control / Wärtsilä"
+                  value={visitorCompany}
+                  onChange={(e) => setVisitorCompany(e.target.value)}
+                  required
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-main)] font-bold mb-1">Reason of Visit *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Annual Class & Safety Inspection"
+                  value={visitorReason}
+                  onChange={(e) => setVisitorReason(e.target.value)}
+                  required
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Time In *</label>
+                  <input
+                    type="time"
+                    value={visitorTimeIn}
+                    onChange={(e) => setVisitorTimeIn(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Time Out (Optional)</label>
+                  <input
+                    type="time"
+                    value={visitorTimeOut}
+                    onChange={(e) => setVisitorTimeOut(e.target.value)}
+                    placeholder="Leave empty if currently on board"
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                <button
+                  type="button"
+                  onClick={() => setIsAddVisitorModalOpen(false)}
+                  className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
+                >
+                  Save Visitor Entry
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
