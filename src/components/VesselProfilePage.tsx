@@ -1587,19 +1587,19 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
 
             {/* Visitor Logbook Table */}
-            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
-              <table className="w-full text-left text-xs">
+            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+              <table className="w-full text-left text-xs min-w-[850px]">
                 <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
                   <tr>
-                    <th className="py-3 px-4">Date</th>
-                    <th className="py-3 px-4">Visitor Full Name</th>
-                    <th className="py-3 px-4">Company / Organization</th>
-                    <th className="py-3 px-4">Reason of Visit</th>
-                    <th className="py-3 px-4">Location / Berth</th>
-                    <th className="py-3 px-4">Time In</th>
-                    <th className="py-3 px-4">Time Out</th>
-                    <th className="py-3 px-4 text-center">Status</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                    <th className="py-3 px-3">Date</th>
+                    <th className="py-3 px-3">Visitor Full Name</th>
+                    <th className="py-3 px-3">Company / Organization</th>
+                    <th className="py-3 px-3">Reason of Visit</th>
+                    <th className="py-3 px-3">Location / Berth</th>
+                    <th className="py-3 px-3">Time In</th>
+                    <th className="py-3 px-3">Time Out</th>
+                    <th className="py-3 px-3 text-center">Status</th>
+                    <th className="py-3 px-3 text-right sticky right-0 bg-[var(--color-bg-alt)] z-10">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -1615,43 +1615,43 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     filteredVisitors.map((visitor) => {
                       const isOnboard = !visitor.timeOut || visitor.timeOut.trim() === '';
                       return (
-                        <tr key={visitor.id} className="hover:bg-[var(--color-glass-border)] transition">
-                          <td className="py-3 px-4 font-extrabold text-[var(--text-main)] font-mono whitespace-nowrap align-middle">
+                        <tr key={visitor.id} className="hover:bg-[var(--color-glass-border)] transition group">
+                          <td className="py-3 px-3 font-extrabold text-[var(--text-main)] font-mono whitespace-nowrap align-middle">
                             {formatDate(visitor.date)}
                           </td>
 
                           {/* 2. Full Name without logo initials */}
-                          <td className="py-3 px-4 font-bold text-[var(--text-main)] text-xs whitespace-nowrap align-middle">
+                          <td className="py-3 px-3 font-bold text-[var(--text-main)] text-xs whitespace-nowrap align-middle">
                             {visitor.fullName}
                           </td>
 
                           {/* 1. Company Name with shrink-0 icon to prevent squashing */}
-                          <td className="py-3 px-4 text-[var(--text-muted)] font-medium align-middle">
-                            <div className="flex items-center gap-1.5 whitespace-nowrap">
+                          <td className="py-3 px-3 text-[var(--text-muted)] font-medium align-middle">
+                            <div className="flex items-center gap-1.5 whitespace-nowrap max-w-[160px] truncate" title={visitor.company}>
                               <Building2 className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
-                              <span className="text-xs text-[var(--text-main)]">{visitor.company}</span>
+                              <span className="text-xs text-[var(--text-main)] truncate">{visitor.company}</span>
                             </div>
                           </td>
 
-                          <td className="py-3 px-4 text-[var(--text-main)] max-w-xs truncate align-middle">
+                          <td className="py-3 px-3 text-[var(--text-main)] max-w-[180px] truncate align-middle" title={visitor.reason}>
                             {visitor.reason}
                           </td>
                           
-                          <td className="py-3 px-4 text-[var(--text-muted)] align-middle">
+                          <td className="py-3 px-3 text-[var(--text-muted)] align-middle whitespace-nowrap">
                             <div className="flex items-center gap-1 whitespace-nowrap">
                               <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                               <span>{visitor.location}</span>
                             </div>
                           </td>
-                          <td className="py-3 px-4 font-mono font-bold text-emerald-400 whitespace-nowrap align-middle">
+                          <td className="py-3 px-3 font-mono font-bold text-emerald-400 whitespace-nowrap align-middle">
                             {visitor.timeIn}
                           </td>
-                          <td className="py-3 px-4 font-mono font-bold text-[var(--text-muted)] whitespace-nowrap align-middle">
+                          <td className="py-3 px-3 font-mono font-bold text-[var(--text-muted)] whitespace-nowrap align-middle">
                             {visitor.timeOut || '—'}
                           </td>
 
                           {/* 4. Single-line status badge */}
-                          <td className="py-3 px-4 text-center align-middle whitespace-nowrap">
+                          <td className="py-3 px-3 text-center align-middle whitespace-nowrap">
                             {isOnboard ? (
                               <span className="px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-extrabold text-[10px] inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
@@ -1664,13 +1664,13 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                             )}
                           </td>
 
-                          {/* 4. Single-line action buttons */}
-                          <td className="py-3 px-4 text-right align-middle whitespace-nowrap">
-                            <div className="flex items-center justify-end gap-2 whitespace-nowrap">
+                          {/* 4. Sticky single-line action buttons */}
+                          <td className="py-3 px-3 text-right align-middle whitespace-nowrap sticky right-0 bg-[var(--color-surface)] group-hover:bg-[var(--color-glass-border)] transition z-10">
+                            <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
                               {isOnboard && (
                                 <button
                                   onClick={() => handleSignOutVisitor(visitor.id)}
-                                  className="px-2.5 py-1 rounded bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/80 text-[11px] font-bold transition inline-flex items-center gap-1 whitespace-nowrap shrink-0"
+                                  className="px-2.5 py-1 rounded bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/80 text-[11px] font-bold transition inline-flex items-center gap-1 whitespace-nowrap shrink-0 shadow-sm"
                                   title="Sign out visitor at current time"
                                 >
                                   <LogOut className="w-3 h-3 shrink-0" /> Sign Out
@@ -1678,7 +1678,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               )}
                               <button
                                 onClick={() => handleRemoveVisitor(visitor.id)}
-                                className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center shrink-0"
+                                className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center shrink-0 shadow-sm"
                                 title="Delete log entry"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
