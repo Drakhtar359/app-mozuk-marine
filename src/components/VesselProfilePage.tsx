@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ship, CrewMember, TechnicalDoc, MaintenanceLog } from '../types/vessel';
+import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry } from '../types/vessel';
 import {
   ArrowLeft,
   Users,
@@ -85,6 +85,36 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [repairDueDate, setRepairDueDate] = useState('');
   const [repairReportedBy, setRepairReportedBy] = useState('');
   const [repairDescription, setRepairDescription] = useState('');
+
+  // Helper to parse dd/mm/yyyy or yyyy-mm-dd to timestamp for sorting
+  const parseDDMMYYYY = (dateStr?: string): number => {
+    if (!dateStr) return 0;
+    const trimmed = dateStr.trim();
+    const dmyMatch = trimmed.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+    if (dmyMatch) {
+      const [, d, m, y] = dmyMatch;
+      return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10)).getTime();
+    }
+    const ymdMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (ymdMatch) {
+      const [, y, m, d] = ymdMatch;
+      return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10)).getTime();
+    }
+    const t = new Date(trimmed).getTime();
+    return isNaN(t) ? 0 : t;
+  };
+
+  // Sort vessel history: active assignment (!endDate) first, then newest start date down
+  const sortVesselHistory = (history?: VesselHistoryEntry[]): VesselHistoryEntry[] => {
+    if (!history || history.length === 0) return [];
+    return [...history].sort((a, b) => {
+      if (!a.endDate && b.endDate) return -1;
+      if (a.endDate && !b.endDate) return 1;
+      const timeA = parseDDMMYYYY(a.startDate);
+      const timeB = parseDDMMYYYY(b.startDate);
+      return timeB - timeA;
+    });
+  };
 
   // Maritime Crew Hierarchy Rank Weight
   const getCrewRankWeight = (role: string): number => {
@@ -1858,7 +1888,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {selectedCrewMember.vesselHistory.map((entry, idx) => (
+                    {sortVesselHistory(selectedCrewMember.vesselHistory).map((entry, idx) => (
                       <div
                         key={idx}
                         className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"

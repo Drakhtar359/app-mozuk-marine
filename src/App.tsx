@@ -36,9 +36,9 @@ export function App() {
           signOnDate: '15/01/2026',
           signOnLocation: 'Rotterdam',
           vesselHistory: [
-            { shipName: 'MOZUK MARINER', role: 'Chief Officer', startDate: '10/02/2022', endDate: '15/11/2023' },
-            { shipName: 'SIRIOS BULK II', role: 'Master / Captain', startDate: '15/01/2024', endDate: '30/08/2025' },
             { shipName: 'SIRIOS BULK II', role: 'Master / Captain', startDate: '15/01/2026' },
+            { shipName: 'SIRIOS BULK II', role: 'Master / Captain', startDate: '15/01/2024', endDate: '30/08/2025' },
+            { shipName: 'MOZUK MARINER', role: 'Chief Officer', startDate: '10/02/2022', endDate: '15/11/2023' },
           ],
         },
         {
@@ -55,8 +55,8 @@ export function App() {
           signOnDate: '10/03/2026',
           signOnLocation: 'Antwerp',
           vesselHistory: [
-            { shipName: 'MOZUK MARINER', role: 'Second Officer', startDate: '05/05/2023', endDate: '10/12/2024' },
             { shipName: 'SIRIOS BULK II', role: 'Chief Officer', startDate: '10/03/2026' },
+            { shipName: 'MOZUK MARINER', role: 'Second Officer', startDate: '05/05/2023', endDate: '10/12/2024' },
           ],
         },
         {
@@ -73,8 +73,8 @@ export function App() {
           signOnDate: '12/05/2026',
           signOnLocation: 'Yokohama',
           vesselHistory: [
-            { shipName: 'EVER GIVEN', role: 'Third Officer', startDate: '15/01/2024', endDate: '20/12/2024' },
             { shipName: 'SIRIOS BULK II', role: 'Second Officer', startDate: '12/05/2026' },
+            { shipName: 'EVER GIVEN', role: 'Third Officer', startDate: '15/01/2024', endDate: '20/12/2024' },
           ],
         },
         {
@@ -91,8 +91,8 @@ export function App() {
           signOnDate: '01/04/2026',
           signOnLocation: 'Manila',
           vesselHistory: [
-            { shipName: 'MOZUK MARINER', role: 'Able Seaman', startDate: '01/03/2021', endDate: '15/02/2023' },
             { shipName: 'SIRIOS BULK II', role: 'Bosun', startDate: '01/04/2026' },
+            { shipName: 'MOZUK MARINER', role: 'Able Seaman', startDate: '01/03/2021', endDate: '15/02/2023' },
           ],
         },
         {
@@ -109,8 +109,8 @@ export function App() {
           signOnDate: '15/04/2026',
           signOnLocation: 'Manila',
           vesselHistory: [
-            { shipName: 'SIRIOS BULK II', role: 'Ordinary Seaman', startDate: '10/05/2024', endDate: '20/12/2024' },
             { shipName: 'SIRIOS BULK II', role: 'Able Seaman', startDate: '15/04/2026' },
+            { shipName: 'SIRIOS BULK II', role: 'Ordinary Seaman', startDate: '10/05/2024', endDate: '20/12/2024' },
           ],
         },
         {
@@ -127,9 +127,9 @@ export function App() {
           signOnDate: '01/02/2026',
           signOnLocation: 'Piraeus',
           vesselHistory: [
-            { shipName: 'MSC OSCAR', role: 'Second Engineer', startDate: '01/06/2021', endDate: '10/01/2023' },
-            { shipName: 'SIRIOS BULK II', role: 'Chief Engineer', startDate: '01/02/2024', endDate: '15/12/2024' },
             { shipName: 'SIRIOS BULK II', role: 'Chief Engineer', startDate: '01/02/2026' },
+            { shipName: 'SIRIOS BULK II', role: 'Chief Engineer', startDate: '01/02/2024', endDate: '15/12/2024' },
+            { shipName: 'MSC OSCAR', role: 'Second Engineer', startDate: '01/06/2021', endDate: '10/01/2023' },
           ],
         },
         {
@@ -146,8 +146,8 @@ export function App() {
           signOnDate: '05/04/2026',
           signOnLocation: 'Tallinn',
           vesselHistory: [
-            { shipName: 'SIRIOS BULK II', role: 'Third Engineer', startDate: '10/01/2023', endDate: '20/11/2024' },
             { shipName: 'SIRIOS BULK II', role: 'Second Engineer', startDate: '05/04/2026' },
+            { shipName: 'SIRIOS BULK II', role: 'Third Engineer', startDate: '10/01/2023', endDate: '20/11/2024' },
           ],
         },
         {
@@ -164,8 +164,8 @@ export function App() {
           signOnDate: '01/05/2026',
           signOnLocation: 'Riga',
           vesselHistory: [
-            { shipName: 'SIRIOS BULK II', role: 'Fourth Engineer', startDate: '15/04/2024', endDate: '10/01/2025' },
             { shipName: 'SIRIOS BULK II', role: 'Third Engineer', startDate: '01/05/2026' },
+            { shipName: 'SIRIOS BULK II', role: 'Fourth Engineer', startDate: '15/04/2024', endDate: '10/01/2025' },
           ],
         },
         {
@@ -182,8 +182,8 @@ export function App() {
           signOnDate: '20/05/2026',
           signOnLocation: 'Alexandria',
           vesselHistory: [
-            { shipName: 'MOZUK MARINER', role: 'Wiper', startDate: '05/02/2023', endDate: '30/11/2024' },
             { shipName: 'SIRIOS BULK II', role: 'Oiler / Motorman', startDate: '20/05/2026' },
+            { shipName: 'MOZUK MARINER', role: 'Wiper', startDate: '05/02/2023', endDate: '30/11/2024' },
           ],
         },
         {
@@ -200,8 +200,8 @@ export function App() {
           signOnDate: '15/02/2026',
           signOnLocation: 'Genoa',
           vesselHistory: [
-            { shipName: 'MSC OSCAR', role: 'Second Cook', startDate: '10/03/2022', endDate: '15/01/2024' },
             { shipName: 'SIRIOS BULK II', role: 'Chief Cook', startDate: '15/02/2026' },
+            { shipName: 'MSC OSCAR', role: 'Second Cook', startDate: '10/03/2022', endDate: '15/01/2024' },
           ],
         },
         {
