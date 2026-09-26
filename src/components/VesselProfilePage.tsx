@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog } from '../types/vessel';
+import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog, getEffectiveVesselHistory } from '../types/vessel';
 import {
   ArrowLeft,
   Users,
@@ -2486,38 +2486,41 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   <History className="w-4 h-4 text-[var(--color-primary)]" /> Company Vessel Service History
                 </h4>
 
-                {(!selectedCrewMember.vesselHistory || selectedCrewMember.vesselHistory.length === 0) ? (
-                  <div className="bg-[var(--color-surface)] rounded-xl p-4 text-center text-[var(--text-muted)] text-xs border border-[var(--color-glass-border)]">
-                    Current vessel ({ship.name}) is the first recorded assignment in company fleet.
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {sortVesselHistory(selectedCrewMember.vesselHistory).map((entry, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold">
-                            <Briefcase className="w-4 h-4" />
+                {(() => {
+                  const effectiveSelectedHistory = getEffectiveVesselHistory(selectedCrewMember);
+                  return effectiveSelectedHistory.length === 0 ? (
+                    <div className="bg-[var(--color-surface)] rounded-xl p-4 text-center text-[var(--text-muted)] text-xs border border-[var(--color-glass-border)]">
+                      Current vessel ({ship.name}) is the first recorded assignment in company fleet.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {sortVesselHistory(effectiveSelectedHistory).map((entry, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold">
+                              <Briefcase className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h5 className="font-bold text-[var(--text-main)] text-xs">{entry.shipName}</h5>
+                              <span className="text-[11px] text-[var(--color-primary)] font-semibold">{entry.role}</span>
+                            </div>
                           </div>
-                          <div>
-                            <h5 className="font-bold text-[var(--text-main)] text-xs">{entry.shipName}</h5>
-                            <span className="text-[11px] text-[var(--color-primary)] font-semibold">{entry.role}</span>
-                          </div>
-                        </div>
 
-                        <div className="text-[11px] text-[var(--text-muted)] font-mono sm:text-right">
-                          <span>{formatDate(entry.startDate)}</span>
-                          <span className="mx-1.5">→</span>
-                          <span className={!entry.endDate ? 'text-emerald-500 font-bold' : ''}>
-                            {entry.endDate ? formatDate(entry.endDate) : 'Present (Current Assignment)'}
-                          </span>
+                          <div className="text-[11px] text-[var(--text-muted)] font-mono sm:text-right">
+                            <span>{formatDate(entry.startDate)}</span>
+                            <span className="mx-1.5">→</span>
+                            <span className={!entry.endDate ? 'text-emerald-500 font-bold' : ''}>
+                              {entry.endDate ? formatDate(entry.endDate) : 'Present (Current Assignment)'}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 

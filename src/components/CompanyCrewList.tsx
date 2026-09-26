@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CrewMember, Ship, VesselHistoryEntry } from '../types/vessel';
+import { CrewMember, Ship, VesselHistoryEntry, getEffectiveVesselHistory } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { sortByRankHierarchy, getCrewRankWeight } from '../utils/rankSort';
 import { DateInput } from './DateInput';
@@ -482,7 +482,8 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               ) : (
                 paginatedCrew.map((crew) => {
                   const assignedShip = ships.find((s) => s.id === crew.assignedShipId);
-                  const historyCount = crew.vesselHistory ? crew.vesselHistory.length : 0;
+                  const effectiveHistory = getEffectiveVesselHistory(crew);
+                  const historyCount = effectiveHistory.length;
 
                   return (
                     <tr
@@ -1160,13 +1161,15 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                   <History className="w-4 h-4 text-[var(--color-primary)]" /> Company Vessel Service History
                 </h4>
 
-                {(!viewingProfileCrew.vesselHistory || viewingProfileCrew.vesselHistory.length === 0) ? (
-                  <div className="bg-[var(--color-surface)] rounded-xl p-4 text-center text-[var(--text-muted)] text-xs border border-[var(--color-glass-border)]">
-                    No prior vessel assignment recorded in company fleet.
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {sortVesselHistory(viewingProfileCrew.vesselHistory).map((entry, idx) => (
+                {(() => {
+                  const effectiveProfileHistory = getEffectiveVesselHistory(viewingProfileCrew);
+                  return effectiveProfileHistory.length === 0 ? (
+                    <div className="bg-[var(--color-surface)] rounded-xl p-4 text-center text-[var(--text-muted)] text-xs border border-[var(--color-glass-border)]">
+                      No prior vessel assignment recorded in company fleet.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {sortVesselHistory(effectiveProfileHistory).map((entry, idx) => (
                       <div
                         key={idx}
                         className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
@@ -1191,7 +1194,8 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       </div>
                     ))}
                   </div>
-                )}
+                );
+              })()}
               </div>
             </div>
 

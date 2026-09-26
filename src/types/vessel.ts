@@ -75,3 +75,33 @@ export interface Ship {
   visitors?: VisitorLog[];
   addedAt: string;
 }
+
+export const getEffectiveVesselHistory = (crew: CrewMember): VesselHistoryEntry[] => {
+  const history = crew.vesselHistory ? [...crew.vesselHistory] : [];
+
+  if (crew.assignedShipName) {
+    const hasActiveEntryForShip = history.some(
+      (h) => h.shipName.toLowerCase() === crew.assignedShipName!.toLowerCase() && !h.endDate
+    );
+    if (!hasActiveEntryForShip) {
+      const closedEntryIdx = history.findIndex(
+        (h) => h.shipName.toLowerCase() === crew.assignedShipName!.toLowerCase()
+      );
+      if (closedEntryIdx !== -1) {
+        history[closedEntryIdx] = {
+          ...history[closedEntryIdx],
+          role: history[closedEntryIdx].role || crew.role,
+          endDate: undefined,
+        };
+      } else {
+        history.unshift({
+          shipName: crew.assignedShipName,
+          role: crew.role,
+          startDate: crew.signOnDate || 'Active',
+        });
+      }
+    }
+  }
+
+  return history;
+};
