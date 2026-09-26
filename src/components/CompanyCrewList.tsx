@@ -28,6 +28,8 @@ import {
   BookOpen,
   Briefcase,
   History,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 interface CompanyCrewListProps {
@@ -55,6 +57,8 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   const [vesselFilter, setVesselFilter] = useState<string>('all');
   const [departmentFilter, setDepartmentFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'rank' | 'name' | 'signOn'>('rank');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   // Modal States
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -261,6 +265,11 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     return 0;
   });
 
+  // Pagination Slice
+  const totalPages = Math.ceil(sortedCrew.length / ITEMS_PER_PAGE) || 1;
+  const validCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedCrew = sortedCrew.slice((validCurrentPage - 1) * ITEMS_PER_PAGE, validCurrentPage * ITEMS_PER_PAGE);
+
   const assignedCount = companyCrew.filter((c) => c.assignedShipId).length;
   const unassignedCount = companyCrew.filter((c) => !c.assignedShipId).length;
 
@@ -277,6 +286,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     setVesselFilter('all');
     setDepartmentFilter('all');
     setSortBy('rank');
+    setCurrentPage(1);
   };
 
   return (
@@ -439,179 +449,217 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
       </div>
 
       {/* MASTER CREW ROSTER TABLE */}
-      <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-        <table className="w-full text-left text-xs min-w-[950px]">
-          <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-bold">
-            <tr>
-              <th className="py-3.5 px-4">Crew Member Name & Role</th>
-              <th className="py-3.5 px-4">Department</th>
-              <th className="py-3.5 px-4">Current Ship Assignment</th>
-              <th className="py-3.5 px-4">Nationality</th>
-              <th className="py-3.5 px-4">Passport & Seaman Book</th>
-              <th className="py-3.5 px-4 text-center">Vessels Served</th>
-              <th className="py-3.5 px-4 text-right sticky right-0 bg-[var(--color-bg-alt)] z-10">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--color-glass-border)]">
-            {sortedCrew.length === 0 ? (
+      <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-bold">
               <tr>
-                <td colSpan={7} className="py-12 text-center text-[var(--text-muted)] text-xs">
-                  <Users className="w-10 h-10 text-[var(--text-dim)] mx-auto mb-2 opacity-50" />
-                  <h4 className="font-bold text-[var(--text-main)] text-sm mb-1">No Crew Members Match Criteria</h4>
-                  <p>Try clearing your search term or filter parameters.</p>
-                </td>
+                <th className="py-3.5 px-4">Crew Member Name & Role</th>
+                <th className="py-3.5 px-4">Department</th>
+                <th className="py-3.5 px-4">Current Ship Assignment</th>
+                <th className="py-3.5 px-4">Nationality</th>
+                <th className="py-3.5 px-4">Passport & Seaman Book</th>
+                <th className="py-3.5 px-4 text-center">Vessels Served</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
-            ) : (
-              sortedCrew.map((crew) => {
-                const assignedShip = ships.find((s) => s.id === crew.assignedShipId);
-                const historyCount = crew.vesselHistory ? crew.vesselHistory.length : 0;
+            </thead>
+            <tbody className="divide-y divide-[var(--color-glass-border)]">
+              {paginatedCrew.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-[var(--text-muted)] text-xs">
+                    <Users className="w-10 h-10 text-[var(--text-dim)] mx-auto mb-2 opacity-50" />
+                    <h4 className="font-bold text-[var(--text-main)] text-sm mb-1">No Crew Members Match Criteria</h4>
+                    <p>Try clearing your search term or filter parameters.</p>
+                  </td>
+                </tr>
+              ) : (
+                paginatedCrew.map((crew) => {
+                  const assignedShip = ships.find((s) => s.id === crew.assignedShipId);
+                  const historyCount = crew.vesselHistory ? crew.vesselHistory.length : 0;
 
-                return (
-                  <tr
-                    key={crew.id}
-                    className="hover:bg-[var(--color-glass-border)] transition group cursor-pointer"
-                    onClick={() => {
-                      setViewingProfileCrew(crew);
-                      onSelectCrewMember(crew);
-                    }}
-                    title="Click to view full crew profile"
-                  >
-                    {/* Name & Role (Fitted cleanly on one line) */}
-                    <td className="py-3.5 px-4 align-middle whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-blue-950/80 border border-blue-800/80 text-blue-400 font-extrabold text-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                          {crew.name.charAt(0)}
-                        </div>
-                        <div>
-                          <h4 className="font-extrabold text-[var(--text-main)] text-xs whitespace-nowrap group-hover:text-[var(--color-primary)] transition">
-                            {crew.name}
-                          </h4>
-                          <div className="flex items-center gap-2 mt-0.5 whitespace-nowrap">
-                            <span className="font-semibold text-[11px] text-[var(--color-primary)] whitespace-nowrap">
-                              {crew.role}
-                            </span>
-                            {crew.email && (
-                              <span className="text-[11px] text-[var(--text-muted)] flex items-center gap-1 font-mono whitespace-nowrap">
-                                <Mail className="w-3 h-3 text-cyan-400 shrink-0" />
-                                {crew.email}
+                  return (
+                    <tr
+                      key={crew.id}
+                      className="hover:bg-[var(--color-glass-border)] transition group cursor-pointer"
+                      onClick={() => {
+                        setViewingProfileCrew(crew);
+                        onSelectCrewMember(crew);
+                      }}
+                      title="Click to view full crew profile"
+                    >
+                      {/* Name & Role (Fitted cleanly on one line) */}
+                      <td className="py-3.5 px-4 align-middle whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-blue-950/80 border border-blue-800/80 text-blue-400 font-extrabold text-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            {crew.name.charAt(0)}
+                          </div>
+                          <div>
+                            <h4 className="font-extrabold text-[var(--text-main)] text-xs whitespace-nowrap group-hover:text-[var(--color-primary)] transition">
+                              {crew.name}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-0.5 whitespace-nowrap">
+                              <span className="font-semibold text-[11px] text-[var(--color-primary)] whitespace-nowrap">
+                                {crew.role}
                               </span>
-                            )}
+                              {crew.email && (
+                                <span className="text-[11px] text-[var(--text-muted)] flex items-center gap-1 font-mono whitespace-nowrap">
+                                  <Mail className="w-3 h-3 text-cyan-400 shrink-0" />
+                                  {crew.email}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Department */}
-                    <td className="py-3.5 px-4 align-middle whitespace-nowrap">
-                      {crew.department === 'master' && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-purple-950/60 text-purple-300 border border-purple-800/60 font-bold text-[10px]">
-                          MASTER
+                      {/* Department */}
+                      <td className="py-3.5 px-4 align-middle whitespace-nowrap">
+                        {crew.department === 'master' && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-purple-950/60 text-purple-300 border border-purple-800/60 font-bold text-[10px]">
+                            MASTER
+                          </span>
+                        )}
+                        {crew.department === 'deck' && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 font-bold text-[10px]">
+                            DECK DEPT
+                          </span>
+                        )}
+                        {crew.department === 'engine' && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-blue-950/60 text-blue-300 border border-blue-800/60 font-bold text-[10px]">
+                            ENGINE DEPT
+                          </span>
+                        )}
+                        {crew.department === 'kitchen' && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 font-bold text-[10px]">
+                            GALLEY & MESS
+                          </span>
+                        )}
+                        {!crew.department && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-slate-800/60 text-slate-400 border border-slate-700/60 font-bold text-[10px]">
+                            GENERAL CREW
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Current Ship Assignment */}
+                      <td className="py-3.5 px-4 align-middle whitespace-nowrap">
+                        {assignedShip ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectShip(assignedShip);
+                            }}
+                            className="px-3 py-1 rounded-xl bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/80 text-xs font-bold inline-flex items-center gap-1.5 transition shadow-sm group/btn"
+                            title={`Click to open ${assignedShip.name} vessel profile`}
+                          >
+                            <ShipIcon className="w-3.5 h-3.5 text-cyan-400 shrink-0 group-hover/btn:scale-110 transition-transform" />
+                            <span>{assignedShip.name}</span>
+                            <ExternalLink className="w-3 h-3 opacity-60 ml-0.5" />
+                          </button>
+                        ) : (
+                          <span className="px-3 py-1 rounded-xl bg-amber-950/40 text-amber-300 border border-amber-800/60 text-xs font-bold inline-flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                            <span>Unassigned</span>
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Nationality */}
+                      <td className="py-3.5 px-4 align-middle text-[var(--text-main)] font-semibold whitespace-nowrap">
+                        {crew.nationality}
+                      </td>
+
+                      {/* Passport & Seaman Book */}
+                      <td className="py-3.5 px-4 align-middle whitespace-nowrap font-mono text-[11px] text-[var(--text-muted)] space-y-0.5">
+                        <div>Pass: <span className="text-[var(--text-main)]">{crew.passportNumber || '—'}</span></div>
+                        <div>SB: <span className="text-[var(--text-main)]">{crew.seamanBookNo || '—'}</span></div>
+                      </td>
+
+                      {/* Vessels Served */}
+                      <td className="py-3.5 px-4 align-middle text-center whitespace-nowrap">
+                        <span className="px-2.5 py-1 rounded-lg bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-bold text-xs text-[var(--color-primary)]">
+                          {historyCount} {historyCount === 1 ? 'vessel' : 'vessels'}
                         </span>
-                      )}
-                      {crew.department === 'deck' && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 font-bold text-[10px]">
-                          DECK DEPT
-                        </span>
-                      )}
-                      {crew.department === 'engine' && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-blue-950/60 text-blue-300 border border-blue-800/60 font-bold text-[10px]">
-                          ENGINE DEPT
-                        </span>
-                      )}
-                      {crew.department === 'kitchen' && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 font-bold text-[10px]">
-                          GALLEY & MESS
-                        </span>
-                      )}
-                      {!crew.department && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-slate-800/60 text-slate-400 border border-slate-700/60 font-bold text-[10px]">
-                          GENERAL CREW
-                        </span>
-                      )}
-                    </td>
+                      </td>
 
-                    {/* Current Ship Assignment */}
-                    <td className="py-3.5 px-4 align-middle whitespace-nowrap">
-                      {assignedShip ? (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectShip(assignedShip);
-                          }}
-                          className="px-3 py-1 rounded-xl bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/80 text-xs font-bold inline-flex items-center gap-1.5 transition shadow-sm group/btn"
-                          title={`Click to open ${assignedShip.name} vessel profile`}
-                        >
-                          <ShipIcon className="w-3.5 h-3.5 text-cyan-400 shrink-0 group-hover/btn:scale-110 transition-transform" />
-                          <span>{assignedShip.name}</span>
-                          <ExternalLink className="w-3 h-3 opacity-60 ml-0.5" />
-                        </button>
-                      ) : (
-                        <span className="px-3 py-1 rounded-xl bg-amber-950/40 text-amber-300 border border-amber-800/60 text-xs font-bold inline-flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                          <span>Unassigned</span>
-                        </span>
-                      )}
-                    </td>
+                      {/* Actions */}
+                      <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+                          {/* View Profile Button */}
+                          <button
+                            onClick={() => {
+                              setViewingProfileCrew(crew);
+                              onSelectCrewMember(crew);
+                            }}
+                            className="p-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/60 text-blue-300 border border-blue-800/60 transition inline-flex items-center gap-1 text-[11px] font-bold"
+                            title="View full crew profile"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                            <span>Profile</span>
+                          </button>
 
-                    {/* Nationality */}
-                    <td className="py-3.5 px-4 align-middle text-[var(--text-main)] font-semibold whitespace-nowrap">
-                      {crew.nationality}
-                    </td>
+                          {/* Delete Button */}
+                          <button
+                            onClick={() => onRemoveCrewMember(crew.id)}
+                            className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
+                            title="Remove crew member from company roster"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
 
-                    {/* Passport & Seaman Book */}
-                    <td className="py-3.5 px-4 align-middle whitespace-nowrap font-mono text-[11px] text-[var(--text-muted)] space-y-0.5">
-                      <div>Pass: <span className="text-[var(--text-main)]">{crew.passportNumber || '—'}</span></div>
-                      <div>SB: <span className="text-[var(--text-main)]">{crew.seamanBookNo || '—'}</span></div>
-                    </td>
+        {/* Pagination Bar */}
+        {sortedCrew.length > 0 && (
+          <div className="px-4 py-3 bg-[var(--color-surface)] border-t border-[var(--color-glass-border)] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="text-[var(--text-muted)] font-semibold">
+              Showing <strong className="text-[var(--text-main)] font-mono">{(validCurrentPage - 1) * ITEMS_PER_PAGE + 1}</strong> to{' '}
+              <strong className="text-[var(--text-main)] font-mono">{Math.min(validCurrentPage * ITEMS_PER_PAGE, sortedCrew.length)}</strong> of{' '}
+              <strong className="text-[var(--text-main)] font-mono">{sortedCrew.length}</strong> crew members
+            </div>
 
-                    {/* Vessels Served */}
-                    <td className="py-3.5 px-4 align-middle text-center whitespace-nowrap">
-                      <span className="px-2.5 py-1 rounded-lg bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-bold text-xs text-[var(--color-primary)]">
-                        {historyCount} {historyCount === 1 ? 'vessel' : 'vessels'}
-                      </span>
-                    </td>
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={validCurrentPage === 1}
+                  className="px-2.5 py-1.5 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] text-[var(--text-main)] font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--color-glass-border)] transition flex items-center gap-1"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Prev
+                </button>
 
-                    {/* Actions */}
-                    <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap sticky right-0 bg-[var(--color-surface)] group-hover:bg-[var(--color-glass-border)] transition z-10">
-                      <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-                        {/* Assign / Change Ship Button */}
-                        <button
-                          onClick={() => openAssignModal(crew)}
-                          className="px-2.5 py-1 rounded-lg bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-800/80 text-[11px] font-bold transition inline-flex items-center gap-1 shadow-sm"
-                          title="Assign or reassign crew member to a vessel"
-                        >
-                          <Anchor className="w-3 h-3 text-cyan-400" />
-                          <span>{crew.assignedShipId ? 'Change Ship' : 'Assign Ship'}</span>
-                        </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-xl font-mono font-bold text-xs transition ${
+                      pageNum === validCurrentPage
+                        ? 'bg-[var(--color-primary)] text-slate-950 shadow-sm'
+                        : 'bg-[var(--color-bg)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
 
-                        {/* View Profile Button */}
-                        <button
-                          onClick={() => {
-                            setViewingProfileCrew(crew);
-                            onSelectCrewMember(crew);
-                          }}
-                          className="p-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/60 text-blue-300 border border-blue-800/60 transition inline-flex items-center"
-                          title="View full crew profile"
-                        >
-                          <FileText className="w-3.5 h-3.5" />
-                        </button>
-
-                        {/* Delete Button */}
-                        <button
-                          onClick={() => onRemoveCrewMember(crew.id)}
-                          className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
-                          title="Remove crew member from company roster"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={validCurrentPage === totalPages}
+                  className="px-2.5 py-1.5 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] text-[var(--text-main)] font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--color-glass-border)] transition flex items-center gap-1"
+                >
+                  Next <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             )}
-          </tbody>
-        </table>
+          </div>
+        )}
       </div>
 
       {/* MODAL 1: REGISTER NEW COMPANY CREW MEMBER */}
