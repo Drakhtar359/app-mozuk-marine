@@ -30,6 +30,7 @@ import {
   History,
   ChevronLeft,
   ChevronRight,
+  Phone,
 } from 'lucide-react';
 
 interface CompanyCrewListProps {
@@ -76,6 +77,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   // Add Crew Form States
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [role, setRole] = useState('Chief Officer');
   const [department, setDepartment] = useState<'master' | 'deck' | 'engine' | 'kitchen'>('deck');
   const [nationality, setNationality] = useState('British');
@@ -92,6 +94,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   const [quickShipId, setQuickShipId] = useState<string>('unassigned');
   const [quickRole, setQuickRole] = useState('');
   const [quickEmail, setQuickEmail] = useState('');
+  const [quickPhone, setQuickPhone] = useState('');
   const [quickSignOnDate, setQuickSignOnDate] = useState('');
   const [quickLocation, setQuickLocation] = useState('');
 
@@ -108,6 +111,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   const resetForm = () => {
     setName('');
     setEmail('');
+    setPhoneNumber('');
     setRole('Chief Officer');
     setDepartment('deck');
     setNationality('British');
@@ -132,6 +136,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
       id: `crew-${Date.now()}`,
       name: name.trim(),
       email: email.trim() || undefined,
+      phoneNumber: phoneNumber.trim() || undefined,
       role: role.trim() || 'Officer',
       department,
       nationality: nationality.trim() || 'International',
@@ -166,6 +171,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     setQuickShipId(crew.assignedShipId || 'unassigned');
     setQuickRole(crew.role);
     setQuickEmail(crew.email || '');
+    setQuickPhone(crew.phoneNumber || '');
     setQuickSignOnDate(crew.signOnDate || getTodayDDMMYYYY());
     setQuickLocation(crew.signOnLocation || '');
   };
@@ -202,6 +208,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
       ...assigningCrew,
       role: quickRole.trim() || assigningCrew.role,
       email: quickEmail.trim() || assigningCrew.email,
+      phoneNumber: quickPhone.trim() || assigningCrew.phoneNumber,
       assignedShipId: newShip ? newShip.id : undefined,
       assignedShipName: newShip ? newShip.name : undefined,
       signOnDate: formatDate(quickSignOnDate || getTodayDDMMYYYY()),
@@ -549,17 +556,17 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               e.stopPropagation();
                               onSelectShip(assignedShip);
                             }}
-                            className="px-3 py-1 rounded-xl bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/80 text-xs font-bold inline-flex items-center gap-1.5 transition shadow-sm group/btn"
+                            className="px-2.5 py-0.5 rounded-full bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/80 text-[10px] font-bold inline-flex items-center gap-1 transition shadow-sm group/btn"
                             title={`Click to open ${assignedShip.name} vessel profile`}
                           >
-                            <ShipIcon className="w-3.5 h-3.5 text-cyan-400 shrink-0 group-hover/btn:scale-110 transition-transform" />
+                            <ShipIcon className="w-3 h-3 text-cyan-400 shrink-0 group-hover/btn:scale-110 transition-transform" />
                             <span>{assignedShip.name}</span>
-                            <ExternalLink className="w-3 h-3 opacity-60 ml-0.5" />
+                            <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
                           </button>
                         ) : (
-                          <span className="px-3 py-1 rounded-xl bg-amber-950/40 text-amber-300 border border-amber-800/60 text-xs font-bold inline-flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                            <span>Unassigned</span>
+                          <span className="px-2.5 py-0.5 rounded-full bg-amber-950/40 text-amber-300 border border-amber-800/60 text-[10px] font-bold inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-amber-400 shrink-0" />
+                            <span>UNASSIGNED</span>
                           </span>
                         )}
                       </td>
@@ -691,8 +698,8 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
             {/* Form */}
             <form onSubmit={handleAddSubmit} className="p-6 space-y-4 text-xs">
-              {/* Name & Email */}
-              <div className="grid grid-cols-2 gap-3">
+              {/* Name, Email & Phone */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">
                     Full Name <span className="text-rose-400">*</span>
@@ -717,6 +724,19 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Phone Number <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="e.g. +44 7911 123456"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] font-mono"
                   />
                 </div>
               </div>
@@ -1039,6 +1059,16 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     </div>
                     <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={viewingProfileCrew.email}>
                       {viewingProfileCrew.email || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* Phone Number */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Phone className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Phone Number
+                    </div>
+                    <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={viewingProfileCrew.phoneNumber}>
+                      {viewingProfileCrew.phoneNumber || 'N/A'}
                     </div>
                   </div>
 

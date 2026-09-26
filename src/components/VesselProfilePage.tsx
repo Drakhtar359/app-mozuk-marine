@@ -39,6 +39,7 @@ import {
   LogIn,
   Filter,
   Mail,
+  Phone,
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
@@ -77,6 +78,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   // Form states for Crew Member
   const [crewName, setCrewName] = useState('');
   const [crewEmail, setCrewEmail] = useState('');
+  const [crewPhoneNumber, setCrewPhoneNumber] = useState('');
   const [crewDepartment, setCrewDepartment] = useState<'master' | 'deck' | 'engine' | 'kitchen'>('deck');
   const [crewRole, setCrewRole] = useState('Chief Officer');
   const [crewNationality, setCrewNationality] = useState('');
@@ -287,6 +289,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       id: `crew-${Date.now()}`,
       name: crewName.trim(),
       email: crewEmail.trim() || undefined,
+      phoneNumber: crewPhoneNumber.trim() || undefined,
       role: crewRole,
       department: crewDepartment,
       nationality: crewNationality.trim() || 'Mozambican',
@@ -313,6 +316,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
     setCrewName('');
     setCrewEmail('');
+    setCrewPhoneNumber('');
     setCrewNationality('');
     setCrewSignOnDate('');
     setSeamanBookNo('');
@@ -1914,7 +1918,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             ) : (
               /* TAB 2: REGISTER NEW CREW MEMBER FORM */
               <form onSubmit={handleAddCrew} className="p-6 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Full Name *</label>
                   <input
@@ -1935,6 +1939,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     value={crewEmail}
                     onChange={(e) => setCrewEmail(e.target.value)}
                     className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="e.g. +44 7911 123456"
+                    value={crewPhoneNumber}
+                    onChange={(e) => setCrewPhoneNumber(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
                   />
                 </div>
               </div>
@@ -2370,6 +2385,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     </div>
                     <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={selectedCrewMember.email}>
                       {selectedCrewMember.email || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* Phone Number */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Phone className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Phone Number
+                    </div>
+                    <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={selectedCrewMember.phoneNumber}>
+                      {selectedCrewMember.phoneNumber || 'N/A'}
                     </div>
                   </div>
 
