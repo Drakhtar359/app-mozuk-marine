@@ -19,6 +19,8 @@ export interface CrewMember {
   seamanBookNo?: string;
   seamanBookExpiry?: string;
   vesselHistory?: VesselHistoryEntry[];
+  assignedShipId?: string;
+  assignedShipName?: string;
 }
 
 export interface TechnicalDoc {

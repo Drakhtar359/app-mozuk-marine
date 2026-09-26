@@ -44,14 +44,20 @@ import { DateInput } from './DateInput';
 
 interface VesselProfilePageProps {
   ship: Ship;
+  companyCrew?: CrewMember[];
   onBack: () => void;
   onUpdateShip: (updatedShip: Ship) => void;
+  onAssignExistingCrewToShip?: (crewId: string, role?: string, signOnDate?: string, signOnLocation?: string) => void;
+  onUnassignCrewFromShip?: (crewId: string) => void;
 }
 
 export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   ship,
+  companyCrew = [],
   onBack,
   onUpdateShip,
+  onAssignExistingCrewToShip,
+  onUnassignCrewFromShip,
 }) => {
   const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'visitors'>('crew');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
@@ -62,6 +68,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [isAddDocModalOpen, setIsAddDocModalOpen] = useState(false);
   const [isAddRepairModalOpen, setIsAddRepairModalOpen] = useState(false);
   const [isAddVisitorModalOpen, setIsAddVisitorModalOpen] = useState(false);
+
+  // Add Crew Modal Mode (Select from company roster vs Register new)
+  const [addCrewTab, setAddCrewTab] = useState<'select' | 'create'>('select');
+  const [selectedExistingCrewId, setSelectedExistingCrewId] = useState<string>('');
 
   // Form states for Crew Member
   const [crewName, setCrewName] = useState('');
@@ -310,11 +320,50 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     setIsAddCrewModalOpen(false);
   };
 
+  const handleAssignExistingCrewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedExistingCrewId) return;
+
+    if (onAssignExistingCrewToShip) {
+      onAssignExistingCrewToShip(
+        selectedExistingCrewId,
+        crewRole,
+        crewSignOnDate || getTodayDDMMYYYY(),
+        crewSignOnLocation
+      );
+    } else {
+      const existing = companyCrew.find((c) => c.id === selectedExistingCrewId);
+      if (existing) {
+        const updated: CrewMember = {
+          ...existing,
+          role: crewRole || existing.role,
+          signOnDate: formatDate(crewSignOnDate || getTodayDDMMYYYY()),
+          signOnLocation: crewSignOnLocation || existing.signOnLocation,
+          assignedShipId: ship.id,
+          assignedShipName: ship.name,
+        };
+        onUpdateShip({
+          ...ship,
+          crew: [updated, ...ship.crew.filter((c) => c.id !== existing.id)],
+        });
+      }
+    }
+
+    setSelectedExistingCrewId('');
+    setCrewSignOnDate('');
+    setCrewSignOnLocation('');
+    setIsAddCrewModalOpen(false);
+  };
+
   const handleRemoveCrew = (crewId: string) => {
-    onUpdateShip({
-      ...ship,
-      crew: ship.crew.filter((c) => c.id !== crewId),
-    });
+    if (onUnassignCrewFromShip) {
+      onUnassignCrewFromShip(crewId);
+    } else {
+      onUpdateShip({
+        ...ship,
+        crew: ship.crew.filter((c) => c.id !== crewId),
+      });
+    }
   };
 
   // Technical Document Handlers
@@ -1700,17 +1749,167 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       {/* MODAL 1: ADD CREW MEMBER */}
       {isAddCrewModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col">
+            {/* Modal Header */}
             <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                <UserPlus className="w-4 h-4 text-[var(--color-primary)]" /> Add Crew Member to {ship.name}
-              </h3>
-              <button onClick={() => setIsAddCrewModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
+              <div>
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                  <UserPlus className="w-4 h-4 text-[var(--color-primary)]" /> Add Crew Member to {ship.name}
+                </h3>
+                <p className="text-xs text-[var(--text-muted)]">Assign existing company personnel or register a new crew member</p>
+              </div>
+              <button onClick={() => setIsAddCrewModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleAddCrew} className="p-6 space-y-4 text-xs">
+            {/* Mode Switcher Tabs */}
+            <div className="px-6 pt-4 pb-2 border-b border-[var(--color-glass-border)] bg-[var(--color-bg-alt)]">
+              <div className="grid grid-cols-2 gap-2 bg-[var(--color-bg)] p-1 rounded-xl border border-[var(--color-glass-border)] text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setAddCrewTab('select')}
+                  className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition ${
+                    addCrewTab === 'select'
+                      ? 'bg-[var(--color-primary)] text-slate-950 shadow-sm'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  }`}
+                >
+                  <Users className="w-3.5 h-3.5" /> Select from Roster
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAddCrewTab('create')}
+                  className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition ${
+                    addCrewTab === 'create'
+                      ? 'bg-[var(--color-primary)] text-slate-950 shadow-sm'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  }`}
+                >
+                  <UserPlus className="w-3.5 h-3.5" /> Register New Crew
+                </button>
+              </div>
+            </div>
+
+            {/* TAB 1: SELECT FROM COMPANY ROSTER */}
+            {addCrewTab === 'select' ? (
+              <form onSubmit={handleAssignExistingCrewSubmit} className="p-6 space-y-4 text-xs">
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1.5">
+                    Select Company Crew Member *
+                  </label>
+                  <select
+                    value={selectedExistingCrewId}
+                    onChange={(e) => {
+                      const id = e.target.value;
+                      setSelectedExistingCrewId(id);
+                      const selected = companyCrew.find((c) => c.id === id);
+                      if (selected) {
+                        setCrewRole(selected.role);
+                      }
+                    }}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
+                  >
+                    <option value="">-- Choose a Crew Member from Company Database --</option>
+                    
+                    {/* Unassigned Standby Crew First */}
+                    <optgroup label="⚡ Unassigned / Standby Pool (Available)">
+                      {companyCrew
+                        .filter((c) => !c.assignedShipId && !ship.crew.some((sc) => sc.id === c.id))
+                        .map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name} — {c.role} ({c.nationality}) • STANDBY
+                          </option>
+                        ))}
+                    </optgroup>
+
+                    {/* Assigned Crew on Other Vessels */}
+                    <optgroup label="⚓ Currently Onboard Other Vessels">
+                      {companyCrew
+                        .filter((c) => c.assignedShipId && c.assignedShipId !== ship.id)
+                        .map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name} — {c.role} (Currently on {c.assignedShipName})
+                          </option>
+                        ))}
+                    </optgroup>
+                  </select>
+                </div>
+
+                {selectedExistingCrewId && (() => {
+                  const selectedCrew = companyCrew.find((c) => c.id === selectedExistingCrewId);
+                  if (!selectedCrew) return null;
+
+                  return (
+                    <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] space-y-1">
+                      <div className="font-extrabold text-[var(--text-main)] text-xs flex items-center justify-between">
+                        <span>{selectedCrew.name}</span>
+                        <span className="text-[var(--color-primary)]">{selectedCrew.nationality}</span>
+                      </div>
+                      <div className="text-[11px] text-[var(--text-muted)] font-mono">
+                        Passport: {selectedCrew.passportNumber || 'N/A'} • Seaman Book: {selectedCrew.seamanBookNo || 'N/A'}
+                      </div>
+                      <div className="text-[11px] text-amber-400 font-bold mt-1">
+                        Current Status: {selectedCrew.assignedShipName ? `Working on ${selectedCrew.assignedShipName}` : 'Unassigned Standby'}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Position on {ship.name}</label>
+                  <input
+                    type="text"
+                    value={crewRole}
+                    onChange={(e) => setCrewRole(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On Date</label>
+                    <DateInput
+                      value={crewSignOnDate}
+                      onChange={(val) => setCrewSignOnDate(val)}
+                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On City / Port</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Rotterdam"
+                      value={crewSignOnLocation}
+                      onChange={(e) => setCrewSignOnLocation(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddCrewModalOpen(false)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!selectedExistingCrewId}
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold disabled:opacity-50"
+                  >
+                    Assign to {ship.name}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* TAB 2: REGISTER NEW CREW MEMBER FORM */
+              <form onSubmit={handleAddCrew} className="p-6 space-y-4 text-xs">
               <div>
                 <label className="block text-[var(--text-main)] font-bold mb-1">Full Name *</label>
                 <input
@@ -1886,6 +2085,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 </button>
               </div>
             </form>
+            )}
           </div>
         </div>
       )}
