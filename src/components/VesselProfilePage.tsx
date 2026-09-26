@@ -1818,12 +1818,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     <option value="">-- Choose a Crew Member from Company Database --</option>
                     
                     {/* Unassigned Standby Crew First */}
-                    <optgroup label="⚡ Unassigned / Standby Pool (Available)">
+                    <optgroup label="⚡ Unassigned Pool (Available)">
                       {companyCrew
                         .filter((c) => !c.assignedShipId && !ship.crew.some((sc) => sc.id === c.id))
                         .map((c) => (
                           <option key={c.id} value={c.id}>
-                            {c.name} — {c.role} ({c.nationality}) • STANDBY
+                            {c.name} — {c.role} ({c.nationality}) • UNASSIGNED
                           </option>
                         ))}
                     </optgroup>
@@ -1855,7 +1855,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         Passport: {selectedCrew.passportNumber || 'N/A'} • Seaman Book: {selectedCrew.seamanBookNo || 'N/A'}
                       </div>
                       <div className="text-[11px] text-amber-400 font-bold mt-1">
-                        Current Status: {selectedCrew.assignedShipName ? `Working on ${selectedCrew.assignedShipName}` : 'Unassigned Standby'}
+                        Current Status: {selectedCrew.assignedShipName ? `Working on ${selectedCrew.assignedShipName}` : 'Unassigned'}
                       </div>
                     </div>
                   );
@@ -1946,7 +1946,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   onChange={(e) => handleDepartmentChange(e.target.value as any)}
                   className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold"
                 >
-                  <option value="master">Vessel Command (Master / Captain)</option>
+                  <option value="master">Master</option>
                   <option value="deck">Deck Department (Navigation & Cargo)</option>
                   <option value="engine">Engine Department (Propulsion & Electrical)</option>
                   <option value="kitchen">Kitchen / Mess Department (Catering & Galley)</option>

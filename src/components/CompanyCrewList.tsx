@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CrewMember, Ship } from '../types/vessel';
+import { CrewMember, Ship, VesselHistoryEntry } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { sortByRankHierarchy, getCrewRankWeight } from '../utils/rankSort';
 import { DateInput } from './DateInput';
@@ -22,6 +22,12 @@ import {
   UserCheck,
   X,
   Mail,
+  Globe,
+  Calendar,
+  MapPin,
+  BookOpen,
+  Briefcase,
+  History,
 } from 'lucide-react';
 
 interface CompanyCrewListProps {
@@ -53,6 +59,15 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   // Modal States
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [assigningCrew, setAssigningCrew] = useState<CrewMember | null>(null);
+  const [viewingProfileCrew, setViewingProfileCrew] = useState<CrewMember | null>(null);
+
+  const sortVesselHistory = (history: VesselHistoryEntry[]) => {
+    return [...history].sort((a, b) => {
+      if (!a.endDate && b.endDate) return -1;
+      if (a.endDate && !b.endDate) return 1;
+      return (b.startDate || '').localeCompare(a.startDate || '');
+    });
+  };
 
   // Add Crew Form States
   const [name, setName] = useState('');
@@ -297,7 +312,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
           <div className="flex items-center gap-2 bg-amber-950/40 border border-amber-800/60 px-3 py-1.5 rounded-xl text-xs text-amber-300">
             <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-            <span className="font-semibold">Standby:</span>
+            <span className="font-semibold">Unassigned:</span>
             <strong className="text-white font-mono text-sm">{unassignedCount}</strong>
           </div>
 
@@ -337,7 +352,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             >
               <option value="all">All Assignment Statuses</option>
               <option value="assigned">Onboard Vessel ({assignedCount})</option>
-              <option value="unassigned">Unassigned / Standby ({unassignedCount})</option>
+              <option value="unassigned">Unassigned ({unassignedCount})</option>
             </select>
           </div>
 
@@ -348,8 +363,8 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               onChange={(e) => setVesselFilter(e.target.value)}
               className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-semibold focus:outline-none cursor-pointer"
             >
-              <option value="all">All Ships & Standby</option>
-              <option value="unassigned">Unassigned Standby Pool</option>
+              <option value="all">All Ships & Unassigned</option>
+              <option value="unassigned">Unassigned Pool</option>
               {ships.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name} ({s.crew.length} crew)
@@ -366,7 +381,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-semibold focus:outline-none cursor-pointer"
             >
               <option value="all">All Departments</option>
-              <option value="master">Command & Master</option>
+              <option value="master">Master</option>
               <option value="deck">Deck Department</option>
               <option value="engine">Engine Department</option>
               <option value="kitchen">Kitchen / Mess Dept</option>
@@ -433,7 +448,6 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               <th className="py-3.5 px-4">Current Ship Assignment</th>
               <th className="py-3.5 px-4">Nationality</th>
               <th className="py-3.5 px-4">Passport & Seaman Book</th>
-              <th className="py-3.5 px-4">Signed On</th>
               <th className="py-3.5 px-4 text-center">Vessels Served</th>
               <th className="py-3.5 px-4 text-right sticky right-0 bg-[var(--color-bg-alt)] z-10">Actions</th>
             </tr>
@@ -441,7 +455,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
           <tbody className="divide-y divide-[var(--color-glass-border)]">
             {sortedCrew.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-[var(--text-muted)] text-xs">
+                <td colSpan={7} className="py-12 text-center text-[var(--text-muted)] text-xs">
                   <Users className="w-10 h-10 text-[var(--text-dim)] mx-auto mb-2 opacity-50" />
                   <h4 className="font-bold text-[var(--text-main)] text-sm mb-1">No Crew Members Match Criteria</h4>
                   <p>Try clearing your search term or filter parameters.</p>
@@ -456,7 +470,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                   <tr
                     key={crew.id}
                     className="hover:bg-[var(--color-glass-border)] transition group cursor-pointer"
-                    onClick={() => onSelectCrewMember(crew)}
+                    onClick={() => {
+                      setViewingProfileCrew(crew);
+                      onSelectCrewMember(crew);
+                    }}
                     title="Click to view full crew profile"
                   >
                     {/* Name & Role (Fitted cleanly on one line) */}
@@ -488,7 +505,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                       {crew.department === 'master' && (
                         <span className="px-2.5 py-0.5 rounded-full bg-purple-950/60 text-purple-300 border border-purple-800/60 font-bold text-[10px]">
-                          COMMAND / MASTER
+                          MASTER
                         </span>
                       )}
                       {crew.department === 'deck' && (
@@ -531,7 +548,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       ) : (
                         <span className="px-3 py-1 rounded-xl bg-amber-950/40 text-amber-300 border border-amber-800/60 text-xs font-bold inline-flex items-center gap-1.5">
                           <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                          <span>Unassigned / Standby</span>
+                          <span>Unassigned</span>
                         </span>
                       )}
                     </td>
@@ -545,14 +562,6 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     <td className="py-3.5 px-4 align-middle whitespace-nowrap font-mono text-[11px] text-[var(--text-muted)] space-y-0.5">
                       <div>Pass: <span className="text-[var(--text-main)]">{crew.passportNumber || '—'}</span></div>
                       <div>SB: <span className="text-[var(--text-main)]">{crew.seamanBookNo || '—'}</span></div>
-                    </td>
-
-                    {/* Signed On Date */}
-                    <td className="py-3.5 px-4 align-middle whitespace-nowrap font-mono font-semibold text-[var(--text-main)]">
-                      {formatDate(crew.signOnDate)}
-                      {crew.signOnLocation && (
-                        <div className="text-[10px] text-[var(--text-muted)] font-sans">{crew.signOnLocation}</div>
-                      )}
                     </td>
 
                     {/* Vessels Served */}
@@ -577,7 +586,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
                         {/* View Profile Button */}
                         <button
-                          onClick={() => onSelectCrewMember(crew)}
+                          onClick={() => {
+                            setViewingProfileCrew(crew);
+                            onSelectCrewMember(crew);
+                          }}
                           className="p-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/60 text-blue-300 border border-blue-800/60 transition inline-flex items-center"
                           title="View full crew profile"
                         >
@@ -670,7 +682,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     onChange={(e) => handleDepartmentSelect(e.target.value as any)}
                     className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
                   >
-                    <option value="master">Command / Master</option>
+                    <option value="master">Master</option>
                     <option value="deck">Deck Department</option>
                     <option value="engine">Engine Department</option>
                     <option value="kitchen">Kitchen / Mess Dept</option>
@@ -714,7 +726,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                   onChange={(e) => setTargetShipId(e.target.value)}
                   className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-cyan-400 cursor-pointer"
                 >
-                  <option value="unassigned">Unassigned / Standby Pool (Available for future assignment)</option>
+                  <option value="unassigned">Unassigned Pool (Available for future assignment)</option>
                   {ships.map((s) => (
                     <option key={s.id} value={s.id}>
                       Assign to Vessel: {s.name} ({s.type || 'Vessel'})
@@ -860,7 +872,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                   onChange={(e) => setQuickShipId(e.target.value)}
                   className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-cyan-400 cursor-pointer"
                 >
-                  <option value="unassigned">Unassign / Set to Standby Pool</option>
+                  <option value="unassigned">Unassign / Set to Unassigned Pool</option>
                   {ships.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name} ({s.type || 'Container Ship'})
@@ -926,6 +938,194 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: CREW MEMBER PROFILE */}
+      {viewingProfileCrew && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+            {/* Profile Header */}
+            <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary)]/20 border-2 border-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary)] font-extrabold text-2xl shadow-md">
+                  {viewingProfileCrew.name.charAt(0)}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">
+                      {viewingProfileCrew.name}
+                    </h3>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold text-[10px] uppercase border border-[var(--color-primary)]/30">
+                      {viewingProfileCrew.department === 'master' ? 'Master' : viewingProfileCrew.department?.toUpperCase() || 'CREW'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--color-primary)] font-bold uppercase tracking-wider mt-0.5">
+                    {viewingProfileCrew.role}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setViewingProfileCrew(null)}
+                className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Profile Content Body */}
+            <div className="p-6 space-y-6 overflow-y-auto flex-1 text-xs">
+              {/* Personal & Maritime Credentials Grid */}
+              <div>
+                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-2 border-b border-[var(--color-glass-border)] pb-2">
+                  <UserCheck className="w-4 h-4 text-[var(--color-primary)]" /> Personal & Maritime Credentials
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {/* Email */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Mail className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Email Address
+                    </div>
+                    <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={viewingProfileCrew.email}>
+                      {viewingProfileCrew.email || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* 1. Nationality */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Globe className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Nationality
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {viewingProfileCrew.nationality || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* 2. Date of Birth */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Date of Birth
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {formatDate(viewingProfileCrew.dateOfBirth)}
+                    </div>
+                  </div>
+
+                  {/* 3. Passport Number */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <FileText className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Passport No.
+                    </div>
+                    <div className="font-mono font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {viewingProfileCrew.passportNumber || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* 4. Passport Expiry */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Passport Expiry
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {formatDate(viewingProfileCrew.passportExpiry)}
+                    </div>
+                  </div>
+
+                  {/* 5. Seaman Book Number */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <BookOpen className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Seaman Book No.
+                    </div>
+                    <div className="font-mono font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {viewingProfileCrew.seamanBookNo || 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* 6. Seaman Book Expiry */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Seaman Book Expiry
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {formatDate(viewingProfileCrew.seamanBookExpiry)}
+                    </div>
+                  </div>
+
+                  {/* 7. Signed On Date */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <Anchor className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Signed On Date
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {formatDate(viewingProfileCrew.signOnDate)}
+                    </div>
+                  </div>
+
+                  {/* 8. Signed On Location (City) */}
+                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Sign-On City
+                    </div>
+                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
+                      {viewingProfileCrew.signOnLocation || 'N/A'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* History of Ships Worked On */}
+              <div>
+                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-2 border-b border-[var(--color-glass-border)] pb-2">
+                  <History className="w-4 h-4 text-[var(--color-primary)]" /> Company Vessel Service History
+                </h4>
+
+                {(!viewingProfileCrew.vesselHistory || viewingProfileCrew.vesselHistory.length === 0) ? (
+                  <div className="bg-[var(--color-surface)] rounded-xl p-4 text-center text-[var(--text-muted)] text-xs border border-[var(--color-glass-border)]">
+                    No prior vessel assignment recorded in company fleet.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {sortVesselHistory(viewingProfileCrew.vesselHistory).map((entry, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold">
+                            <Briefcase className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <h5 className="font-bold text-[var(--text-main)] text-xs">{entry.shipName}</h5>
+                            <span className="text-[11px] text-[var(--color-primary)] font-semibold">{entry.role}</span>
+                          </div>
+                        </div>
+
+                        <div className="text-[11px] text-[var(--text-muted)] font-mono sm:text-right">
+                          <span>{formatDate(entry.startDate)}</span>
+                          <span className="mx-1.5">→</span>
+                          <span className={!entry.endDate ? 'text-emerald-500 font-bold' : ''}>
+                            {entry.endDate ? formatDate(entry.endDate) : 'Present (Current Assignment)'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-3 border-t border-[var(--color-glass-border)] bg-[var(--color-surface)] flex justify-end shrink-0">
+              <button
+                onClick={() => setViewingProfileCrew(null)}
+                className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs"
+              >
+                Close Profile
+              </button>
+            </div>
           </div>
         </div>
       )}
