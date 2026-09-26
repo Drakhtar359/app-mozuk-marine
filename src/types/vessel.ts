@@ -21,6 +21,7 @@ export interface CrewMember {
   vesselHistory?: VesselHistoryEntry[];
   assignedShipId?: string;
   assignedShipName?: string;
+  email?: string;
 }
 
 export interface TechnicalDoc {

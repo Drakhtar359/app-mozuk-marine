@@ -21,8 +21,7 @@ import {
   Anchor,
   UserCheck,
   X,
-  Shield,
-  Briefcase,
+  Mail,
 } from 'lucide-react';
 
 interface CompanyCrewListProps {
@@ -57,6 +56,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
   // Add Crew Form States
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [role, setRole] = useState('Chief Officer');
   const [department, setDepartment] = useState<'master' | 'deck' | 'engine' | 'kitchen'>('deck');
   const [nationality, setNationality] = useState('British');
@@ -72,6 +72,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   // Quick Assignment Form States
   const [quickShipId, setQuickShipId] = useState<string>('unassigned');
   const [quickRole, setQuickRole] = useState('');
+  const [quickEmail, setQuickEmail] = useState('');
   const [quickSignOnDate, setQuickSignOnDate] = useState('');
   const [quickLocation, setQuickLocation] = useState('');
 
@@ -87,6 +88,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   // Reset Add Form
   const resetForm = () => {
     setName('');
+    setEmail('');
     setRole('Chief Officer');
     setDepartment('deck');
     setNationality('British');
@@ -110,6 +112,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     const newCrew: CrewMember = {
       id: `crew-${Date.now()}`,
       name: name.trim(),
+      email: email.trim() || undefined,
       role: role.trim() || 'Officer',
       department,
       nationality: nationality.trim() || 'International',
@@ -143,6 +146,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     setAssigningCrew(crew);
     setQuickShipId(crew.assignedShipId || 'unassigned');
     setQuickRole(crew.role);
+    setQuickEmail(crew.email || '');
     setQuickSignOnDate(crew.signOnDate || getTodayDDMMYYYY());
     setQuickLocation(crew.signOnLocation || '');
   };
@@ -158,14 +162,11 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     let updatedHistory = [...prevHistory];
 
     if (newShip) {
-      // Check if already active entry for this ship
       const activeIdx = updatedHistory.findIndex((h) => !h.endDate && h.shipName === newShip.name);
       if (activeIdx === -1) {
-        // Close previous open assignments
         updatedHistory = updatedHistory.map((h) =>
           !h.endDate ? { ...h, endDate: formatDate(quickSignOnDate || getTodayDDMMYYYY()) } : h
         );
-        // Add new assignment
         updatedHistory.unshift({
           shipName: newShip.name,
           role: quickRole.trim() || assigningCrew.role,
@@ -173,7 +174,6 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
         });
       }
     } else {
-      // Unassigned - close any open active history entry
       updatedHistory = updatedHistory.map((h) =>
         !h.endDate ? { ...h, endDate: formatDate(quickSignOnDate || getTodayDDMMYYYY()) } : h
       );
@@ -182,6 +182,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     const updatedCrew: CrewMember = {
       ...assigningCrew,
       role: quickRole.trim() || assigningCrew.role,
+      email: quickEmail.trim() || assigningCrew.email,
       assignedShipId: newShip ? newShip.id : undefined,
       assignedShipName: newShip ? newShip.name : undefined,
       signOnDate: formatDate(quickSignOnDate || getTodayDDMMYYYY()),
@@ -195,32 +196,29 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
   // Filter & Sort Logic
   const filteredCrew = companyCrew.filter((crew) => {
-    // Search Term Filter
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
       const matchName = crew.name.toLowerCase().includes(q);
+      const matchEmail = (crew.email || '').toLowerCase().includes(q);
       const matchRole = crew.role.toLowerCase().includes(q);
       const matchPassport = (crew.passportNumber || '').toLowerCase().includes(q);
       const matchSeaman = (crew.seamanBookNo || '').toLowerCase().includes(q);
       const matchNat = (crew.nationality || '').toLowerCase().includes(q);
       const matchShip = (crew.assignedShipName || '').toLowerCase().includes(q);
 
-      if (!matchName && !matchRole && !matchPassport && !matchSeaman && !matchNat && !matchShip) {
+      if (!matchName && !matchEmail && !matchRole && !matchPassport && !matchSeaman && !matchNat && !matchShip) {
         return false;
       }
     }
 
-    // Assignment Filter
     if (assignmentFilter === 'assigned' && !crew.assignedShipId) return false;
     if (assignmentFilter === 'unassigned' && crew.assignedShipId) return false;
 
-    // Specific Vessel Filter
     if (vesselFilter !== 'all') {
       if (vesselFilter === 'unassigned' && crew.assignedShipId) return false;
       if (vesselFilter !== 'unassigned' && crew.assignedShipId !== vesselFilter) return false;
     }
 
-    // Department Filter
     if (departmentFilter !== 'all') {
       if (departmentFilter === 'master' && crew.department !== 'master') return false;
       if (departmentFilter === 'deck' && crew.department !== 'deck') return false;
@@ -323,7 +321,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search by name, rank, passport or seaman book..."
+              placeholder="Search by name, email, rank, passport or seaman book..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-slate-500 focus:outline-none focus:border-[var(--color-primary)] transition"
@@ -430,8 +428,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
         <table className="w-full text-left text-xs min-w-[950px]">
           <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-bold">
             <tr>
-              <th className="py-3.5 px-4">Rank Weight</th>
-              <th className="py-3.5 px-4">Crew Member Name & Rank</th>
+              <th className="py-3.5 px-4">Crew Member Name & Role</th>
               <th className="py-3.5 px-4">Department</th>
               <th className="py-3.5 px-4">Current Ship Assignment</th>
               <th className="py-3.5 px-4">Nationality</th>
@@ -444,7 +441,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
           <tbody className="divide-y divide-[var(--color-glass-border)]">
             {sortedCrew.length === 0 ? (
               <tr>
-                <td colSpan={9} className="py-12 text-center text-[var(--text-muted)] text-xs">
+                <td colSpan={8} className="py-12 text-center text-[var(--text-muted)] text-xs">
                   <Users className="w-10 h-10 text-[var(--text-dim)] mx-auto mb-2 opacity-50" />
                   <h4 className="font-bold text-[var(--text-main)] text-sm mb-1">No Crew Members Match Criteria</h4>
                   <p>Try clearing your search term or filter parameters.</p>
@@ -453,7 +450,6 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             ) : (
               sortedCrew.map((crew) => {
                 const assignedShip = ships.find((s) => s.id === crew.assignedShipId);
-                const rankWeight = getCrewRankWeight(crew.role);
                 const historyCount = crew.vesselHistory ? crew.vesselHistory.length : 0;
 
                 return (
@@ -463,26 +459,27 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     onClick={() => onSelectCrewMember(crew)}
                     title="Click to view full crew profile"
                   >
-                    {/* Rank Weight Badge */}
-                    <td className="py-3.5 px-4 align-middle">
-                      <span className="w-7 h-7 rounded-lg bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-mono font-extrabold text-[11px] text-[var(--color-primary)] inline-flex items-center justify-center">
-                        #{rankWeight}
-                      </span>
-                    </td>
-
-                    {/* Name & Role */}
-                    <td className="py-3.5 px-4 align-middle">
+                    {/* Name & Role (Fitted cleanly on one line) */}
+                    <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-blue-950/80 border border-blue-800/80 text-blue-400 font-extrabold text-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                           {crew.name.charAt(0)}
                         </div>
                         <div>
-                          <h4 className="font-extrabold text-[var(--text-main)] text-xs group-hover:text-[var(--color-primary)] transition">
+                          <h4 className="font-extrabold text-[var(--text-main)] text-xs whitespace-nowrap group-hover:text-[var(--color-primary)] transition">
                             {crew.name}
                           </h4>
-                          <span className="inline-block font-semibold text-[11px] text-[var(--color-primary)] mt-0.5">
-                            {crew.role}
-                          </span>
+                          <div className="flex items-center gap-2 mt-0.5 whitespace-nowrap">
+                            <span className="font-semibold text-[11px] text-[var(--color-primary)] whitespace-nowrap">
+                              {crew.role}
+                            </span>
+                            {crew.email && (
+                              <span className="text-[11px] text-[var(--text-muted)] flex items-center gap-1 font-mono whitespace-nowrap">
+                                <Mail className="w-3 h-3 text-cyan-400 shrink-0" />
+                                {crew.email}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -634,7 +631,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
             {/* Form */}
             <form onSubmit={handleAddSubmit} className="p-6 space-y-4 text-xs">
-              {/* Name & Department */}
+              {/* Name & Email */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">
@@ -651,6 +648,22 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                 </div>
 
                 <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Email Address <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="e.g. m.vance@mozukmarine.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                  />
+                </div>
+              </div>
+
+              {/* Department & Role */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Department</label>
                   <select
                     value={department}
@@ -663,10 +676,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     <option value="kitchen">Kitchen / Mess Dept</option>
                   </select>
                 </div>
-              </div>
 
-              {/* Role & Nationality */}
-              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Position</label>
                   <input
@@ -678,18 +688,19 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Nationality</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. British, Filipino, Greek"
-                    value={nationality}
-                    onChange={(e) => setNationality(e.target.value)}
-                    required
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
-                  />
-                </div>
+              {/* Nationality */}
+              <div>
+                <label className="block text-[var(--text-main)] font-bold mb-1">Nationality</label>
+                <input
+                  type="text"
+                  placeholder="e.g. British, Filipino, Greek"
+                  value={nationality}
+                  onChange={(e) => setNationality(e.target.value)}
+                  required
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                />
               </div>
 
               {/* Vessel Assignment Selection */}
@@ -864,6 +875,17 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                   type="text"
                   value={quickRole}
                   onChange={(e) => setQuickRole(e.target.value)}
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-main)] font-bold mb-1.5">Email Address</label>
+                <input
+                  type="email"
+                  value={quickEmail}
+                  onChange={(e) => setQuickEmail(e.target.value)}
+                  placeholder="e.g. officer@mozukmarine.com"
                   className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                 />
               </div>

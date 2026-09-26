@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Calendar } from 'lucide-react';
-import { formatDate, toInputDateFormat } from '../utils/dateFormatter';
+import { toInputDateFormat } from '../utils/dateFormatter';
 
 interface DateInputProps {
   value: string;
@@ -21,8 +21,7 @@ export const DateInput: React.FC<DateInputProps> = ({
 }) => {
   const hiddenDateInputRef = useRef<HTMLInputElement>(null);
 
-  // Always display formatted dd/mm/yyyy text
-  const displayValue = value ? formatDate(value) : '';
+  // Compute native YYYY-MM-DD for native calendar picker overlay
   const nativeValue = value ? toInputDateFormat(value) : '';
 
   const handleNativePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,8 +37,7 @@ export const DateInput: React.FC<DateInputProps> = ({
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-    onChange(raw);
+    onChange(e.target.value);
   };
 
   const openPicker = () => {
@@ -61,7 +59,7 @@ export const DateInput: React.FC<DateInputProps> = ({
     <div className={`relative flex items-center ${className}`}>
       <input
         type="text"
-        value={displayValue}
+        value={value || ''}
         onChange={handleTextChange}
         placeholder={placeholder}
         required={required}

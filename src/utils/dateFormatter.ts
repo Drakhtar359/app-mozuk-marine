@@ -1,5 +1,5 @@
 /**
- * Utility function to format any date string into dd/mm/yyyy format.
+ * Utility function to format any date string into dd/mm/yyyy format cleanly.
  */
 export function formatDate(dateStr?: string | null): string {
   if (!dateStr) return '';
@@ -20,17 +20,7 @@ export function formatDate(dateStr?: string | null): string {
     return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
   }
 
-  // Fallback for JS Date strings
-  const parsed = new Date(trimmed);
-  if (isNaN(parsed.getTime())) {
-    return dateStr;
-  }
-
-  const day = String(parsed.getDate()).padStart(2, '0');
-  const month = String(parsed.getMonth() + 1).padStart(2, '0');
-  const year = parsed.getFullYear();
-
-  return `${day}/${month}/${year}`;
+  return trimmed;
 }
 
 /**
