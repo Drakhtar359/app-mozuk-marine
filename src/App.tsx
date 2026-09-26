@@ -612,8 +612,11 @@ export function App() {
                   </div>
                   <div>
                     <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Company Crew Roster</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">
-                      {totalCrewCount} Personnel <span className="text-xs text-emerald-400 font-bold">({totalOnboardCrewCount} onboard)</span>
+                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl leading-tight">
+                      {totalCrewCount} Personnel
+                    </div>
+                    <div className="text-xs text-emerald-400 font-bold mt-0.5">
+                      ({totalOnboardCrewCount} onboard)
                     </div>
                   </div>
                 </div>
