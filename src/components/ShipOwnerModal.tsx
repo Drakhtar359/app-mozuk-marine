@@ -4,14 +4,12 @@ import {
   Building2,
   Globe,
   Phone,
-  Mail,
   UserCheck,
   Plus,
   Trash2,
   X,
-  FileText,
-  Briefcase,
   ShieldCheck,
+  Users,
 } from 'lucide-react';
 
 interface ShipOwnerModalProps {
@@ -83,7 +81,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] my-auto">
+      <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] my-auto">
         {/* Modal Header */}
         <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
           <div>
@@ -92,7 +90,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
               Edit Ship Owner & Manager Details
             </h3>
             <p className="text-xs text-[var(--text-muted)]">
-              Update corporate owner profile, headquarters location, main hotline, and designated company contacts.
+              Update corporate owner profile, headquarters location, main phone line, and internal company contacts.
             </p>
           </div>
           <button
@@ -160,156 +158,148 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
             </div>
           </div>
 
-          {/* SECTION 2: DESIGNATED CONTACT PEOPLE */}
-          <div className="space-y-4 pt-2">
+          {/* SECTION 2: INTERNAL COMPANY CONTACTS TABLE (HORIZONTAL) */}
+          <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-2">
               <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] flex items-center gap-2">
-                <UserCheck className="w-4 h-4 text-[var(--color-primary)]" />
-                Company Contact People ({contactPeople.length})
+                <Users className="w-4 h-4 text-[var(--color-primary)]" />
+                Internal Company Contacts Directory ({contactPeople.length})
               </h4>
               <button
                 type="button"
                 onClick={handleAddContactPerson}
-                className="px-3 py-1.5 rounded-xl bg-[rgba(0,242,254,0.1)] hover:bg-[rgba(0,242,254,0.2)] text-[var(--color-primary)] border border-[var(--color-glass-border)] font-bold text-xs flex items-center gap-1.5 transition"
+                className="px-3.5 py-1.5 rounded-xl bg-[rgba(0,242,254,0.1)] hover:bg-[rgba(0,242,254,0.2)] text-[var(--color-primary)] border border-[var(--color-glass-border)] font-bold text-xs flex items-center gap-1.5 transition"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Contact Person
               </button>
             </div>
 
-            {contactPeople.length === 0 ? (
-              <div className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-xl p-5 text-center text-[var(--text-muted)] text-xs">
-                No company contact persons listed. Click "+ Add Contact Person" to record DPA, Technical Superintendents, or Emergency Contacts.
+            <div className="mozuk-glass-card rounded-2xl overflow-hidden border border-[var(--color-glass-border)]">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs min-w-[800px]">
+                  <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-bold">
+                    <tr>
+                      <th className="py-3 px-3 min-w-[150px]">Full Name *</th>
+                      <th className="py-3 px-3 min-w-[150px]">Position / Role *</th>
+                      <th className="py-3 px-3 min-w-[110px]">Country *</th>
+                      <th className="py-3 px-3 min-w-[125px]">Phone Number *</th>
+                      <th className="py-3 px-3 min-w-[150px]">Email Address *</th>
+                      <th className="py-3 px-3 min-w-[160px]">Description (Optional)</th>
+                      <th className="py-3 px-3 text-right w-12">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--color-glass-border)]">
+                    {contactPeople.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-8 text-center text-[var(--text-muted)] text-xs">
+                          <UserCheck className="w-8 h-8 text-[var(--text-dim)] mx-auto mb-2 opacity-50" />
+                          No internal contact persons added yet. Click "+ Add Contact Person" to populate the table.
+                        </td>
+                      </tr>
+                    ) : (
+                      contactPeople.map((person) => (
+                        <tr key={person.id} className="hover:bg-[var(--color-glass-border)] transition align-top">
+                          {/* Full Name */}
+                          <td className="py-2.5 px-3">
+                            <input
+                              type="text"
+                              placeholder="e.g. Capt. Antonio Vance"
+                              value={person.fullName}
+                              onChange={(e) =>
+                                handleUpdateContactPerson(person.id, 'fullName', e.target.value)
+                              }
+                              required
+                              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] font-semibold"
+                            />
+                          </td>
+
+                          {/* Position */}
+                          <td className="py-2.5 px-3">
+                            <input
+                              type="text"
+                              placeholder="e.g. DPA / Operations"
+                              value={person.position}
+                              onChange={(e) =>
+                                handleUpdateContactPerson(person.id, 'position', e.target.value)
+                              }
+                              required
+                              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] font-semibold"
+                            />
+                          </td>
+
+                          {/* Country */}
+                          <td className="py-2.5 px-3">
+                            <input
+                              type="text"
+                              placeholder="e.g. Mozambique"
+                              value={person.country}
+                              onChange={(e) =>
+                                handleUpdateContactPerson(person.id, 'country', e.target.value)
+                              }
+                              required
+                              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)]"
+                            />
+                          </td>
+
+                          {/* Phone Number */}
+                          <td className="py-2.5 px-3">
+                            <input
+                              type="tel"
+                              placeholder="e.g. +258 84 999 1122"
+                              value={person.phoneNumber}
+                              onChange={(e) =>
+                                handleUpdateContactPerson(person.id, 'phoneNumber', e.target.value)
+                              }
+                              required
+                              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[var(--text-main)]"
+                            />
+                          </td>
+
+                          {/* Email */}
+                          <td className="py-2.5 px-3">
+                            <input
+                              type="email"
+                              placeholder="e.g. a.vance@mozukmarine.com"
+                              value={person.email}
+                              onChange={(e) =>
+                                handleUpdateContactPerson(person.id, 'email', e.target.value)
+                              }
+                              required
+                              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[var(--text-main)]"
+                            />
+                          </td>
+
+                          {/* Description */}
+                          <td className="py-2.5 px-3">
+                            <input
+                              type="text"
+                              placeholder="e.g. Primary emergency contact"
+                              value={person.description || ''}
+                              onChange={(e) =>
+                                handleUpdateContactPerson(person.id, 'description', e.target.value)
+                              }
+                              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)]"
+                            />
+                          </td>
+
+                          {/* Delete Action */}
+                          <td className="py-2.5 px-3 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveContactPerson(person.id)}
+                              className="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition"
+                              title="Delete Contact Person"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
-            ) : (
-              <div className="space-y-4">
-                {contactPeople.map((person, index) => (
-                  <div
-                    key={person.id}
-                    className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-2xl p-4 space-y-3 relative group"
-                  >
-                    <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-2">
-                      <span className="font-bold text-[var(--color-primary)] text-xs uppercase tracking-wider flex items-center gap-1.5">
-                        <Briefcase className="w-3.5 h-3.5" /> Contact #{index + 1}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveContactPerson(person.id)}
-                        className="text-red-400 hover:text-red-300 hover:bg-red-950/40 px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition"
-                        title="Remove Contact Person"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" /> Remove
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {/* Full Name */}
-                      <div>
-                        <label className="block text-[var(--text-main)] font-bold mb-1">
-                          Full Name *
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Capt. Antonio Vance"
-                          value={person.fullName}
-                          onChange={(e) =>
-                            handleUpdateContactPerson(person.id, 'fullName', e.target.value)
-                          }
-                          required
-                          className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-semibold"
-                        />
-                      </div>
-
-                      {/* Position */}
-                      <div>
-                        <label className="block text-[var(--text-main)] font-bold mb-1">
-                          Position / Role *
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Designated Person Ashore (DPA)"
-                          value={person.position}
-                          onChange={(e) =>
-                            handleUpdateContactPerson(person.id, 'position', e.target.value)
-                          }
-                          required
-                          className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-semibold"
-                        />
-                      </div>
-
-                      {/* Country */}
-                      <div>
-                        <label className="block text-[var(--text-main)] font-bold mb-1">
-                          Country *
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Mozambique"
-                          value={person.country}
-                          onChange={(e) =>
-                            handleUpdateContactPerson(person.id, 'country', e.target.value)
-                          }
-                          required
-                          className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)]"
-                        />
-                      </div>
-
-                      {/* Phone Number */}
-                      <div>
-                        <label className="block text-[var(--text-main)] font-bold mb-1">
-                          Phone Number *
-                        </label>
-                        <input
-                          type="tel"
-                          placeholder="e.g. +258 84 999 1122"
-                          value={person.phoneNumber}
-                          onChange={(e) =>
-                            handleUpdateContactPerson(person.id, 'phoneNumber', e.target.value)
-                          }
-                          required
-                          className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs font-mono text-[var(--text-main)]"
-                        />
-                      </div>
-
-                      {/* Email */}
-                      <div className="sm:col-span-2">
-                        <label className="block text-[var(--text-main)] font-bold mb-1">
-                          Email Address *
-                        </label>
-                        <input
-                          type="email"
-                          placeholder="e.g. a.vance@mozukmarine.com"
-                          value={person.email}
-                          onChange={(e) =>
-                            handleUpdateContactPerson(person.id, 'email', e.target.value)
-                          }
-                          required
-                          className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs font-mono text-[var(--text-main)]"
-                        />
-                      </div>
-
-                      {/* Description (Optional) */}
-                      <div className="sm:col-span-2">
-                        <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center justify-between">
-                          <span>Description</span>
-                          <span className="text-[10px] text-[var(--text-muted)] font-normal">
-                            (Optional)
-                          </span>
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Primary emergency contact for ISM/ISPS fleet operations & port clearance."
-                          value={person.description || ''}
-                          onChange={(e) =>
-                            handleUpdateContactPerson(person.id, 'description', e.target.value)
-                          }
-                          className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)]"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Modal Footer Buttons */}
