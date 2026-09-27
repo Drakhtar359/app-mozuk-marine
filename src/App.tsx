@@ -7,7 +7,7 @@ import { ShipList } from './components/ShipList';
 import { VesselProfilePage } from './components/VesselProfilePage';
 import { CompanyCrewList } from './components/CompanyCrewList';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2 } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -626,29 +626,55 @@ export function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6">
         {!selectedShip ? (
           <div className="space-y-10">
-            {/* Mozuk Marine Fleet Banner */}
-            <div className="mozuk-glass-card rounded-2xl p-6 relative overflow-hidden">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4 mb-5">
-                <div>
-                  <h2 className="text-2xl font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] flex items-center gap-2">
-                    <ShieldCheck className="w-6 h-6 text-[var(--color-primary)]" />
-                    Ship Owner Fleet Operations Portal
-                  </h2>
-                  <p className="text-xs text-[var(--text-muted)] mt-1 max-w-2xl leading-relaxed">
-                    Integrated with Mozuk Marine's engineering standards. Access fleet vessel profiles, master crew database, statutory technical certificates, and maintenance repair logs.
-                  </p>
+            {/* Unified Ship Owner & Fleet Operations Portal Banner */}
+            <div className="mozuk-glass-card rounded-2xl p-6 relative overflow-hidden shadow-lg border border-[var(--color-glass-border)]">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5 mb-5">
+                <div className="flex items-start gap-3.5">
+                  <div className="p-3 rounded-2xl bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)] border border-[var(--color-glass-border)] shrink-0 mt-0.5">
+                    <Building2 className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-2xl font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)]">
+                        {ownerDetails.companyName}
+                      </h2>
+                      <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 text-[11px] font-bold inline-flex items-center gap-1 shrink-0">
+                        <Globe className="w-3 h-3 text-cyan-400" />
+                        {ownerDetails.country}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-muted)] mt-1 font-medium">
+                      <span className="flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Authorized Ship Owner & Managing Agency
+                      </span>
+                      <span className="text-[var(--color-glass-border)]">•</span>
+                      <span className="flex items-center gap-1 font-mono text-[var(--text-main)] font-semibold">
+                        <Phone className="w-3.5 h-3.5 text-cyan-400" /> {ownerDetails.phoneNumber}
+                      </span>
+                      <span className="text-[var(--color-glass-border)]">•</span>
+                      <span className="flex items-center gap-1 font-semibold text-[var(--color-primary)]">
+                        <Users className="w-3.5 h-3.5" /> {ownerDetails.contactPeople.length} Internal Contact{ownerDetails.contactPeople.length === 1 ? '' : 's'}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-[var(--text-muted)] mt-2 leading-relaxed max-w-3xl">
+                      Integrated with Mozuk Marine's engineering standards. Access fleet vessel profiles, master crew database, statutory technical certificates, and maintenance repair logs.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                {/* Action Buttons */}
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start lg:self-center">
                   <button
                     onClick={() => setIsOwnerModalOpen(true)}
-                    className="px-4 py-2.5 rounded-full btn-mozuk-secondary text-xs font-bold flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-full btn-mozuk-secondary text-xs font-bold flex items-center gap-2 transition hover:scale-[1.02]"
                   >
-                    <Building2 className="w-4 h-4 text-[var(--color-primary)]" /> Edit Owner Details
+                    <Edit className="w-4 h-4 text-[var(--color-primary)]" /> Edit Owner Details
                   </button>
                   <button
                     onClick={() => setIsAddModalOpen(true)}
-                    className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2 shadow-sm transition hover:scale-[1.02]"
                   >
                     <Plus className="w-4 h-4" /> Register Vessel
                   </button>
@@ -703,12 +729,6 @@ export function App() {
                 </div>
               </div>
             </div>
-
-            {/* 1. Ship Owner & Management Profile */}
-            <ShipOwnerCard
-              ownerDetails={ownerDetails}
-              onEdit={() => setIsOwnerModalOpen(true)}
-            />
 
             {/* 2. Fleet Directory */}
             <ShipList
