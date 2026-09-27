@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Ship, CrewMember } from './types/vessel';
+import { Ship, CrewMember, ShipOwnerDetails } from './types/vessel';
 import { AddShipModal } from './components/AddShipModal';
+import { ShipOwnerModal } from './components/ShipOwnerModal';
+import { ShipOwnerCard } from './components/ShipOwnerCard';
 import { ShipList } from './components/ShipList';
 import { VesselProfilePage } from './components/VesselProfilePage';
 import { CompanyCrewList } from './components/CompanyCrewList';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2 } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -356,9 +358,62 @@ export function App() {
     },
   ]);
 
+  const defaultOwnerDetails: ShipOwnerDetails = {
+    companyName: 'MOZUK MARINE SHIPPING SERVICES S.A.',
+    country: 'Mozambique',
+    phoneNumber: '+258 21 300 450',
+    contactPeople: [
+      {
+        id: 'cp-1',
+        fullName: 'Capt. Antonio Vance',
+        position: 'Designated Person Ashore (DPA) & Fleet Operations Manager',
+        country: 'Mozambique',
+        phoneNumber: '+258 84 999 1122',
+        email: 'a.vance@mozukmarine.com',
+        description: 'Primary emergency contact for ISM/ISPS fleet operations & port clearance.',
+      },
+      {
+        id: 'cp-2',
+        fullName: 'Eng. Dimitris Pappas',
+        position: 'Chief Technical Superintendent',
+        country: 'Greece',
+        phoneNumber: '+30 210 459 9800',
+        email: 'tech.pappas@mozukmarine.com',
+        description: 'Responsible for main engine overhauls, dry-docking & classification surveys.',
+      },
+      {
+        id: 'cp-3',
+        fullName: 'Sarah Jenkins',
+        position: 'Crewing & HR Director',
+        country: 'United Kingdom',
+        phoneNumber: '+44 20 7946 0912',
+        email: 'crewing@mozukmarine.com',
+        description: 'Manages officer sign-ons, seaman contracts, and STCW certifications.',
+      },
+    ],
+  };
+
+  const [ownerDetails, setOwnerDetails] = useState<ShipOwnerDetails>(() => {
+    const saved = localStorage.getItem('mozuk_owner_details');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Error parsing saved owner details:', e);
+      }
+    }
+    return defaultOwnerDetails;
+  });
+
   const [selectedShipId, setSelectedShipId] = useState<string | null>(null);
   const [selectedCrewForProfile, setSelectedCrewForProfile] = useState<CrewMember | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
+
+  const handleSaveOwnerDetails = (updated: ShipOwnerDetails) => {
+    setOwnerDetails(updated);
+    localStorage.setItem('mozuk_owner_details', JSON.stringify(updated));
+  };
 
   // Sync theme changes to html element & localStorage
   useEffect(() => {
@@ -586,6 +641,12 @@ export function App() {
 
                 <div className="flex items-center gap-2 shrink-0">
                   <button
+                    onClick={() => setIsOwnerModalOpen(true)}
+                    className="px-4 py-2.5 rounded-full btn-mozuk-secondary text-xs font-bold flex items-center gap-2"
+                  >
+                    <Building2 className="w-4 h-4 text-[var(--color-primary)]" /> Edit Owner Details
+                  </button>
+                  <button
                     onClick={() => setIsAddModalOpen(true)}
                     className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2"
                   >
@@ -643,7 +704,13 @@ export function App() {
               </div>
             </div>
 
-            {/* 1. Fleet Directory */}
+            {/* 1. Ship Owner & Management Profile */}
+            <ShipOwnerCard
+              ownerDetails={ownerDetails}
+              onEdit={() => setIsOwnerModalOpen(true)}
+            />
+
+            {/* 2. Fleet Directory */}
             <ShipList
               ships={ships}
               onSelectShip={(ship) => setSelectedShipId(ship.id)}
@@ -701,6 +768,14 @@ export function App() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddShip={handleAddShip}
+      />
+
+      {/* Ship Owner Details Modal */}
+      <ShipOwnerModal
+        isOpen={isOwnerModalOpen}
+        onClose={() => setIsOwnerModalOpen(false)}
+        ownerDetails={ownerDetails}
+        onSave={handleSaveOwnerDetails}
       />
     </div>
   );
