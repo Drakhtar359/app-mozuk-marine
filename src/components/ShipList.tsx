@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Ship } from '../types/vessel';
 import { Ship as ShipIcon, Calendar, Scale, Trash2, Users, FileCheck, Wrench, ChevronRight, Anchor, Navigation, ExternalLink, Plus } from 'lucide-react';
+import { DeleteShipModal } from './DeleteShipModal';
 
 interface ShipListProps {
   ships: Ship[];
@@ -16,6 +17,8 @@ export const ShipList: React.FC<ShipListProps> = ({
   onRemoveShip,
   onRegisterVessel,
 }) => {
+  const [deletingShip, setDeletingShip] = useState<Ship | null>(null);
+
   if (ships.length === 0) {
     return (
       <div className="mozuk-glass-card rounded-2xl p-12 text-center text-[var(--text-muted)] my-6">
@@ -193,7 +196,7 @@ export const ShipList: React.FC<ShipListProps> = ({
                   whileTap={{ scale: 0.9 }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onRemoveShip(ship.id);
+                    setDeletingShip(ship);
                   }}
                   className="p-1.5 rounded-lg bg-rose-950/20 hover:bg-rose-900/40 text-rose-400 border border-rose-800/40 transition"
                   title="Remove vessel from fleet"
@@ -205,6 +208,17 @@ export const ShipList: React.FC<ShipListProps> = ({
           );
         })}
       </div>
+
+      {/* 5-Second Press & Hold Delete Prompt Modal */}
+      <DeleteShipModal
+        isOpen={!!deletingShip}
+        ship={deletingShip}
+        onClose={() => setDeletingShip(null)}
+        onConfirmDelete={(shipId) => {
+          onRemoveShip(shipId);
+          setDeletingShip(null);
+        }}
+      />
     </div>
   );
 };
