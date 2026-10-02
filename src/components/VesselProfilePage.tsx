@@ -819,11 +819,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* COLUMN 1: DECK DEPARTMENT */}
               <div className="flex flex-col">
-                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-cyan-500 flex-1 flex flex-col">
+                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-orange-500 flex-1 flex flex-col">
                   {/* Column Header */}
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-cyan-950/60 text-cyan-400 border border-cyan-800/60">
+                      <div className="p-2 rounded-xl bg-orange-950/60 text-orange-400 border border-orange-800/60">
                         <Compass className="w-5 h-5" />
                       </div>
                       <div>
@@ -835,7 +835,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         </span>
                       </div>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/60 text-cyan-400 font-bold text-xs border border-cyan-800/60">
+                    <span className="px-2.5 py-0.5 rounded-full bg-orange-950/60 text-orange-400 font-bold text-xs border border-orange-800/60">
                       {deckCrew.length}
                     </span>
                   </div>
@@ -851,16 +851,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         <div
                           key={member.id}
                           onClick={() => setSelectedCrewMember(member)}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-cyan-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-orange-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-cyan-950/80 border border-cyan-800/80 flex items-center justify-center text-cyan-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-orange-950/80 border border-orange-800/80 flex items-center justify-center text-orange-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-cyan-400 transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 font-semibold text-[10px] mt-0.5 border border-cyan-800/40">
+                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-orange-400 transition">{member.name}</h4>
+                              <span className="inline-block px-2 py-0.5 rounded bg-orange-950/60 text-orange-300 font-semibold text-[10px] mt-0.5 border border-orange-800/40">
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
@@ -890,7 +890,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       handleDepartmentChange('deck');
                       setIsAddCrewModalOpen(true);
                     }}
-                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-cyan-800/80 text-cyan-400 hover:bg-cyan-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-orange-800/80 text-orange-400 hover:bg-orange-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add Deck Crew
                   </button>
@@ -899,11 +899,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
               {/* COLUMN 2: ENGINE DEPARTMENT */}
               <div className="flex flex-col">
-                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-blue-500 flex-1 flex flex-col">
+                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-rose-500 flex-1 flex flex-col">
                   {/* Column Header */}
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-blue-950/60 text-blue-400 border border-blue-800/60">
+                      <div className="p-2 rounded-xl bg-rose-950/60 text-rose-400 border border-rose-800/60">
                         <Wrench className="w-5 h-5" />
                       </div>
                       <div>
@@ -915,7 +915,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         </span>
                       </div>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-blue-950/60 text-blue-400 font-bold text-xs border border-blue-800/60">
+                    <span className="px-2.5 py-0.5 rounded-full bg-rose-950/60 text-rose-400 font-bold text-xs border border-rose-800/60">
                       {engineCrew.length}
                     </span>
                   </div>
@@ -931,16 +931,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         <div
                           key={member.id}
                           onClick={() => setSelectedCrewMember(member)}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-blue-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-rose-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-blue-950/80 border border-blue-800/80 flex items-center justify-center text-blue-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-rose-950/80 border border-rose-800/80 flex items-center justify-center text-rose-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-blue-400 transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-blue-950/60 text-blue-300 font-semibold text-[10px] mt-0.5 border border-blue-800/40">
+                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-rose-400 transition">{member.name}</h4>
+                              <span className="inline-block px-2 py-0.5 rounded bg-rose-950/60 text-rose-300 font-semibold text-[10px] mt-0.5 border border-rose-800/40">
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
@@ -970,7 +970,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       handleDepartmentChange('engine');
                       setIsAddCrewModalOpen(true);
                     }}
-                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-blue-800/80 text-blue-400 hover:bg-blue-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-rose-800/80 text-rose-400 hover:bg-rose-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add Engine Crew
                   </button>

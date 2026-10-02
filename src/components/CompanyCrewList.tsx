@@ -539,17 +539,17 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                           </span>
                         )}
                         {crew.department === 'deck' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/20 text-[#28ada4] border border-[#2c6498]/40 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-orange-950/60 text-orange-400 border border-orange-800/60 font-bold text-[10px]">
                             DECK DEPT
                           </span>
                         )}
                         {crew.department === 'engine' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/30 text-white border border-[#2c6498]/50 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-rose-950/60 text-rose-400 border border-rose-800/60 font-bold text-[10px]">
                             ENGINE DEPT
                           </span>
                         )}
                         {crew.department === 'kitchen' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-slate-800/60 text-slate-300 border border-slate-700/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold text-[10px]">
                             GALLEY & MESS
                           </span>
                         )}

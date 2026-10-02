@@ -579,12 +579,9 @@ export function App() {
                 }}
               />
               <div>
-                <h1 className="font-['Space_Grotesk',sans-serif] font-bold text-xl tracking-tight text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition">
-                  MOZUK <span className="text-[var(--color-primary)] font-extrabold">MARINE</span>
+                <h1 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl tracking-tight transition">
+                  <span className="text-black dark:text-white">MOZUK</span><span className="text-[#28ada4] font-black">APP</span>
                 </h1>
-                <p className="text-[11px] text-[var(--text-muted)] font-medium">
-                  Vessel Profile & Operations Portal
-                </p>
               </div>
             </div>
           </div>
