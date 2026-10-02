@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShipOwnerDetails, Ship, CrewMember } from '../types/vessel';
 import {
@@ -15,7 +15,8 @@ import {
   Mail,
   UserCheck,
   ChevronRight,
-  ExternalLink,
+  ChevronLeft,
+  Anchor,
 } from 'lucide-react';
 
 interface CompanyProfilePageProps {
@@ -35,6 +36,9 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   onOpenEditModal,
   onSelectShip,
 }) => {
+  const [vesselPage, setVesselPage] = useState(1);
+  const VESSELS_PER_PAGE = 12; // 4 vessels per row * 3 rows per page
+
   const totalFleetCount = ships.length;
   const totalCrewCount = companyCrew.length;
   const totalOnboardCrewCount = companyCrew.filter((c) => c.assignedShipId).length;
@@ -43,6 +47,10 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
     (acc, s) => acc + s.maintenance.filter((m) => m.status !== 'completed').length,
     0
   );
+
+  const totalVesselPages = Math.ceil(ships.length / VESSELS_PER_PAGE) || 1;
+  const validVesselPage = Math.min(vesselPage, totalVesselPages);
+  const paginatedShips = ships.slice((validVesselPage - 1) * VESSELS_PER_PAGE, validVesselPage * VESSELS_PER_PAGE);
 
   return (
     <div className="space-y-8">
@@ -164,8 +172,103 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         </div>
       </div>
 
-      {/* Internal Company Contacts Table Section */}
+      {/* 1. Managed Fleet Vessels Directory (Placed BEFORE Internal Contacts, Up to 4 per row, 3 rows max per page) */}
       <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+              <Anchor className="w-5 h-5 text-[#28ada4]" />
+              Managed Fleet Directory ({ships.length})
+            </h3>
+            <p className="text-xs text-[var(--text-muted)]">
+              Vessels currently registered and operating under {ownerDetails.companyName}.
+            </p>
+          </div>
+
+          {totalVesselPages > 1 && (
+            <div className="flex items-center gap-1.5 self-start sm:self-auto">
+              <button
+                onClick={() => setVesselPage((prev) => Math.max(prev - 1, 1))}
+                disabled={validVesselPage === 1}
+                className="px-2.5 py-1.5 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] text-[var(--text-main)] font-bold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--color-glass-border)] transition flex items-center gap-1"
+              >
+                <ChevronLeft className="w-4 h-4" /> Prev
+              </button>
+
+              <span className="text-xs font-mono font-bold text-[var(--text-main)] px-2">
+                Page {validVesselPage} of {totalVesselPages}
+              </span>
+
+              <button
+                onClick={() => setVesselPage((prev) => Math.min(prev + 1, totalVesselPages))}
+                disabled={validVesselPage === totalVesselPages}
+                className="px-2.5 py-1.5 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] text-[var(--text-main)] font-bold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--color-glass-border)] transition flex items-center gap-1"
+              >
+                Next <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* 4 Vessels per row grid layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {paginatedShips.map((ship) => {
+            const openRepairs = ship.maintenance.filter((m) => m.status !== 'completed').length;
+            return (
+              <motion.div
+                key={ship.id}
+                whileHover={{ y: -3, scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                onClick={() => onSelectShip(ship)}
+                className="mozuk-glass-card rounded-2xl p-4 cursor-pointer hover:border-[#28ada4]/50 transition group flex flex-col justify-between border border-[var(--color-glass-border)] shadow-md relative overflow-hidden"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-[#28ada4] uppercase tracking-wider">
+                      {ship.type}
+                    </span>
+                    {ship.flag && (
+                      <span className="text-[10px] text-[var(--text-muted)] font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)]">
+                        {ship.flag}
+                      </span>
+                    )}
+                  </div>
+
+                  <h4 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#28ada4] transition leading-snug">
+                    {ship.name}
+                  </h4>
+                  <div className="font-mono text-xs font-bold text-[var(--text-muted)] mt-1">
+                    {ship.imo}
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-[var(--color-glass-border)] space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[var(--text-muted)] font-medium">Crew Onboard:</span>
+                    <strong className="text-[var(--text-main)] font-bold">{ship.crew.length} Personnel</strong>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[var(--text-muted)] font-medium">Open Repairs:</span>
+                    <strong className={openRepairs > 0 ? 'text-amber-500 font-bold' : 'text-emerald-500 font-bold'}>
+                      {openRepairs} Pending
+                    </strong>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between text-xs font-bold text-[#28ada4] group-hover:underline">
+                    <span>View Profile</span>
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 2. Internal Company Contacts Table Section (Placed AFTER Vessels) */}
+      <div className="space-y-4 pt-4 border-t border-[var(--color-glass-border)]">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
@@ -263,42 +366,6 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-
-      {/* Managed Fleet Quick Directory */}
-      <div className="space-y-4">
-        <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
-          <ShipIcon className="w-5 h-5 text-[#28ada4]" />
-          Managed Fleet Vessels ({ships.length})
-        </h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {ships.map((ship) => (
-            <motion.div
-              key={ship.id}
-              whileHover={{ y: -2 }}
-              onClick={() => onSelectShip(ship)}
-              className="mozuk-glass-card rounded-2xl p-4 cursor-pointer hover:border-[#28ada4]/50 transition group flex flex-col justify-between"
-            >
-              <div>
-                <div className="text-[10px] font-bold text-[#28ada4] uppercase tracking-wider mb-1">
-                  {ship.type}
-                </div>
-                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-base text-[var(--text-main)] group-hover:text-[#28ada4] transition">
-                  {ship.name}
-                </h4>
-                <div className="font-mono text-xs text-[var(--text-muted)] mt-0.5">
-                  {ship.imo}
-                </div>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-[var(--color-glass-border)] flex items-center justify-between text-xs font-bold text-[#28ada4]">
-                <span>{ship.crew.length} Crew Onboard</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </motion.div>
-          ))}
         </div>
       </div>
     </div>

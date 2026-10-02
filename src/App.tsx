@@ -9,7 +9,7 @@ import { VesselProfilePage } from './components/VesselProfilePage';
 import { CompanyCrewList } from './components/CompanyCrewList';
 import { CompanyProfilePage } from './components/CompanyProfilePage';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -584,8 +584,8 @@ export function App() {
                 }}
               />
               <div>
-                <h1 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl tracking-tight transition">
-                  <span className="text-black dark:text-white font-bold">MOZUK</span><span className="text-[#28ada4] font-black">APP</span>
+                <h1 className="font-['Montserrat',sans-serif] text-xl tracking-tight transition">
+                  <span className="text-black dark:text-white font-normal">MOZUK</span><span className="text-[#28ada4] font-bold">APP</span>
                 </h1>
               </div>
             </div>
@@ -632,6 +632,21 @@ export function App() {
               className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs flex items-center gap-2"
             >
               <Building2 className="w-4 h-4 text-[#28ada4]" /> Company Profile
+            </motion.button>
+
+            {/* Logout Button */}
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => {
+                setSelectedShipId(null);
+                setViewMode('fleet');
+              }}
+              className="px-3.5 py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
+              title="Log out of Mozuk Marine Portal"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Logout</span>
             </motion.button>
           </div>
         </div>
