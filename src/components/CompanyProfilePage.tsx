@@ -72,15 +72,6 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             Company Profile & Manager Details
           </h2>
         </div>
-
-        <motion.button
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          onClick={onOpenEditModal}
-          className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2 shadow-sm self-start sm:self-auto"
-        >
-          <Edit className="w-4 h-4" /> Edit Company Details
-        </motion.button>
       </div>
 
       {/* Main Company Overview Banner */}

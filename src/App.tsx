@@ -585,7 +585,7 @@ export function App() {
               />
               <div>
                 <h1 className="font-['Montserrat',sans-serif] text-xl tracking-tight transition">
-                  <span className="text-black dark:text-white font-normal">MOZUK</span><span className="text-[#28ada4] font-bold">APP</span>
+                  <span className="text-[var(--text-main)] font-normal">MOZUK</span><span className="text-[#28ada4] font-bold">APP</span>
                 </h1>
               </div>
             </div>
@@ -622,17 +622,19 @@ export function App() {
               </motion.button>
             )}
 
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={() => {
-                setSelectedShipId(null);
-                setViewMode('profile');
-              }}
-              className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs flex items-center gap-2"
-            >
-              <Building2 className="w-4 h-4 text-[#28ada4]" /> Company Profile
-            </motion.button>
+            {viewMode === 'fleet' && !selectedShip && (
+              <motion.button
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={() => {
+                  setSelectedShipId(null);
+                  setViewMode('profile');
+                }}
+                className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs flex items-center gap-2"
+              >
+                <Building2 className="w-4 h-4 text-[#28ada4]" /> Company Profile
+              </motion.button>
+            )}
 
             {/* Logout Button */}
             <motion.button
