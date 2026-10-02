@@ -1,18 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Ship } from '../types/vessel';
-import { Ship as ShipIcon, Calendar, Scale, Trash2, Users, FileCheck, Wrench, ChevronRight, Anchor, Navigation, ExternalLink } from 'lucide-react';
+import { Ship as ShipIcon, Calendar, Scale, Trash2, Users, FileCheck, Wrench, ChevronRight, Anchor, Navigation, ExternalLink, Plus } from 'lucide-react';
 
 interface ShipListProps {
   ships: Ship[];
   onSelectShip: (ship: Ship) => void;
   onRemoveShip: (shipId: string) => void;
+  onRegisterVessel?: () => void;
 }
 
 export const ShipList: React.FC<ShipListProps> = ({
   ships,
   onSelectShip,
   onRemoveShip,
+  onRegisterVessel,
 }) => {
   if (ships.length === 0) {
     return (
@@ -21,21 +23,43 @@ export const ShipList: React.FC<ShipListProps> = ({
         <h3 className="font-heading font-bold text-[var(--text-main)] text-lg mb-1">
           No Vessels Registered in Fleet
         </h3>
-        <p className="text-xs max-w-md mx-auto leading-relaxed">
-          Click the <strong className="text-[var(--color-primary)]">"+ Register Vessel"</strong> button above to add a ship to your Mozuk Marine fleet portal.
+        <p className="text-xs max-w-md mx-auto leading-relaxed mb-4">
+          Register a ship to manage fleet profile, crew roster, technical documents, and work orders.
         </p>
+        {onRegisterVessel && (
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={onRegisterVessel}
+            className="px-4 py-2.5 rounded-full btn-mozuk-primary font-bold text-xs inline-flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" /> Register Vessel
+          </motion.button>
+        )}
       </div>
     );
   }
 
   return (
     <div className="space-y-4 my-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <h2 className="font-heading font-bold text-[var(--text-main)] text-xl flex items-center gap-2">
           <Anchor className="w-5 h-5 text-[var(--color-primary)] shrink-0" />
           Registered Fleet Directory
         </h2>
-        <span className="text-xs text-[var(--text-muted)] hidden sm:inline font-medium">Select a vessel to view its profile, crew & maintenance</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-[var(--text-muted)] hidden md:inline font-medium">Select a vessel to view its profile, crew & maintenance</span>
+          {onRegisterVessel && (
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={onRegisterVessel}
+              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0 shadow-sm"
+            >
+              <Plus className="w-4 h-4" /> Register Vessel
+            </motion.button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

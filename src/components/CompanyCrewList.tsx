@@ -322,16 +322,16 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <strong className="text-[var(--text-main)] font-mono text-sm">{companyCrew.length}</strong>
           </div>
 
-          <div className="flex items-center gap-2 bg-emerald-950/40 border border-emerald-800/60 px-3 py-1.5 rounded-xl text-xs text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="font-semibold">Onboard:</span>
-            <strong className="text-white font-mono text-sm">{assignedCount}</strong>
+          <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs text-emerald-700 dark:text-emerald-300 font-bold">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Onboard:</span>
+            <strong className="font-mono text-sm">{assignedCount}</strong>
           </div>
 
-          <div className="flex items-center gap-2 bg-amber-950/40 border border-amber-800/60 px-3 py-1.5 rounded-xl text-xs text-amber-300">
-            <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-            <span className="font-semibold">Unassigned:</span>
-            <strong className="text-white font-mono text-sm">{unassignedCount}</strong>
+          <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs text-amber-700 dark:text-amber-300 font-bold">
+            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span>Unassigned:</span>
+            <strong className="font-mono text-sm">{unassignedCount}</strong>
           </div>
 
           <motion.button
@@ -359,7 +359,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               placeholder="Search by name, email, rank, passport or seaman book..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-slate-500 focus:outline-none focus:border-[var(--color-primary)] transition"
+              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--color-primary)] transition font-medium"
             />
           </div>
 
@@ -368,7 +368,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <select
               value={assignmentFilter}
               onChange={(e) => setAssignmentFilter(e.target.value as any)}
-              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-semibold focus:outline-none cursor-pointer"
+              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
             >
               <option value="all">All Assignment Statuses</option>
               <option value="assigned">Onboard Vessel ({assignedCount})</option>
@@ -381,7 +381,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <select
               value={vesselFilter}
               onChange={(e) => setVesselFilter(e.target.value)}
-              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-semibold focus:outline-none cursor-pointer"
+              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
             >
               <option value="all">All Ships & Unassigned</option>
               <option value="unassigned">Unassigned Pool</option>
@@ -398,7 +398,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-semibold focus:outline-none cursor-pointer"
+              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
             >
               <option value="all">All Departments</option>
               <option value="master">Master</option>
@@ -412,17 +412,17 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
         {/* Sort & Reset Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[var(--color-glass-border)] text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-[var(--text-muted)] font-semibold flex items-center gap-1">
+            <span className="text-[var(--text-muted)] font-bold flex items-center gap-1">
               <ArrowUpDown className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Sort By:
             </span>
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => setSortBy('rank')}
-              className={`px-3 py-1 rounded-lg font-bold transition ${
+              className={`px-3 py-1 rounded-lg font-extrabold transition ${
                 sortBy === 'rank'
                   ? 'bg-[var(--color-primary)] text-slate-950'
-                  : 'bg-[var(--color-bg)] text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  : 'bg-[var(--color-bg)] text-[var(--text-main)] hover:text-[var(--color-primary)] border border-[var(--color-glass-border)]'
               }`}
             >
               Rank Hierarchy (Master → Rating)
@@ -431,10 +431,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => setSortBy('name')}
-              className={`px-3 py-1 rounded-lg font-bold transition ${
+              className={`px-3 py-1 rounded-lg font-extrabold transition ${
                 sortBy === 'name'
                   ? 'bg-[var(--color-primary)] text-slate-950'
-                  : 'bg-[var(--color-bg)] text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  : 'bg-[var(--color-bg)] text-[var(--text-main)] hover:text-[var(--color-primary)] border border-[var(--color-glass-border)]'
               }`}
             >
               Name (A-Z)
@@ -443,10 +443,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => setSortBy('signOn')}
-              className={`px-3 py-1 rounded-lg font-bold transition ${
+              className={`px-3 py-1 rounded-lg font-extrabold transition ${
                 sortBy === 'signOn'
                   ? 'bg-[var(--color-primary)] text-slate-950'
-                  : 'bg-[var(--color-bg)] text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  : 'bg-[var(--color-bg)] text-[var(--text-main)] hover:text-[var(--color-primary)] border border-[var(--color-glass-border)]'
               }`}
             >
               Recent Sign-On
@@ -458,7 +458,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={resetFilters}
-              className="px-3 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-bold flex items-center gap-1.5 transition"
+              className="px-3 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-white font-bold flex items-center gap-1.5 transition"
             >
               <RotateCcw className="w-3.5 h-3.5" /> Clear Filters
             </motion.button>
@@ -467,10 +467,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
       </div>
 
       {/* MASTER CREW ROSTER TABLE */}
-      <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden">
+      <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-bold">
+            <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
               <tr>
                 <th className="py-3.5 px-4">Crew Member Name & Role</th>
                 <th className="py-3.5 px-4">Department</th>
@@ -506,10 +506,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       }}
                       title="Click to view full crew profile"
                     >
-                      {/* Name & Role (Fitted cleanly on one line) */}
+                      {/* Name & Role */}
                       <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-[#2c6498]/20 border border-[#28ada4]/40 text-[#28ada4] font-extrabold text-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                          <div className="w-9 h-9 rounded-xl bg-[#28ada4]/15 border border-[#28ada4]/40 text-[#28ada4] font-extrabold text-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
                             {crew.name.charAt(0)}
                           </div>
                           <div>
@@ -517,12 +517,12 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               {crew.name}
                             </h4>
                             <div className="flex items-center gap-2 mt-0.5 whitespace-nowrap">
-                              <span className="font-semibold text-[11px] text-[var(--color-primary)] whitespace-nowrap">
+                              <span className="font-bold text-[11px] text-[#28ada4] whitespace-nowrap">
                                 {crew.role}
                               </span>
                               {crew.email && (
                                 <span className="text-[11px] text-[var(--text-muted)] flex items-center gap-1 font-mono whitespace-nowrap">
-                                  <Mail className="w-3 h-3 text-[var(--color-primary)] shrink-0" />
+                                  <Mail className="w-3 h-3 text-[#28ada4] shrink-0" />
                                   {crew.email}
                                 </span>
                               )}
@@ -534,27 +534,27 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       {/* Department */}
                       <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                         {crew.department === 'master' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/40 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#28ada4]/15 text-[#1e8b83] dark:text-[#28ada4] border border-[#28ada4]/40 font-extrabold text-[10px]">
                             MASTER
                           </span>
                         )}
                         {crew.department === 'deck' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-orange-950/60 text-orange-400 border border-orange-800/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-orange-500/15 text-orange-700 dark:text-orange-300 border border-orange-500/30 font-extrabold text-[10px]">
                             DECK DEPT
                           </span>
                         )}
                         {crew.department === 'engine' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-rose-950/60 text-rose-400 border border-rose-800/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 font-extrabold text-[10px]">
                             ENGINE DEPT
                           </span>
                         )}
                         {crew.department === 'kitchen' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-extrabold text-[10px]">
                             GALLEY & MESS
                           </span>
                         )}
                         {!crew.department && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-slate-800/60 text-slate-400 border border-slate-700/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-slate-500/15 text-slate-700 dark:text-slate-300 border border-slate-500/30 font-extrabold text-[10px]">
                             GENERAL CREW
                           </span>
                         )}
@@ -568,35 +568,35 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               e.stopPropagation();
                               onSelectShip(assignedShip);
                             }}
-                            className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/20 hover:bg-[#2c6498]/40 text-white border border-[#2c6498]/50 text-[10px] font-bold inline-flex items-center gap-1 transition shadow-sm group/btn"
+                            className="px-2.5 py-1 rounded-full bg-[#2c6498]/15 hover:bg-[#2c6498]/30 text-[var(--text-main)] border border-[#2c6498]/40 text-[10px] font-extrabold inline-flex items-center gap-1 transition shadow-sm group/btn"
                             title={`Click to open ${assignedShip.name} vessel profile`}
                           >
                             <ShipIcon className="w-3 h-3 text-[#28ada4] shrink-0 group-hover/btn:scale-110 transition-transform" />
                             <span>{assignedShip.name}</span>
-                            <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
+                            <ExternalLink className="w-2.5 h-2.5 opacity-70 ml-0.5 text-[#28ada4]" />
                           </button>
                         ) : (
-                          <span className="px-2.5 py-0.5 rounded-full bg-amber-950/40 text-amber-300 border border-amber-800/60 text-[10px] font-bold inline-flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-amber-400 shrink-0" />
+                          <span className="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 text-[10px] font-bold inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400 shrink-0" />
                             <span>UNASSIGNED</span>
                           </span>
                         )}
                       </td>
 
                       {/* Nationality */}
-                      <td className="py-3.5 px-4 align-middle text-[var(--text-main)] font-semibold whitespace-nowrap">
+                      <td className="py-3.5 px-4 align-middle text-[var(--text-main)] font-extrabold whitespace-nowrap">
                         {crew.nationality}
                       </td>
 
                       {/* Passport & Seaman Book */}
-                      <td className="py-3.5 px-4 align-middle whitespace-nowrap font-mono text-[11px] text-[var(--text-muted)] space-y-0.5">
+                      <td className="py-3.5 px-4 align-middle whitespace-nowrap font-mono text-[11px] text-[var(--text-muted)] space-y-0.5 font-bold">
                         <div>Pass: <span className="text-[var(--text-main)]">{crew.passportNumber || '—'}</span></div>
                         <div>SB: <span className="text-[var(--text-main)]">{crew.seamanBookNo || '—'}</span></div>
                       </td>
 
                       {/* Vessels Served */}
                       <td className="py-3.5 px-4 align-middle text-center whitespace-nowrap">
-                        <span className="px-2.5 py-1 rounded-lg bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-bold text-xs text-[var(--color-primary)]">
+                        <span className="px-2.5 py-1 rounded-lg bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-extrabold text-xs text-[#28ada4]">
                           {historyCount} {historyCount === 1 ? 'vessel' : 'vessels'}
                         </span>
                       </td>
@@ -610,17 +610,17 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               setViewingProfileCrew(crew);
                               onSelectCrewMember(crew);
                             }}
-                            className="p-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/60 text-blue-300 border border-blue-800/60 transition inline-flex items-center gap-1 text-[11px] font-bold"
+                            className="p-1.5 px-2 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-blue-700 dark:text-blue-300 border border-blue-500/30 transition inline-flex items-center gap-1 text-[11px] font-extrabold"
                             title="View full crew profile"
                           >
-                            <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                            <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
                             <span>Profile</span>
                           </button>
 
                           {/* Delete Button */}
                           <button
                             onClick={() => onRemoveCrewMember(crew.id)}
-                            className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
+                            className="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-700 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
                             title="Remove crew member from company roster"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
