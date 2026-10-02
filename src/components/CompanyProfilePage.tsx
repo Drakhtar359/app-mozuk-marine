@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShipOwnerDetails, Ship, CrewMember, CompanyEmployee } from '../types/vessel';
+import { ShipOwnerDetails, Ship, CrewMember, CompanyEmployee, CompanyContactPerson } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
 import {
@@ -44,6 +44,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   onSelectShip,
   onUpdateOwnerDetails,
 }) => {
+  const [activeTab, setActiveTab] = useState<'employees' | 'contacts'>('employees');
   const [contactSearchTerm, setContactSearchTerm] = useState('');
 
   // Local state for Employees list initialized from ownerDetails
@@ -51,11 +52,22 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
     ownerDetails.employees || []
   );
 
+  // Local state for Contacts list initialized from ownerDetails
+  const [contactPeopleList, setContactPeopleList] = useState<CompanyContactPerson[]>(
+    ownerDetails.contactPeople || []
+  );
+
   useEffect(() => {
     if (ownerDetails.employees) {
       setEmployeesList(ownerDetails.employees);
     }
   }, [ownerDetails.employees]);
+
+  useEffect(() => {
+    if (ownerDetails.contactPeople) {
+      setContactPeopleList(ownerDetails.contactPeople);
+    }
+  }, [ownerDetails.contactPeople]);
 
   // Employee Modal States
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
@@ -69,6 +81,16 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   const [empCountry, setEmpCountry] = useState('Mozambique');
   const [empCity, setEmpCity] = useState('Maputo');
 
+  // Contact Person Modal States
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [editingContactId, setEditingContactId] = useState<string | null>(null);
+  const [cpFullName, setCpFullName] = useState('');
+  const [cpPosition, setCpPosition] = useState('');
+  const [cpCountry, setCpCountry] = useState('Mozambique');
+  const [cpPhoneNumber, setCpPhoneNumber] = useState('');
+  const [cpEmail, setCpEmail] = useState('');
+  const [cpDescription, setCpDescription] = useState('');
+
   const totalFleetCount = ships.length;
   const totalCrewCount = companyCrew.length;
   const totalOnboardCrewCount = companyCrew.filter((c) => c.assignedShipId).length;
@@ -78,7 +100,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
     0
   );
 
-  const filteredContactPeople = ownerDetails.contactPeople.filter((person) => {
+  const filteredContactPeople = contactPeopleList.filter((person) => {
     const query = contactSearchTerm.toLowerCase().trim();
     if (!query) return true;
     return (
@@ -90,6 +112,82 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
       (person.description && person.description.toLowerCase().includes(query))
     );
   });
+
+  // Contact Handlers
+  const handleOpenAddContactModal = () => {
+    setEditingContactId(null);
+    setCpFullName('');
+    setCpPosition('');
+    setCpCountry(ownerDetails.country || 'Mozambique');
+    setCpPhoneNumber('');
+    setCpEmail('');
+    setCpDescription('');
+    setIsContactModalOpen(true);
+  };
+
+  const handleOpenEditContactModal = (cp: CompanyContactPerson) => {
+    setEditingContactId(cp.id);
+    setCpFullName(cp.fullName);
+    setCpPosition(cp.position);
+    setCpCountry(cp.country || 'Mozambique');
+    setCpPhoneNumber(cp.phoneNumber || '');
+    setCpEmail(cp.email || '');
+    setCpDescription(cp.description || '');
+    setIsContactModalOpen(true);
+  };
+
+  const handleDeleteContact = (id: string) => {
+    const updated = contactPeopleList.filter((cp) => cp.id !== id);
+    setContactPeopleList(updated);
+    if (onUpdateOwnerDetails) {
+      onUpdateOwnerDetails({
+        ...ownerDetails,
+        contactPeople: updated,
+      });
+    }
+  };
+
+  const handleSaveContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cpFullName.trim()) return;
+
+    let updatedList: CompanyContactPerson[];
+    if (editingContactId) {
+      updatedList = contactPeopleList.map((cp) =>
+        cp.id === editingContactId
+          ? {
+              ...cp,
+              fullName: cpFullName.trim(),
+              position: cpPosition.trim() || 'Representative',
+              country: cpCountry.trim() || 'Mozambique',
+              phoneNumber: cpPhoneNumber.trim(),
+              email: cpEmail.trim(),
+              description: cpDescription.trim(),
+            }
+          : cp
+      );
+    } else {
+      const newContact: CompanyContactPerson = {
+        id: `cp-${Date.now()}`,
+        fullName: cpFullName.trim(),
+        position: cpPosition.trim() || 'Representative',
+        country: cpCountry.trim() || 'Mozambique',
+        phoneNumber: cpPhoneNumber.trim(),
+        email: cpEmail.trim(),
+        description: cpDescription.trim(),
+      };
+      updatedList = [...contactPeopleList, newContact];
+    }
+
+    setContactPeopleList(updatedList);
+    if (onUpdateOwnerDetails) {
+      onUpdateOwnerDetails({
+        ...ownerDetails,
+        contactPeople: updatedList,
+      });
+    }
+    setIsContactModalOpen(false);
+  };
 
   // Employee Handlers
   const handleOpenAddEmployeeModal = () => {
@@ -178,24 +276,12 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
 
   return (
     <div className="space-y-8">
-      {/* Top Header & Navigation Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5">
-        <div className="flex items-center gap-3">
-          <motion.button
-            whileHover={{ scale: 1.05, x: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onBack}
-            className="p-2.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-[var(--text-main)] hover:border-[var(--color-primary)] transition flex items-center gap-2 text-xs font-bold shadow-sm"
-          >
-            <ArrowLeft className="w-4 h-4 text-[var(--color-primary)]" />
-            <span>Back to Fleet Directory</span>
-          </motion.button>
-          <div className="h-6 w-px bg-[var(--color-glass-border)] hidden sm:block" />
-          <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-2xl text-[var(--text-main)] flex items-center gap-2">
-            <Building2 className="w-6 h-6 text-[#28ada4]" />
-            Company Profile & Manager Details
-          </h2>
-        </div>
+      {/* Top Header */}
+      <div className="border-b border-[var(--color-glass-border)] pb-5">
+        <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-2xl text-[var(--text-main)] flex items-center gap-2">
+          <Building2 className="w-6 h-6 text-[#28ada4]" />
+          Company Profile & Manager Details
+        </h2>
       </div>
 
       {/* Main Company Overview Banner with Edit Company Details Button */}
@@ -229,7 +315,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 <span className="text-[var(--color-glass-border)]">•</span>
                 <span className="flex items-center gap-1.5 font-bold text-[#28ada4]">
                   <Users className="w-4 h-4" />
-                  {ownerDetails.contactPeople.length} Internal Contact{ownerDetails.contactPeople.length === 1 ? '' : 's'}
+                  {contactPeopleList.length} Internal Contact{contactPeopleList.length === 1 ? '' : 's'}
                 </span>
               </div>
 
@@ -297,240 +383,294 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         </div>
       </div>
 
-      {/* 1. Company Employees Directory */}
-      <div className="space-y-4 pt-4 border-t border-[var(--color-glass-border)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-[#28ada4]" />
-              Employees Directory ({employeesList.length})
-            </h3>
-            <p className="text-xs text-[var(--text-muted)]">
-              Shore-based corporate personnel, superintendents, operations leads, and company staff.
-            </p>
-          </div>
+      {/* Directory Tabs Navigation */}
+      <div className="flex items-center gap-3 border-b border-[var(--color-glass-border)] pb-4 pt-2">
+        <button
+          onClick={() => setActiveTab('employees')}
+          className={`px-5 py-3 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center gap-2.5 shadow-sm ${
+            activeTab === 'employees'
+              ? 'bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/40 font-extrabold'
+              : 'bg-[var(--color-bg-alt)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--color-glass-border-hover)] border border-[var(--color-glass-border)]'
+          }`}
+        >
+          <Briefcase className="w-4 h-4 text-[#28ada4]" />
+          <span>Employees Directory</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
+            activeTab === 'employees'
+              ? 'bg-[#28ada4] text-slate-950'
+              : 'bg-[var(--color-glass-border)] text-[var(--text-muted)]'
+          }`}>
+            {employeesList.length}
+          </span>
+        </button>
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={handleOpenAddEmployeeModal}
-            className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm self-start sm:self-auto"
-          >
-            <Plus className="w-4 h-4" /> Register Employee
-          </motion.button>
-        </div>
-
-        <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs min-w-[950px]">
-              <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
-                <tr>
-                  <th className="py-3.5 px-4">Employee Name & Position</th>
-                  <th className="py-3.5 px-4">Date of Birth</th>
-                  <th className="py-3.5 px-4">Date of Joining</th>
-                  <th className="py-3.5 px-4">Email Address</th>
-                  <th className="py-3.5 px-4">Phone Number</th>
-                  <th className="py-3.5 px-4">Country & City</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--color-glass-border)]">
-                {employeesList.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-10 text-center text-[var(--text-muted)]">
-                      <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
-                      No company employees registered yet. Click "+ Register Employee" to populate directory.
-                    </td>
-                  </tr>
-                ) : (
-                  employeesList.map((emp) => (
-                    <tr key={emp.id} className="hover:bg-[var(--color-glass-border)] transition">
-                      {/* Name & Position */}
-                      <td className="py-3.5 px-4 align-middle">
-                        <div className="font-extrabold text-[var(--text-main)] text-xs">
-                          {emp.name}
-                        </div>
-                        <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
-                          {emp.position}
-                        </div>
-                      </td>
-
-                      {/* Date of Birth */}
-                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
-                        {emp.dateOfBirth || '—'}
-                      </td>
-
-                      {/* Date of Joining */}
-                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
-                        {emp.dateOfJoining || '—'}
-                      </td>
-
-                      {/* Email */}
-                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
-                        {emp.email ? (
-                          <a href={`mailto:${emp.email}`} className="hover:underline flex items-center gap-1">
-                            <Mail className="w-3 h-3 text-[#28ada4]" />
-                            {emp.email}
-                          </a>
-                        ) : (
-                          '—'
-                        )}
-                      </td>
-
-                      {/* Phone */}
-                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
-                        {emp.phoneNumber || '—'}
-                      </td>
-
-                      {/* Country & City */}
-                      <td className="py-3.5 px-4 align-middle whitespace-nowrap">
-                        <div className="font-bold text-[var(--text-main)]">{emp.country}</div>
-                        <div className="text-[11px] text-[var(--text-muted)]">{emp.city}</div>
-                      </td>
-
-                      {/* Actions */}
-                      <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            onClick={() => handleOpenEditEmployeeModal(emp)}
-                            className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
-                          >
-                            <Edit className="w-3.5 h-3.5" /> Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteEmployee(emp.id)}
-                            className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
-                            title="Delete employee record"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <button
+          onClick={() => setActiveTab('contacts')}
+          className={`px-5 py-3 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center gap-2.5 shadow-sm ${
+            activeTab === 'contacts'
+              ? 'bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/40 font-extrabold'
+              : 'bg-[var(--color-bg-alt)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--color-glass-border-hover)] border border-[var(--color-glass-border)]'
+          }`}
+        >
+          <UserCheck className="w-4 h-4 text-[#28ada4]" />
+          <span>Contacts & Company Directory</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
+            activeTab === 'contacts'
+              ? 'bg-[#28ada4] text-slate-950'
+              : 'bg-[var(--color-glass-border)] text-[var(--text-muted)]'
+          }`}>
+            {contactPeopleList.length}
+          </span>
+        </button>
       </div>
 
-      {/* 2. Internal Company Contacts Table Section */}
-      <div className="space-y-4 pt-4 border-t border-[var(--color-glass-border)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
-              <UserCheck className="w-5 h-5 text-[#28ada4]" />
-              Internal Company Contacts Directory ({filteredContactPeople.length})
-            </h3>
-            <p className="text-xs text-[var(--text-muted)]">
-              Authorized company representatives, DPAs, technical superintendents, and crewing directors.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-            <div className="relative flex-1 sm:w-64">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-              <input
-                type="text"
-                placeholder="Search contacts by keyword..."
-                value={contactSearchTerm}
-                onChange={(e) => setContactSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition shadow-sm"
-              />
+      {/* TAB 1: EMPLOYEES DIRECTORY */}
+      {activeTab === 'employees' && (
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <Briefcase className="w-5 h-5 text-[#28ada4]" />
+                Employees Directory ({employeesList.length})
+              </h3>
+              <p className="text-xs text-[var(--text-muted)]">
+                Shore-based corporate personnel, superintendents, operations leads, and company staff.
+              </p>
             </div>
 
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              onClick={onOpenEditModal}
-              className="px-3.5 py-2 rounded-full bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold flex items-center justify-center gap-1.5 transition shrink-0"
+              onClick={handleOpenAddEmployeeModal}
+              className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm self-start sm:self-auto"
             >
-              <Edit className="w-3.5 h-3.5" /> Manage Contacts
+              <Plus className="w-4 h-4" /> Register Employee
             </motion.button>
           </div>
-        </div>
 
-        <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs min-w-[750px]">
-              <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
-                <tr>
-                  <th className="py-3.5 px-4">Contact Person & Position</th>
-                  <th className="py-3.5 px-4">Country</th>
-                  <th className="py-3.5 px-4">Phone Number</th>
-                  <th className="py-3.5 px-4">Email Address</th>
-                  <th className="py-3.5 px-4">Responsibilities / Notes</th>
-                  <th className="py-3.5 px-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--color-glass-border)]">
-                {filteredContactPeople.length === 0 ? (
+          <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[950px]">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                   <tr>
-                    <td colSpan={6} className="py-10 text-center text-[var(--text-muted)]">
-                      <UserCheck className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
-                      {ownerDetails.contactPeople.length === 0
-                        ? 'No internal contacts listed. Click "Manage Contacts" to add team members.'
-                        : 'No internal contacts match your search query.'}
-                    </td>
+                    <th className="py-3.5 px-4">Employee Name & Position</th>
+                    <th className="py-3.5 px-4">Date of Birth</th>
+                    <th className="py-3.5 px-4">Date of Joining</th>
+                    <th className="py-3.5 px-4">Email Address</th>
+                    <th className="py-3.5 px-4">Phone Number</th>
+                    <th className="py-3.5 px-4">Country & City</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
-                ) : (
-                  filteredContactPeople.map((person) => (
-                    <tr key={person.id} className="hover:bg-[var(--color-glass-border)] transition">
-                      {/* Name & Position */}
-                      <td className="py-3.5 px-4 align-middle">
-                        <div className="font-extrabold text-[var(--text-main)] text-xs">
-                          {person.fullName}
-                        </div>
-                        <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
-                          {person.position}
-                        </div>
-                      </td>
-
-                      {/* Country */}
-                      <td className="py-3.5 px-4 align-middle text-[var(--text-main)] font-semibold whitespace-nowrap">
-                        {person.country}
-                      </td>
-
-                      {/* Phone */}
-                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
-                        {person.phoneNumber || '—'}
-                      </td>
-
-                      {/* Email */}
-                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
-                        {person.email ? (
-                          <a href={`mailto:${person.email}`} className="hover:underline flex items-center gap-1">
-                            <Mail className="w-3 h-3 text-[#28ada4]" />
-                            {person.email}
-                          </a>
-                        ) : (
-                          '—'
-                        )}
-                      </td>
-
-                      {/* Description */}
-                      <td className="py-3.5 px-4 align-middle text-[var(--text-muted)] max-w-xs truncate">
-                        {person.description || '—'}
-                      </td>
-
-                      {/* Action */}
-                      <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
-                        <button
-                          onClick={onOpenEditModal}
-                          className="px-3 py-1.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
-                        >
-                          <Edit className="w-3.5 h-3.5" /> Edit
-                        </button>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-glass-border)]">
+                  {employeesList.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-10 text-center text-[var(--text-muted)]">
+                        <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
+                        No company employees registered yet. Click "+ Register Employee" to populate directory.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    employeesList.map((emp) => (
+                      <tr key={emp.id} className="hover:bg-[var(--color-glass-border)] transition">
+                        {/* Name & Position */}
+                        <td className="py-3.5 px-4 align-middle">
+                          <div className="font-extrabold text-[var(--text-main)] text-xs">
+                            {emp.name}
+                          </div>
+                          <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                            {emp.position}
+                          </div>
+                        </td>
+
+                        {/* Date of Birth */}
+                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
+                          {emp.dateOfBirth || '—'}
+                        </td>
+
+                        {/* Date of Joining */}
+                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
+                          {emp.dateOfJoining || '—'}
+                        </td>
+
+                        {/* Email */}
+                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                          {emp.email ? (
+                            <a href={`mailto:${emp.email}`} className="hover:underline flex items-center gap-1">
+                              <Mail className="w-3 h-3 text-[#28ada4]" />
+                              {emp.email}
+                            </a>
+                          ) : (
+                            '—'
+                          )}
+                        </td>
+
+                        {/* Phone */}
+                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                          {emp.phoneNumber || '—'}
+                        </td>
+
+                        {/* Country & City */}
+                        <td className="py-3.5 px-4 align-middle whitespace-nowrap">
+                          <div className="font-bold text-[var(--text-main)]">{emp.country}</div>
+                          <div className="text-[11px] text-[var(--text-muted)]">{emp.city}</div>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => handleOpenEditEmployeeModal(emp)}
+                              className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEmployee(emp.id)}
+                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                              title="Delete employee record"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* TAB 2: CONTACTS & COMPANY DIRECTORY */}
+      {activeTab === 'contacts' && (
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <UserCheck className="w-5 h-5 text-[#28ada4]" />
+                Contacts & Company Directory ({filteredContactPeople.length})
+              </h3>
+              <p className="text-xs text-[var(--text-muted)]">
+                Authorized company representatives, DPAs, technical superintendents, and crewing directors.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-64">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                <input
+                  type="text"
+                  placeholder="Search contacts..."
+                  value={contactSearchTerm}
+                  onChange={(e) => setContactSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition shadow-sm"
+                />
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={handleOpenAddContactModal}
+                className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm shrink-0"
+              >
+                <Plus className="w-4 h-4" /> Register Contact
+              </motion.button>
+            </div>
+          </div>
+
+          <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[950px]">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4">Contact Person & Position</th>
+                    <th className="py-3.5 px-4">Country</th>
+                    <th className="py-3.5 px-4">Email Address</th>
+                    <th className="py-3.5 px-4">Phone Number</th>
+                    <th className="py-3.5 px-4">Responsibilities / Notes</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-glass-border)]">
+                  {filteredContactPeople.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-10 text-center text-[var(--text-muted)]">
+                        <UserCheck className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
+                        {contactPeopleList.length === 0
+                          ? 'No internal contacts listed. Click "+ Register Contact" to add team members.'
+                          : 'No internal contacts match your search query.'}
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredContactPeople.map((person) => (
+                      <tr key={person.id} className="hover:bg-[var(--color-glass-border)] transition">
+                        {/* Name & Position */}
+                        <td className="py-3.5 px-4 align-middle">
+                          <div className="font-extrabold text-[var(--text-main)] text-xs">
+                            {person.fullName}
+                          </div>
+                          <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                            {person.position}
+                          </div>
+                        </td>
+
+                        {/* Country */}
+                        <td className="py-3.5 px-4 align-middle font-bold text-[var(--text-main)] whitespace-nowrap">
+                          {person.country}
+                        </td>
+
+                        {/* Email */}
+                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                          {person.email ? (
+                            <a href={`mailto:${person.email}`} className="hover:underline flex items-center gap-1">
+                              <Mail className="w-3 h-3 text-[#28ada4]" />
+                              {person.email}
+                            </a>
+                          ) : (
+                            '—'
+                          )}
+                        </td>
+
+                        {/* Phone */}
+                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                          {person.phoneNumber || '—'}
+                        </td>
+
+                        {/* Description */}
+                        <td className="py-3.5 px-4 align-middle text-[var(--text-muted)] max-w-xs truncate">
+                          {person.description || '—'}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => handleOpenEditContactModal(person)}
+                              className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteContact(person.id)}
+                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                              title="Delete contact record"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL: REGISTER / EDIT COMPANY EMPLOYEE */}
       <AnimatePresence>
@@ -702,6 +842,158 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                     className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs shadow-md"
                   >
                     {editingEmployeeId ? 'Save Changes' : 'Register Employee'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL: REGISTER / EDIT COMPANY CONTACT PERSON */}
+      <AnimatePresence>
+        {isContactModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsContactModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col"
+            >
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] sticky top-0 z-20">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-[#28ada4]/10 text-[#28ada4] border border-[#28ada4]/30">
+                    <UserCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      {editingContactId ? 'Edit Company Contact Person' : 'Register New Contact Person'}
+                    </h3>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      Fill in representative details and key contact credentials.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsContactModalOpen(false)}
+                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleSaveContactSubmit} className="p-6 space-y-4 text-xs">
+                {/* Contact Person Name */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Contact Person Full Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Eng. Carlos Mendes"
+                    value={cpFullName}
+                    onChange={(e) => setCpFullName(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
+
+                {/* Position */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Position / Responsibilities <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. DPA & Safety Director, Technical Superintendent"
+                    value={cpPosition}
+                    onChange={(e) => setCpPosition(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
+
+                {/* Country */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Country
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Mozambique, Greece"
+                    value={cpCountry}
+                    onChange={(e) => setCpCountry(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
+
+                {/* Contact Row (Email & Phone Number) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="e.g. c.mendes@mozukmarine.com"
+                      value={cpEmail}
+                      onChange={(e) => setCpEmail(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="e.g. +258 84 300 9988"
+                      value={cpPhoneNumber}
+                      onChange={(e) => setCpPhoneNumber(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+                </div>
+
+                {/* Responsibilities / Notes */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Responsibilities / Notes
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="e.g. 24/7 Designated Person Ashore for emergency response..."
+                    value={cpDescription}
+                    onChange={(e) => setCpDescription(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
+
+                {/* Actions */}
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setIsContactModalOpen(false)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs shadow-md"
+                  >
+                    {editingContactId ? 'Save Changes' : 'Register Contact'}
                   </button>
                 </div>
               </form>
