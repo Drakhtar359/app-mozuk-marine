@@ -16,15 +16,13 @@ import {
   ArrowLeft,
   Mail,
   UserCheck,
-  ChevronRight,
-  ChevronLeft,
-  Anchor,
   Briefcase,
   Plus,
   Trash2,
   X,
   MapPin,
   Calendar,
+  Search,
 } from 'lucide-react';
 
 interface CompanyProfilePageProps {
@@ -46,8 +44,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   onSelectShip,
   onUpdateOwnerDetails,
 }) => {
-  const [vesselPage, setVesselPage] = useState(1);
-  const VESSELS_PER_PAGE = 12; // 4 vessels per row * 3 rows per page
+  const [contactSearchTerm, setContactSearchTerm] = useState('');
 
   // Local state for Employees list initialized from ownerDetails
   const [employeesList, setEmployeesList] = useState<CompanyEmployee[]>(
@@ -81,9 +78,18 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
     0
   );
 
-  const totalVesselPages = Math.ceil(ships.length / VESSELS_PER_PAGE) || 1;
-  const validVesselPage = Math.min(vesselPage, totalVesselPages);
-  const paginatedShips = ships.slice((validVesselPage - 1) * VESSELS_PER_PAGE, validVesselPage * VESSELS_PER_PAGE);
+  const filteredContactPeople = ownerDetails.contactPeople.filter((person) => {
+    const query = contactSearchTerm.toLowerCase().trim();
+    if (!query) return true;
+    return (
+      person.fullName.toLowerCase().includes(query) ||
+      person.position.toLowerCase().includes(query) ||
+      person.country.toLowerCase().includes(query) ||
+      (person.phoneNumber && person.phoneNumber.toLowerCase().includes(query)) ||
+      (person.email && person.email.toLowerCase().includes(query)) ||
+      (person.description && person.description.toLowerCase().includes(query))
+    );
+  });
 
   // Employee Handlers
   const handleOpenAddEmployeeModal = () => {
@@ -291,102 +297,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         </div>
       </div>
 
-      {/* 1. Managed Fleet Vessels Directory (Placed BEFORE Internal Contacts, Up to 4 per row, 3 rows max per page) */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
-              <Anchor className="w-5 h-5 text-[#28ada4]" />
-              Managed Fleet Directory ({ships.length})
-            </h3>
-            <p className="text-xs text-[var(--text-muted)]">
-              Vessels currently registered and operating under {ownerDetails.companyName}.
-            </p>
-          </div>
-
-          {totalVesselPages > 1 && (
-            <div className="flex items-center gap-1.5 self-start sm:self-auto">
-              <button
-                onClick={() => setVesselPage((prev) => Math.max(prev - 1, 1))}
-                disabled={validVesselPage === 1}
-                className="px-2.5 py-1.5 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] text-[var(--text-main)] font-bold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--color-glass-border)] transition flex items-center gap-1"
-              >
-                <ChevronLeft className="w-4 h-4" /> Prev
-              </button>
-
-              <span className="text-xs font-mono font-bold text-[var(--text-main)] px-2">
-                Page {validVesselPage} of {totalVesselPages}
-              </span>
-
-              <button
-                onClick={() => setVesselPage((prev) => Math.min(prev + 1, totalVesselPages))}
-                disabled={validVesselPage === totalVesselPages}
-                className="px-2.5 py-1.5 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] text-[var(--text-main)] font-bold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--color-glass-border)] transition flex items-center gap-1"
-              >
-                Next <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* 4 Vessels per row grid layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {paginatedShips.map((ship) => {
-            const openRepairs = ship.maintenance.filter((m) => m.status !== 'completed').length;
-            return (
-              <motion.div
-                key={ship.id}
-                whileHover={{ y: -3, scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                onClick={() => onSelectShip(ship)}
-                className="mozuk-glass-card rounded-2xl p-4 cursor-pointer hover:border-[#28ada4]/50 transition group flex flex-col justify-between border border-[var(--color-glass-border)] shadow-md relative overflow-hidden"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-[#28ada4] uppercase tracking-wider">
-                      {ship.type}
-                    </span>
-                    {ship.flag && (
-                      <span className="text-[10px] text-[var(--text-muted)] font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)]">
-                        {ship.flag}
-                      </span>
-                    )}
-                  </div>
-
-                  <h4 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#28ada4] transition leading-snug">
-                    {ship.name}
-                  </h4>
-                  <div className="font-mono text-xs font-bold text-[var(--text-muted)] mt-1">
-                    {ship.imo}
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-[var(--color-glass-border)] space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-[var(--text-muted)] font-medium">Crew Onboard:</span>
-                    <strong className="text-[var(--text-main)] font-bold">{ship.crew.length} Personnel</strong>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-[var(--text-muted)] font-medium">Open Repairs:</span>
-                    <strong className={openRepairs > 0 ? 'text-amber-500 font-bold' : 'text-emerald-500 font-bold'}>
-                      {openRepairs} Pending
-                    </strong>
-                  </div>
-
-                  <div className="pt-2 flex items-center justify-between text-xs font-bold text-[#28ada4] group-hover:underline">
-                    <span>View Profile</span>
-                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 2. Company Employees Directory (Placed BELOW Managed Fleet Directory) */}
+      {/* 1. Company Employees Directory */}
       <div className="space-y-4 pt-4 border-t border-[var(--color-glass-border)]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -504,27 +415,40 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         </div>
       </div>
 
-      {/* 3. Internal Company Contacts Table Section */}
+      {/* 2. Internal Company Contacts Table Section */}
       <div className="space-y-4 pt-4 border-t border-[var(--color-glass-border)]">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-[#28ada4]" />
-              Internal Company Contacts Directory
+              Internal Company Contacts Directory ({filteredContactPeople.length})
             </h3>
             <p className="text-xs text-[var(--text-muted)]">
               Authorized company representatives, DPAs, technical superintendents, and crewing directors.
             </p>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={onOpenEditModal}
-            className="px-3.5 py-2 rounded-full bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold flex items-center gap-1.5 transition"
-          >
-            <Edit className="w-3.5 h-3.5" /> Manage Contacts
-          </motion.button>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+              <input
+                type="text"
+                placeholder="Search contacts by keyword..."
+                value={contactSearchTerm}
+                onChange={(e) => setContactSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition shadow-sm"
+              />
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={onOpenEditModal}
+              className="px-3.5 py-2 rounded-full bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold flex items-center justify-center gap-1.5 transition shrink-0"
+            >
+              <Edit className="w-3.5 h-3.5" /> Manage Contacts
+            </motion.button>
+          </div>
         </div>
 
         <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
@@ -541,15 +465,17 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-glass-border)]">
-                {ownerDetails.contactPeople.length === 0 ? (
+                {filteredContactPeople.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-10 text-center text-[var(--text-muted)]">
                       <UserCheck className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
-                      No internal contacts listed. Click "Manage Contacts" to add team members.
+                      {ownerDetails.contactPeople.length === 0
+                        ? 'No internal contacts listed. Click "Manage Contacts" to add team members.'
+                        : 'No internal contacts match your search query.'}
                     </td>
                   </tr>
                 ) : (
-                  ownerDetails.contactPeople.map((person) => (
+                  filteredContactPeople.map((person) => (
                     <tr key={person.id} className="hover:bg-[var(--color-glass-border)] transition">
                       {/* Name & Position */}
                       <td className="py-3.5 px-4 align-middle">
