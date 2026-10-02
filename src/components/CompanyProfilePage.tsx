@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ShipOwnerDetails, Ship, CrewMember } from '../types/vessel';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShipOwnerDetails, Ship, CrewMember, CompanyEmployee } from '../types/vessel';
+import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
+import { DateInput } from './DateInput';
 import {
   Building2,
   Globe,
@@ -17,6 +19,12 @@ import {
   ChevronRight,
   ChevronLeft,
   Anchor,
+  Briefcase,
+  Plus,
+  Trash2,
+  X,
+  MapPin,
+  Calendar,
 } from 'lucide-react';
 
 interface CompanyProfilePageProps {
@@ -26,6 +34,7 @@ interface CompanyProfilePageProps {
   onBack: () => void;
   onOpenEditModal: () => void;
   onSelectShip: (ship: Ship) => void;
+  onUpdateOwnerDetails?: (updatedDetails: ShipOwnerDetails) => void;
 }
 
 export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
@@ -35,9 +44,33 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   onBack,
   onOpenEditModal,
   onSelectShip,
+  onUpdateOwnerDetails,
 }) => {
   const [vesselPage, setVesselPage] = useState(1);
   const VESSELS_PER_PAGE = 12; // 4 vessels per row * 3 rows per page
+
+  // Local state for Employees list initialized from ownerDetails
+  const [employeesList, setEmployeesList] = useState<CompanyEmployee[]>(
+    ownerDetails.employees || []
+  );
+
+  useEffect(() => {
+    if (ownerDetails.employees) {
+      setEmployeesList(ownerDetails.employees);
+    }
+  }, [ownerDetails.employees]);
+
+  // Employee Modal States
+  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+  const [editingEmployeeId, setEditingEmployeeId] = useState<string | null>(null);
+  const [empName, setEmpName] = useState('');
+  const [empPosition, setEmpPosition] = useState('');
+  const [empDateOfBirth, setEmpDateOfBirth] = useState('');
+  const [empDateOfJoining, setEmpDateOfJoining] = useState('');
+  const [empEmail, setEmpEmail] = useState('');
+  const [empPhoneNumber, setEmpPhoneNumber] = useState('');
+  const [empCountry, setEmpCountry] = useState('Mozambique');
+  const [empCity, setEmpCity] = useState('Maputo');
 
   const totalFleetCount = ships.length;
   const totalCrewCount = companyCrew.length;
@@ -51,6 +84,91 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   const totalVesselPages = Math.ceil(ships.length / VESSELS_PER_PAGE) || 1;
   const validVesselPage = Math.min(vesselPage, totalVesselPages);
   const paginatedShips = ships.slice((validVesselPage - 1) * VESSELS_PER_PAGE, validVesselPage * VESSELS_PER_PAGE);
+
+  // Employee Handlers
+  const handleOpenAddEmployeeModal = () => {
+    setEditingEmployeeId(null);
+    setEmpName('');
+    setEmpPosition('');
+    setEmpDateOfBirth('');
+    setEmpDateOfJoining('');
+    setEmpEmail('');
+    setEmpPhoneNumber('');
+    setEmpCountry(ownerDetails.country || 'Mozambique');
+    setEmpCity('Maputo');
+    setIsEmployeeModalOpen(true);
+  };
+
+  const handleOpenEditEmployeeModal = (emp: CompanyEmployee) => {
+    setEditingEmployeeId(emp.id);
+    setEmpName(emp.name);
+    setEmpPosition(emp.position);
+    setEmpDateOfBirth(emp.dateOfBirth || '');
+    setEmpDateOfJoining(emp.dateOfJoining || '');
+    setEmpEmail(emp.email || '');
+    setEmpPhoneNumber(emp.phoneNumber || '');
+    setEmpCountry(emp.country || 'Mozambique');
+    setEmpCity(emp.city || '');
+    setIsEmployeeModalOpen(true);
+  };
+
+  const handleDeleteEmployee = (id: string) => {
+    const updated = employeesList.filter((e) => e.id !== id);
+    setEmployeesList(updated);
+    if (onUpdateOwnerDetails) {
+      onUpdateOwnerDetails({
+        ...ownerDetails,
+        employees: updated,
+      });
+    }
+  };
+
+  const handleSaveEmployeeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!empName.trim()) return;
+
+    let updatedList: CompanyEmployee[];
+
+    if (editingEmployeeId) {
+      updatedList = employeesList.map((emp) =>
+        emp.id === editingEmployeeId
+          ? {
+              ...emp,
+              name: empName.trim(),
+              position: empPosition.trim() || 'Staff',
+              dateOfBirth: empDateOfBirth ? formatDate(empDateOfBirth) : '',
+              dateOfJoining: empDateOfJoining ? formatDate(empDateOfJoining) : '',
+              email: empEmail.trim(),
+              phoneNumber: empPhoneNumber.trim(),
+              country: empCountry.trim() || 'Mozambique',
+              city: empCity.trim() || 'Maputo',
+            }
+          : emp
+      );
+    } else {
+      const newEmployee: CompanyEmployee = {
+        id: `emp-${Date.now()}`,
+        name: empName.trim(),
+        position: empPosition.trim() || 'Staff',
+        dateOfBirth: empDateOfBirth ? formatDate(empDateOfBirth) : '',
+        dateOfJoining: empDateOfJoining ? formatDate(empDateOfJoining) : formatDate(getTodayDDMMYYYY()),
+        email: empEmail.trim(),
+        phoneNumber: empPhoneNumber.trim(),
+        country: empCountry.trim() || 'Mozambique',
+        city: empCity.trim() || 'Maputo',
+      };
+      updatedList = [newEmployee, ...employeesList];
+    }
+
+    setEmployeesList(updatedList);
+    if (onUpdateOwnerDetails) {
+      onUpdateOwnerDetails({
+        ...ownerDetails,
+        employees: updatedList,
+      });
+    }
+    setIsEmployeeModalOpen(false);
+  };
 
   return (
     <div className="space-y-8">
@@ -74,7 +192,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         </div>
       </div>
 
-      {/* Main Company Overview Banner */}
+      {/* Main Company Overview Banner with Edit Company Details Button */}
       <div className="mozuk-glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-xl border border-[var(--color-glass-border)]">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div className="flex items-start gap-4">
@@ -114,6 +232,16 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
               </p>
             </div>
           </div>
+
+          {/* Edit Company Details Button inside Company Details Banner */}
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={onOpenEditModal}
+            className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2 shadow-sm shrink-0 self-start"
+          >
+            <Edit className="w-4 h-4" /> Edit Company Details
+          </motion.button>
         </div>
 
         {/* Fleet Metrics Overview */}
@@ -258,7 +386,125 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         </div>
       </div>
 
-      {/* 2. Internal Company Contacts Table Section (Placed AFTER Vessels) */}
+      {/* 2. Company Employees Directory (Placed BELOW Managed Fleet Directory) */}
+      <div className="space-y-4 pt-4 border-t border-[var(--color-glass-border)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-[#28ada4]" />
+              Employees Directory ({employeesList.length})
+            </h3>
+            <p className="text-xs text-[var(--text-muted)]">
+              Shore-based corporate personnel, superintendents, operations leads, and company staff.
+            </p>
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleOpenAddEmployeeModal}
+            className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm self-start sm:self-auto"
+          >
+            <Plus className="w-4 h-4" /> Register Employee
+          </motion.button>
+        </div>
+
+        <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs min-w-[950px]">
+              <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <tr>
+                  <th className="py-3.5 px-4">Employee Name & Position</th>
+                  <th className="py-3.5 px-4">Date of Birth</th>
+                  <th className="py-3.5 px-4">Date of Joining</th>
+                  <th className="py-3.5 px-4">Email Address</th>
+                  <th className="py-3.5 px-4">Phone Number</th>
+                  <th className="py-3.5 px-4">Country & City</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--color-glass-border)]">
+                {employeesList.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-10 text-center text-[var(--text-muted)]">
+                      <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
+                      No company employees registered yet. Click "+ Register Employee" to populate directory.
+                    </td>
+                  </tr>
+                ) : (
+                  employeesList.map((emp) => (
+                    <tr key={emp.id} className="hover:bg-[var(--color-glass-border)] transition">
+                      {/* Name & Position */}
+                      <td className="py-3.5 px-4 align-middle">
+                        <div className="font-extrabold text-[var(--text-main)] text-xs">
+                          {emp.name}
+                        </div>
+                        <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                          {emp.position}
+                        </div>
+                      </td>
+
+                      {/* Date of Birth */}
+                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
+                        {emp.dateOfBirth || '—'}
+                      </td>
+
+                      {/* Date of Joining */}
+                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
+                        {emp.dateOfJoining || '—'}
+                      </td>
+
+                      {/* Email */}
+                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                        {emp.email ? (
+                          <a href={`mailto:${emp.email}`} className="hover:underline flex items-center gap-1">
+                            <Mail className="w-3 h-3 text-[#28ada4]" />
+                            {emp.email}
+                          </a>
+                        ) : (
+                          '—'
+                        )}
+                      </td>
+
+                      {/* Phone */}
+                      <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                        {emp.phoneNumber || '—'}
+                      </td>
+
+                      {/* Country & City */}
+                      <td className="py-3.5 px-4 align-middle whitespace-nowrap">
+                        <div className="font-bold text-[var(--text-main)]">{emp.country}</div>
+                        <div className="text-[11px] text-[var(--text-muted)]">{emp.city}</div>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => handleOpenEditEmployeeModal(emp)}
+                            className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                          >
+                            <Edit className="w-3.5 h-3.5" /> Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteEmployee(emp.id)}
+                            className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                            title="Delete employee record"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Internal Company Contacts Table Section */}
       <div className="space-y-4 pt-4 border-t border-[var(--color-glass-border)]">
         <div className="flex items-center justify-between">
           <div>
@@ -359,6 +605,184 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
           </div>
         </div>
       </div>
+
+      {/* MODAL: REGISTER / EDIT COMPANY EMPLOYEE */}
+      <AnimatePresence>
+        {isEmployeeModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsEmployeeModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col"
+            >
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] sticky top-0 z-20">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-[#28ada4]/10 text-[#28ada4] border border-[#28ada4]/30">
+                    <Briefcase className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      {editingEmployeeId ? 'Edit Employee Details' : 'Register New Company Employee'}
+                    </h3>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      Fill in shore staff credentials and company placement.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsEmployeeModalOpen(false)}
+                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleSaveEmployeeSubmit} className="p-6 space-y-4 text-xs">
+                {/* Employee Name */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Employee Full Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Capt. Antonio Vance"
+                    value={empName}
+                    onChange={(e) => setEmpName(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
+
+                {/* Position */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Position / Job Title <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Fleet Operations Director, HR Lead"
+                    value={empPosition}
+                    onChange={(e) => setEmpPosition(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
+
+                {/* Dates Row (Date of Birth & Date of Joining) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Date of Birth
+                    </label>
+                    <DateInput
+                      value={empDateOfBirth}
+                      onChange={(val) => setEmpDateOfBirth(val)}
+                      placeholder="DD/MM/YYYY"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Date of Joining Company
+                    </label>
+                    <DateInput
+                      value={empDateOfJoining}
+                      onChange={(val) => setEmpDateOfJoining(val)}
+                      placeholder="DD/MM/YYYY"
+                    />
+                  </div>
+                </div>
+
+                {/* Contact Row (Email & Phone Number) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="e.g. a.vance@mozukmarine.com"
+                      value={empEmail}
+                      onChange={(e) => setEmpEmail(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="e.g. +258 84 999 1122"
+                      value={empPhoneNumber}
+                      onChange={(e) => setEmpPhoneNumber(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+                </div>
+
+                {/* Location Row (Country & City) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Country
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Mozambique, Greece"
+                      value={empCountry}
+                      onChange={(e) => setEmpCountry(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Maputo, London"
+                      value={empCity}
+                      onChange={(e) => setEmpCity(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setIsEmployeeModalOpen(false)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs shadow-md"
+                  >
+                    {editingEmployeeId ? 'Save Changes' : 'Register Employee'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

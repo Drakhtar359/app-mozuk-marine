@@ -393,6 +393,52 @@ export function App() {
         description: 'Manages officer sign-ons, seaman contracts, and STCW certifications.',
       },
     ],
+    employees: [
+      {
+        id: 'emp-1',
+        name: 'Capt. Antonio Vance',
+        position: 'Designated Person Ashore (DPA) & Fleet Operations Director',
+        dateOfBirth: '14/08/1976',
+        dateOfJoining: '01/03/2018',
+        email: 'a.vance@mozukmarine.com',
+        phoneNumber: '+258 84 999 1122',
+        country: 'Mozambique',
+        city: 'Maputo',
+      },
+      {
+        id: 'emp-2',
+        name: 'Eng. Dimitris Pappas',
+        position: 'Chief Technical Superintendent',
+        dateOfBirth: '22/11/1980',
+        dateOfJoining: '15/06/2020',
+        email: 'tech.pappas@mozukmarine.com',
+        phoneNumber: '+30 210 459 9800',
+        country: 'Greece',
+        city: 'Piraeus',
+      },
+      {
+        id: 'emp-3',
+        name: 'Sarah Jenkins',
+        position: 'Crewing & HR Director',
+        dateOfBirth: '05/04/1985',
+        dateOfJoining: '10/01/2021',
+        email: 'crewing@mozukmarine.com',
+        phoneNumber: '+44 20 7946 0912',
+        country: 'United Kingdom',
+        city: 'London',
+      },
+      {
+        id: 'emp-4',
+        name: 'Elena Rostova',
+        position: 'Fleet Procurement & Logistics Manager',
+        dateOfBirth: '19/09/1989',
+        dateOfJoining: '01/09/2022',
+        email: 'e.rostova@mozukmarine.com',
+        phoneNumber: '+372 555 1234',
+        country: 'Estonia',
+        city: 'Tallinn',
+      },
+    ],
   };
 
   const [ownerDetails, setOwnerDetails] = useState<ShipOwnerDetails>(() => {
@@ -689,6 +735,7 @@ export function App() {
                 onBack={() => setViewMode('fleet')}
                 onOpenEditModal={() => setIsOwnerModalOpen(true)}
                 onSelectShip={(ship) => setSelectedShipId(ship.id)}
+                onUpdateOwnerDetails={handleSaveOwnerDetails}
               />
             </motion.div>
           ) : (
