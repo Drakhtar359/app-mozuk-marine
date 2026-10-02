@@ -509,7 +509,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       {/* Name & Role (Fitted cleanly on one line) */}
                       <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-blue-950/80 border border-blue-800/80 text-blue-400 font-extrabold text-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                          <div className="w-9 h-9 rounded-xl bg-[#2c6498]/20 border border-[#28ada4]/40 text-[#28ada4] font-extrabold text-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                             {crew.name.charAt(0)}
                           </div>
                           <div>
@@ -522,7 +522,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               </span>
                               {crew.email && (
                                 <span className="text-[11px] text-[var(--text-muted)] flex items-center gap-1 font-mono whitespace-nowrap">
-                                  <Mail className="w-3 h-3 text-cyan-400 shrink-0" />
+                                  <Mail className="w-3 h-3 text-[var(--color-primary)] shrink-0" />
                                   {crew.email}
                                 </span>
                               )}
@@ -534,22 +534,22 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       {/* Department */}
                       <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                         {crew.department === 'master' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-purple-950/60 text-purple-300 border border-purple-800/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/40 font-bold text-[10px]">
                             MASTER
                           </span>
                         )}
                         {crew.department === 'deck' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/20 text-[#28ada4] border border-[#2c6498]/40 font-bold text-[10px]">
                             DECK DEPT
                           </span>
                         )}
                         {crew.department === 'engine' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-blue-950/60 text-blue-300 border border-blue-800/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/30 text-white border border-[#2c6498]/50 font-bold text-[10px]">
                             ENGINE DEPT
                           </span>
                         )}
                         {crew.department === 'kitchen' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 font-bold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-slate-800/60 text-slate-300 border border-slate-700/60 font-bold text-[10px]">
                             GALLEY & MESS
                           </span>
                         )}
@@ -568,10 +568,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               e.stopPropagation();
                               onSelectShip(assignedShip);
                             }}
-                            className="px-2.5 py-0.5 rounded-full bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/80 text-[10px] font-bold inline-flex items-center gap-1 transition shadow-sm group/btn"
+                            className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/20 hover:bg-[#2c6498]/40 text-white border border-[#2c6498]/50 text-[10px] font-bold inline-flex items-center gap-1 transition shadow-sm group/btn"
                             title={`Click to open ${assignedShip.name} vessel profile`}
                           >
-                            <ShipIcon className="w-3 h-3 text-cyan-400 shrink-0 group-hover/btn:scale-110 transition-transform" />
+                            <ShipIcon className="w-3 h-3 text-[#28ada4] shrink-0 group-hover/btn:scale-110 transition-transform" />
                             <span>{assignedShip.name}</span>
                             <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
                           </button>

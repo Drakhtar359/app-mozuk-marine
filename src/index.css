@@ -2,56 +2,56 @@
 
 :root,
 [data-theme="dark"] {
-  /* Ultra-Refined Dark Canvas */
-  --color-bg: #070c14;
-  --color-bg-alt: #0d1522;
-  --color-surface: rgba(13, 22, 36, 0.7);
-  --color-surface-hover: rgba(18, 30, 48, 0.85);
-  --color-glass-border: rgba(255, 255, 255, 0.08);
-  --color-glass-border-hover: rgba(0, 242, 254, 0.35);
+  /* Ultra-Refined Black & White Dark Canvas */
+  --color-bg: #05070a;
+  --color-bg-alt: #0b0f17;
+  --color-surface: rgba(11, 15, 23, 0.8);
+  --color-surface-hover: rgba(18, 24, 36, 0.95);
+  --color-glass-border: rgba(255, 255, 255, 0.09);
+  --color-glass-border-hover: rgba(40, 173, 164, 0.45);
 
-  /* Primary Cyan & Marine Blue Palette */
-  --color-primary: #00f2fe;
-  --color-primary-dark: #00c6ff;
-  --color-secondary: #3b82f6;
-  --color-accent: #10b981;
+  /* Brand Colors: Mozuk Green (#28ada4) & Secondary Blue (#2c6498) */
+  --color-primary: #28ada4;
+  --color-primary-dark: #1f8d85;
+  --color-secondary: #2c6498;
+  --color-accent: #28ada4;
 
-  /* Typography */
-  --text-main: #f8fafc;
+  /* Typography: Crisp Pure White & Muted Slate */
+  --text-main: #ffffff;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
 
   /* Subtle Shadows & Glows */
-  --shadow-glow: 0 0 25px rgba(0, 242, 254, 0.15);
-  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 25px rgba(40, 173, 164, 0.2);
+  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
   --glass-blur: blur(20px);
 }
 
 [data-theme="light"] {
-  /* Crisp Minimal Light Canvas */
-  --color-bg: #f8fafc;
-  --color-bg-alt: #f1f5f9;
-  --color-surface: rgba(255, 255, 255, 0.85);
-  --color-surface-hover: rgba(255, 255, 255, 0.98);
-  --color-glass-border: rgba(15, 23, 42, 0.08);
-  --color-glass-border-hover: rgba(0, 102, 204, 0.3);
+  /* Crisp Minimal Black & White Light Canvas */
+  --color-bg: #ffffff;
+  --color-bg-alt: #f4f6f8;
+  --color-surface: rgba(255, 255, 255, 0.9);
+  --color-surface-hover: rgba(244, 246, 248, 0.98);
+  --color-glass-border: rgba(0, 0, 0, 0.08);
+  --color-glass-border-hover: rgba(40, 173, 164, 0.4);
 
-  /* Deep Blue Accents */
-  --color-primary: #0066cc;
-  --color-primary-dark: #004b99;
-  --color-secondary: #0284c7;
-  --color-accent: #059669;
+  /* Brand Colors */
+  --color-primary: #28ada4;
+  --color-primary-dark: #1f8d85;
+  --color-secondary: #2c6498;
+  --color-accent: #28ada4;
 
-  /* Typography */
-  --text-main: #0f172a;
+  /* Typography: Crisp Pure Black */
+  --text-main: #000000;
   --text-muted: #475569;
   --text-dim: #94a3b8;
 
   /* Shadows */
-  --shadow-glow: 0 10px 25px rgba(0, 102, 204, 0.12);
-  --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
-  --shadow-modal: 0 20px 40px -15px rgba(15, 23, 42, 0.15);
+  --shadow-glow: 0 8px 25px rgba(40, 173, 164, 0.15);
+  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.06);
+  --shadow-modal: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
 }
 
 body {
@@ -74,7 +74,7 @@ h1, h2, h3, h4, .font-heading {
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Background Cyber Radial Ambient Lighting */
+/* Background Cyber Radial Ambient Lighting with Mozuk Green & Secondary Blue */
 .bg-mozuk-overlay {
   position: fixed;
   top: 0;
@@ -84,15 +84,14 @@ h1, h2, h3, h4, .font-heading {
   z-index: -1;
   pointer-events: none;
   background: 
-    radial-gradient(circle at 50% -10%, rgba(0, 242, 254, 0.07) 0%, transparent 50%),
-    radial-gradient(circle at 90% 90%, rgba(59, 130, 246, 0.05) 0%, transparent 45%),
-    radial-gradient(circle at 10% 40%, rgba(16, 185, 129, 0.03) 0%, transparent 40%);
+    radial-gradient(circle at 50% -10%, rgba(40, 173, 164, 0.09) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(44, 100, 152, 0.05) 0%, transparent 45%);
 }
 
 [data-theme="light"] .bg-mozuk-overlay {
   background: 
-    radial-gradient(circle at 50% -10%, rgba(0, 102, 204, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 90% 90%, rgba(2, 132, 199, 0.04) 0%, transparent 45%);
+    radial-gradient(circle at 50% -10%, rgba(40, 173, 164, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(44, 100, 152, 0.04) 0%, transparent 45%);
 }
 
 /* Premium Glassmorphic Surface Cards */
@@ -110,38 +109,28 @@ h1, h2, h3, h4, .font-heading {
   box-shadow: var(--shadow-card), var(--shadow-glow);
 }
 
-/* High-Taste Primary Action Button */
+/* High-Taste Primary Action Button (Mozuk Green #28ada4) */
 .btn-mozuk-primary {
-  background: linear-gradient(135deg, #00f2fe 0%, #00c6ff 100%);
-  color: #050b14;
+  background: linear-gradient(135deg, #28ada4 0%, #1f8d85 100%);
+  color: #ffffff;
   font-weight: 700;
   letter-spacing: -0.01em;
-  box-shadow: 0 4px 14px rgba(0, 242, 254, 0.25);
+  box-shadow: 0 4px 14px rgba(40, 173, 164, 0.3);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-[data-theme="light"] .btn-mozuk-primary {
-  background: linear-gradient(135deg, #0066cc 0%, #0284c7 100%);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 102, 204, 0.2);
 }
 
 .btn-mozuk-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
-}
-
-[data-theme="light"] .btn-mozuk-primary:hover {
-  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.35);
+  box-shadow: 0 6px 20px rgba(40, 173, 164, 0.45);
 }
 
 .btn-mozuk-primary:active {
   transform: translateY(0.5px);
 }
 
-/* High-Taste Secondary Action Button */
+/* High-Taste Secondary Action Button (Secondary #2c6498 presence) */
 .btn-mozuk-secondary {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(44, 100, 152, 0.08);
   border: 1px solid var(--color-glass-border);
   color: var(--text-main);
   backdrop-filter: var(--glass-blur);
@@ -149,22 +138,22 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .btn-mozuk-secondary:hover {
-  background: rgba(0, 242, 254, 0.08);
-  border-color: var(--color-glass-border-hover);
-  color: var(--color-primary);
+  background: rgba(40, 173, 164, 0.12);
+  border-color: #28ada4;
+  color: #28ada4;
   transform: translateY(-1px);
 }
 
 [data-theme="light"] .btn-mozuk-secondary {
-  background: rgba(0, 102, 204, 0.05);
-  border-color: rgba(0, 102, 204, 0.15);
-  color: #0f172a;
+  background: rgba(44, 100, 152, 0.06);
+  border-color: rgba(44, 100, 152, 0.18);
+  color: #000000;
 }
 
 [data-theme="light"] .btn-mozuk-secondary:hover {
-  background: rgba(0, 102, 204, 0.1);
-  border-color: #0066cc;
-  color: #0066cc;
+  background: rgba(40, 173, 164, 0.1);
+  border-color: #28ada4;
+  color: #28ada4;
 }
 
 /* Restrained Input Field Styling */
@@ -185,7 +174,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.15) !important;
+  box-shadow: 0 0 0 3px rgba(40, 173, 164, 0.2) !important;
 }
 
 [data-theme="light"] input[type="text"]:focus,
@@ -194,7 +183,7 @@ textarea:focus {
 [data-theme="light"] input[type="date"]:focus,
 [data-theme="light"] select:focus,
 [data-theme="light"] textarea:focus {
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15) !important;
+  box-shadow: 0 0 0 3px rgba(40, 173, 164, 0.2) !important;
 }
 
 /* Custom Sleek Scrollbar */
@@ -218,6 +207,6 @@ textarea:focus {
 
 /* Selection Color */
 ::selection {
-  background: rgba(0, 242, 254, 0.25);
+  background: rgba(40, 173, 164, 0.3);
   color: #ffffff;
 }
