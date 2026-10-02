@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Ship, CrewMember, ShipOwnerDetails } from './types/vessel';
 import { AddShipModal } from './components/AddShipModal';
 import { ShipOwnerModal } from './components/ShipOwnerModal';
@@ -591,9 +592,11 @@ export function App() {
           {/* Nav Actions */}
           <div className="flex items-center gap-3">
             {/* Theme Toggle Button (Light/Dark Mode) */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.08, rotate: 12 }}
+              whileTap={{ scale: 0.92 }}
               onClick={toggleTheme}
-              className="p-2 rounded-full btn-mozuk-secondary text-[var(--text-main)] hover:rotate-12 transition"
+              className="p-2 rounded-full btn-mozuk-secondary text-[var(--text-main)] transition-colors"
               title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
             >
               {theme === 'dark' ? (
@@ -601,163 +604,208 @@ export function App() {
               ) : (
                 <Moon className="w-4 h-4 text-cyan-600" />
               )}
-            </button>
+            </motion.button>
 
             {selectedShip && (
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => setSelectedShipId(null)}
                 className="px-3.5 py-2 rounded-full btn-mozuk-secondary font-bold text-xs"
               >
                 ← Back to Fleet Directory
-              </button>
+              </motion.button>
             )}
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => setIsAddModalOpen(true)}
               className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"
             >
               <Plus className="w-4 h-4" /> Register Vessel
-            </button>
+            </motion.button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6">
-        {!selectedShip ? (
-          <div className="space-y-10">
-            {/* Unified Ship Owner & Fleet Operations Portal Banner */}
-            <div className="mozuk-glass-card rounded-2xl p-6 relative overflow-hidden shadow-lg border border-[var(--color-glass-border)]">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5 mb-5">
-                <div className="flex items-start gap-3.5">
-                  <div className="p-3 rounded-2xl bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)] border border-[var(--color-glass-border)] shrink-0 mt-0.5">
-                    <Building2 className="w-6 h-6" />
+        <AnimatePresence mode="wait">
+          {!selectedShip ? (
+            <motion.div
+              key="fleet-overview"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="space-y-10"
+            >
+              {/* Unified Ship Owner & Fleet Operations Portal Banner */}
+              <motion.div
+                whileHover={{ y: -2 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                className="mozuk-glass-card rounded-2xl p-6 relative overflow-hidden shadow-lg border border-[var(--color-glass-border)]"
+              >
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5 mb-5">
+                  <div className="flex items-start gap-3.5">
+                    <div className="p-3 rounded-2xl bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)] border border-[var(--color-glass-border)] shrink-0 mt-0.5">
+                      <Building2 className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-2xl font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)]">
+                          {ownerDetails.companyName}
+                        </h2>
+                        <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 text-[11px] font-bold inline-flex items-center gap-1 shrink-0">
+                          <Globe className="w-3 h-3 text-cyan-400" />
+                          {ownerDetails.country}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-muted)] mt-1 font-medium">
+                        <span className="flex items-center gap-1">
+                          <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Authorized Ship Owner & Managing Agency
+                        </span>
+                        <span className="text-[var(--color-glass-border)]">•</span>
+                        <span className="flex items-center gap-1 font-mono text-[var(--text-main)] font-semibold">
+                          <Phone className="w-3.5 h-3.5 text-cyan-400" /> {ownerDetails.phoneNumber}
+                        </span>
+                        <span className="text-[var(--color-glass-border)]">•</span>
+                        <span className="flex items-center gap-1 font-semibold text-[var(--color-primary)]">
+                          <Users className="w-3.5 h-3.5" /> {ownerDetails.contactPeople.length} Internal Contact{ownerDetails.contactPeople.length === 1 ? '' : 's'}
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-[var(--text-muted)] mt-2 leading-relaxed max-w-3xl">
+                        Integrated with Mozuk Marine's engineering standards. Access fleet vessel profiles, master crew database, statutory technical certificates, and maintenance repair logs.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-2xl font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)]">
-                        {ownerDetails.companyName}
-                      </h2>
-                      <span className="px-2.5 py-0.5 rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 text-[11px] font-bold inline-flex items-center gap-1 shrink-0">
-                        <Globe className="w-3 h-3 text-cyan-400" />
-                        {ownerDetails.country}
-                      </span>
-                    </div>
 
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-muted)] mt-1 font-medium">
-                      <span className="flex items-center gap-1">
-                        <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Authorized Ship Owner & Managing Agency
-                      </span>
-                      <span className="text-[var(--color-glass-border)]">•</span>
-                      <span className="flex items-center gap-1 font-mono text-[var(--text-main)] font-semibold">
-                        <Phone className="w-3.5 h-3.5 text-cyan-400" /> {ownerDetails.phoneNumber}
-                      </span>
-                      <span className="text-[var(--color-glass-border)]">•</span>
-                      <span className="flex items-center gap-1 font-semibold text-[var(--color-primary)]">
-                        <Users className="w-3.5 h-3.5" /> {ownerDetails.contactPeople.length} Internal Contact{ownerDetails.contactPeople.length === 1 ? '' : 's'}
-                      </span>
-                    </div>
-
-                    <p className="text-xs text-[var(--text-muted)] mt-2 leading-relaxed max-w-3xl">
-                      Integrated with Mozuk Marine's engineering standards. Access fleet vessel profiles, master crew database, statutory technical certificates, and maintenance repair logs.
-                    </p>
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start lg:self-center">
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => setIsOwnerModalOpen(true)}
+                      className="px-4 py-2.5 rounded-full btn-mozuk-secondary text-xs font-bold flex items-center gap-2"
+                    >
+                      <Edit className="w-4 h-4 text-[var(--color-primary)]" /> Edit Owner Details
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => setIsAddModalOpen(true)}
+                      className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2 shadow-sm"
+                    >
+                      <Plus className="w-4 h-4" /> Register Vessel
+                    </motion.button>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start lg:self-center">
-                  <button
-                    onClick={() => setIsOwnerModalOpen(true)}
-                    className="px-4 py-2.5 rounded-full btn-mozuk-secondary text-xs font-bold flex items-center gap-2 transition hover:scale-[1.02]"
+                {/* Fleet Metric Counters Bar */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                  <motion.div
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3 cursor-default"
                   >
-                    <Edit className="w-4 h-4 text-[var(--color-primary)]" /> Edit Owner Details
-                  </button>
-                  <button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="px-4 py-2.5 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2 shadow-sm transition hover:scale-[1.02]"
+                    <div className="p-2.5 rounded-xl bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)]">
+                      <ShipIcon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Total Fleet</div>
+                      <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalFleetCount} Vessels</div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3 cursor-default"
                   >
-                    <Plus className="w-4 h-4" /> Register Vessel
-                  </button>
-                </div>
-              </div>
-
-              {/* Fleet Metric Counters Bar */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                <div className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-[rgba(0,242,254,0.1)] text-[var(--color-primary)]">
-                    <ShipIcon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Total Fleet</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalFleetCount} Vessels</div>
-                  </div>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-emerald-950/40 text-emerald-400">
-                    <Users className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Company Crew Roster</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl leading-tight">
-                      {totalCrewCount} Personnel
+                    <div className="p-2.5 rounded-xl bg-emerald-950/40 text-emerald-400">
+                      <Users className="w-5 h-5" />
                     </div>
-                    <div className="text-xs text-emerald-400 font-bold mt-0.5">
-                      ({totalOnboardCrewCount} onboard)
+                    <div>
+                      <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Company Crew Roster</div>
+                      <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl leading-tight">
+                        {totalCrewCount} Personnel
+                      </div>
+                      <div className="text-xs text-emerald-400 font-bold mt-0.5">
+                        ({totalOnboardCrewCount} onboard)
+                      </div>
                     </div>
-                  </div>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3 cursor-default"
+                  >
+                    <div className="p-2.5 rounded-xl bg-blue-950/40 text-blue-400">
+                      <FileCheck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Tech Certificates</div>
+                      <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalDocsCount} Valid</div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3 cursor-default"
+                  >
+                    <div className="p-2.5 rounded-xl bg-amber-950/40 text-amber-400">
+                      <Wrench className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Open Work Orders</div>
+                      <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-amber-400 text-xl">{totalOpenRepairsCount} Pending</div>
+                    </div>
+                  </motion.div>
                 </div>
+              </motion.div>
 
-                <div className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-blue-950/40 text-blue-400">
-                    <FileCheck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Tech Certificates</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">{totalDocsCount} Valid</div>
-                  </div>
-                </div>
+              {/* 2. Fleet Directory */}
+              <ShipList
+                ships={ships}
+                onSelectShip={(ship) => setSelectedShipId(ship.id)}
+                onRemoveShip={handleRemoveShip}
+              />
 
-                <div className="p-3.5 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-amber-950/40 text-amber-400">
-                    <Wrench className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Open Work Orders</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-amber-400 text-xl">{totalOpenRepairsCount} Pending</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Fleet Directory */}
-            <ShipList
-              ships={ships}
-              onSelectShip={(ship) => setSelectedShipId(ship.id)}
-              onRemoveShip={handleRemoveShip}
-            />
-
-            {/* 2. Company Master Crew Roster */}
-            <CompanyCrewList
-              companyCrew={companyCrew}
-              ships={ships}
-              onSelectShip={(ship) => setSelectedShipId(ship.id)}
-              onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
-              onAddCrewMember={handleAddCompanyCrew}
-              onUpdateCrewMember={handleUpdateCompanyCrew}
-              onRemoveCrewMember={handleRemoveCompanyCrew}
-            />
-          </div>
-        ) : (
-          <VesselProfilePage
-            ship={selectedShip}
-            companyCrew={companyCrew}
-            onBack={() => setSelectedShipId(null)}
-            onUpdateShip={handleUpdateShip}
-            onAssignExistingCrewToShip={handleAssignExistingCrewToShip}
-            onUnassignCrewFromShip={handleUnassignCrewFromShip}
-          />
-        )}
+              {/* 2. Company Master Crew Roster */}
+              <CompanyCrewList
+                companyCrew={companyCrew}
+                ships={ships}
+                onSelectShip={(ship) => setSelectedShipId(ship.id)}
+                onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
+                onAddCrewMember={handleAddCompanyCrew}
+                onUpdateCrewMember={handleUpdateCompanyCrew}
+                onRemoveCrewMember={handleRemoveCompanyCrew}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="vessel-profile"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            >
+              <VesselProfilePage
+                ship={selectedShip}
+                companyCrew={companyCrew}
+                onBack={() => setSelectedShipId(null)}
+                onUpdateShip={handleUpdateShip}
+                onAssignExistingCrewToShip={handleAssignExistingCrewToShip}
+                onUnassignCrewFromShip={handleUnassignCrewFromShip}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       {/* Footer matching marine.mozuk.net */}

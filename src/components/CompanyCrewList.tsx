@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CrewMember, Ship, VesselHistoryEntry, getEffectiveVesselHistory } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { sortByRankHierarchy, getCrewRankWeight } from '../utils/rankSort';
@@ -333,7 +334,9 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <strong className="text-white font-mono text-sm">{unassignedCount}</strong>
           </div>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
             onClick={() => {
               resetForm();
               setIsAddModalOpen(true);
@@ -341,7 +344,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-2 shadow-sm whitespace-nowrap"
           >
             <Plus className="w-4 h-4" /> Register New Crew Member
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -412,7 +415,9 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <span className="text-[var(--text-muted)] font-semibold flex items-center gap-1">
               <ArrowUpDown className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Sort By:
             </span>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setSortBy('rank')}
               className={`px-3 py-1 rounded-lg font-bold transition ${
                 sortBy === 'rank'
@@ -421,8 +426,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               }`}
             >
               Rank Hierarchy (Master → Rating)
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setSortBy('name')}
               className={`px-3 py-1 rounded-lg font-bold transition ${
                 sortBy === 'name'
@@ -431,8 +438,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               }`}
             >
               Name (A-Z)
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setSortBy('signOn')}
               className={`px-3 py-1 rounded-lg font-bold transition ${
                 sortBy === 'signOn'
@@ -441,16 +450,18 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               }`}
             >
               Recent Sign-On
-            </button>
+            </motion.button>
           </div>
 
           {hasActiveFilters && (
-            <button
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               onClick={resetFilters}
               className="px-3 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-bold flex items-center gap-1.5 transition"
             >
               <RotateCcw className="w-3.5 h-3.5" /> Clear Filters
-            </button>
+            </motion.button>
           )}
         </div>
       </div>
@@ -671,350 +682,406 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
       </div>
 
       {/* MODAL 1: REGISTER NEW COMPANY CREW MEMBER */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col custom-scrollbar">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] sticky top-0 z-20">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[var(--color-primary)]">
-                  <UserCheck className="w-5 h-5" />
+      <AnimatePresence>
+        {isAddModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsAddModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col custom-scrollbar"
+            >
+              {/* Modal Header */}
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] sticky top-0 z-20">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[var(--color-primary)]">
+                    <UserCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      Register New Crew Member to Company Roster
+                    </h3>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      Add marine officer or rating details to the master database.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
-                    Register New Crew Member to Company Roster
-                  </h3>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    Add marine officer or rating details to the master database.
-                  </p>
-                </div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
               </div>
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            {/* Form */}
-            <form onSubmit={handleAddSubmit} className="p-6 space-y-4 text-xs">
-              {/* Name, Email & Phone */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Form */}
+              <form onSubmit={handleAddSubmit} className="p-6 space-y-4 text-xs">
+                {/* Name, Email & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Full Name <span className="text-rose-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Capt. Marcus Vance"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Email Address <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="e.g. m.vance@mozukmarine.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Phone Number <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="e.g. +44 7911 123456"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Department & Role */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Department</label>
+                    <select
+                      value={department}
+                      onChange={(e) => handleDepartmentSelect(e.target.value as any)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
+                    >
+                      <option value="master">Master</option>
+                      <option value="deck">Deck Department</option>
+                      <option value="engine">Engine Department</option>
+                      <option value="kitchen">Kitchen / Mess Dept</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Position</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Chief Officer, Bosun, ETO"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                      required
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                    />
+                  </div>
+                </div>
+
+                {/* Nationality */}
                 <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">
-                    Full Name <span className="text-rose-400">*</span>
-                  </label>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Nationality</label>
                   <input
                     type="text"
-                    placeholder="e.g. Capt. Marcus Vance"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. British, Filipino, Greek"
+                    value={nationality}
+                    onChange={(e) => setNationality(e.target.value)}
                     required
                     className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">
-                    Email Address <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
+                {/* Vessel Assignment Selection */}
+                <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] space-y-2">
+                  <label className="block text-[var(--text-main)] font-bold flex items-center gap-1.5 text-xs">
+                    <Anchor className="w-4 h-4 text-cyan-400" />
+                    Initial Ship Assignment
                   </label>
+                  <select
+                    value={targetShipId}
+                    onChange={(e) => setTargetShipId(e.target.value)}
+                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-cyan-400 cursor-pointer"
+                  >
+                    <option value="unassigned">Unassigned Pool (Available for future assignment)</option>
+                    {ships.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        Assign to Vessel: {s.name} ({s.type || 'Vessel'})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Date of Birth & Passport */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Date of Birth</label>
+                    <DateInput
+                      value={dateOfBirth}
+                      onChange={(val) => setDateOfBirth(val)}
+                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Passport Number</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. GB-99482019"
+                      value={passportNumber}
+                      onChange={(e) => setPassportNumber(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)]"
+                    />
+                  </div>
+                </div>
+
+                {/* Passport Expiry & Seaman Book */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Passport Expiry</label>
+                    <DateInput
+                      value={passportExpiry}
+                      onChange={(val) => setPassportExpiry(val)}
+                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Seaman Book Number</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. SB-884920"
+                      value={seamanBookNo}
+                      onChange={(e) => setSeamanBookNo(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)]"
+                    />
+                  </div>
+                </div>
+
+                {/* Seaman Book Expiry & Sign-On Date */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Seaman Book Expiry</label>
+                    <DateInput
+                      value={seamanBookExpiry}
+                      onChange={(val) => setSeamanBookExpiry(val)}
+                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On Date</label>
+                    <DateInput
+                      value={signOnDate}
+                      onChange={(val) => setSignOnDate(val)}
+                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+                </div>
+
+                {/* Sign On City */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On City / Port</label>
                   <input
-                    type="email"
-                    placeholder="e.g. m.vance@mozukmarine.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                    type="text"
+                    placeholder="e.g. Rotterdam, Antwerp, Yokohama"
+                    value={signOnLocation}
+                    onChange={(e) => setSignOnLocation(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">
-                    Phone Number <span className="text-[var(--text-muted)] font-normal">(Optional)</span>
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="e.g. +44 7911 123456"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] font-mono"
-                  />
+                {/* Modal Actions */}
+                <div className="pt-3 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="button"
+                    onClick={() => setIsAddModalOpen(false)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="w-4 h-4" /> Save Crew Member
+                  </motion.button>
                 </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL 2: QUICK ASSIGN / CHANGE SHIP MODAL */}
+      <AnimatePresence>
+        {assigningCrew && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setAssigningCrew(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col"
+            >
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                    <Anchor className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      Vessel Assignment Control
+                    </h3>
+                    <p className="text-xs text-[var(--text-muted)]">Assign {assigningCrew.name} to a fleet vessel</p>
+                  </div>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setAssigningCrew(null)}
+                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] transition"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
               </div>
 
-              {/* Department & Role */}
-              <div className="grid grid-cols-2 gap-3">
+              <form onSubmit={handleAssignSubmit} className="p-6 space-y-4 text-xs">
+                <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
+                  <div className="font-bold text-[var(--text-main)] text-sm">{assigningCrew.name}</div>
+                  <div className="text-[var(--color-primary)] font-semibold">{assigningCrew.role} • {assigningCrew.nationality}</div>
+                </div>
+
                 <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Department</label>
+                  <label className="block text-[var(--text-main)] font-bold mb-1.5">Select Vessel</label>
                   <select
-                    value={department}
-                    onChange={(e) => handleDepartmentSelect(e.target.value as any)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
+                    value={quickShipId}
+                    onChange={(e) => setQuickShipId(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-cyan-400 cursor-pointer"
                   >
-                    <option value="master">Master</option>
-                    <option value="deck">Deck Department</option>
-                    <option value="engine">Engine Department</option>
-                    <option value="kitchen">Kitchen / Mess Dept</option>
+                    <option value="unassigned">Unassign / Set to Unassigned Pool</option>
+                    {ships.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} ({s.type || 'Container Ship'})
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Position</label>
+                  <label className="block text-[var(--text-main)] font-bold mb-1.5">Role / Position on Vessel</label>
                   <input
                     type="text"
-                    placeholder="e.g. Chief Officer, Bosun, ETO"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    required
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                    value={quickRole}
+                    onChange={(e) => setQuickRole(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
-              </div>
 
-              {/* Nationality */}
-              <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1">Nationality</label>
-                <input
-                  type="text"
-                  placeholder="e.g. British, Filipino, Greek"
-                  value={nationality}
-                  onChange={(e) => setNationality(e.target.value)}
-                  required
-                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
-                />
-              </div>
-
-              {/* Vessel Assignment Selection */}
-              <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] space-y-2">
-                <label className="block text-[var(--text-main)] font-bold flex items-center gap-1.5 text-xs">
-                  <Anchor className="w-4 h-4 text-cyan-400" />
-                  Initial Ship Assignment
-                </label>
-                <select
-                  value={targetShipId}
-                  onChange={(e) => setTargetShipId(e.target.value)}
-                  className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-cyan-400 cursor-pointer"
-                >
-                  <option value="unassigned">Unassigned Pool (Available for future assignment)</option>
-                  {ships.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      Assign to Vessel: {s.name} ({s.type || 'Vessel'})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Date of Birth & Passport */}
-              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Date of Birth</label>
+                  <label className="block text-[var(--text-main)] font-bold mb-1.5">Email Address</label>
+                  <input
+                    type="email"
+                    value={quickEmail}
+                    onChange={(e) => setQuickEmail(e.target.value)}
+                    placeholder="e.g. officer@mozukmarine.com"
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1.5">Sign-On Date</label>
                   <DateInput
-                    value={dateOfBirth}
-                    onChange={(val) => setDateOfBirth(val)}
+                    value={quickSignOnDate}
+                    onChange={(val) => setQuickSignOnDate(val)}
                     inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Passport Number</label>
+                  <label className="block text-[var(--text-main)] font-bold mb-1.5">Sign-On City / Port</label>
                   <input
                     type="text"
-                    placeholder="e.g. GB-99482019"
-                    value={passportNumber}
-                    onChange={(e) => setPassportNumber(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)]"
-                  />
-                </div>
-              </div>
-
-              {/* Passport Expiry & Seaman Book */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Passport Expiry</label>
-                  <DateInput
-                    value={passportExpiry}
-                    onChange={(val) => setPassportExpiry(val)}
-                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    placeholder="e.g. Rotterdam"
+                    value={quickLocation}
+                    onChange={(e) => setQuickLocation(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Seaman Book Number</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. SB-884920"
-                    value={seamanBookNo}
-                    onChange={(e) => setSeamanBookNo(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)]"
-                  />
+                <div className="pt-3 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="button"
+                    onClick={() => setAssigningCrew(null)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="w-4 h-4" /> Save Assignment
+                  </motion.button>
                 </div>
-              </div>
-
-              {/* Seaman Book Expiry & Sign-On Date */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Seaman Book Expiry</label>
-                  <DateInput
-                    value={seamanBookExpiry}
-                    onChange={(val) => setSeamanBookExpiry(val)}
-                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On Date</label>
-                  <DateInput
-                    value={signOnDate}
-                    onChange={(val) => setSignOnDate(val)}
-                    inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                  />
-                </div>
-              </div>
-
-              {/* Sign On City */}
-              <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On City / Port</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Rotterdam, Antwerp, Yokohama"
-                  value={signOnLocation}
-                  onChange={(e) => setSignOnLocation(e.target.value)}
-                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                />
-              </div>
-
-              {/* Modal Actions */}
-              <div className="pt-3 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
-                <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-full btn-mozuk-primary font-bold flex items-center gap-2"
-                >
-                  <CheckCircle2 className="w-4 h-4" /> Save Crew Member
-                </button>
-              </div>
-            </form>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
-
-      {/* MODAL 2: QUICK ASSIGN / CHANGE SHIP MODAL */}
-      {assigningCrew && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col">
-            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-                  <Anchor className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
-                    Vessel Assignment Control
-                  </h3>
-                  <p className="text-xs text-[var(--text-muted)]">Assign {assigningCrew.name} to a fleet vessel</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setAssigningCrew(null)}
-                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAssignSubmit} className="p-6 space-y-4 text-xs">
-              <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                <div className="font-bold text-[var(--text-main)] text-sm">{assigningCrew.name}</div>
-                <div className="text-[var(--color-primary)] font-semibold">{assigningCrew.role} • {assigningCrew.nationality}</div>
-              </div>
-
-              <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1.5">Select Vessel</label>
-                <select
-                  value={quickShipId}
-                  onChange={(e) => setQuickShipId(e.target.value)}
-                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-cyan-400 cursor-pointer"
-                >
-                  <option value="unassigned">Unassign / Set to Unassigned Pool</option>
-                  {ships.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.type || 'Container Ship'})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1.5">Role / Position on Vessel</label>
-                <input
-                  type="text"
-                  value={quickRole}
-                  onChange={(e) => setQuickRole(e.target.value)}
-                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1.5">Email Address</label>
-                <input
-                  type="email"
-                  value={quickEmail}
-                  onChange={(e) => setQuickEmail(e.target.value)}
-                  placeholder="e.g. officer@mozukmarine.com"
-                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1.5">Sign-On Date</label>
-                <DateInput
-                  value={quickSignOnDate}
-                  onChange={(val) => setQuickSignOnDate(val)}
-                  inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1.5">Sign-On City / Port</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Rotterdam"
-                  value={quickLocation}
-                  onChange={(e) => setQuickLocation(e.target.value)}
-                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                />
-              </div>
-
-              <div className="pt-3 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
-                <button
-                  type="button"
-                  onClick={() => setAssigningCrew(null)}
-                  className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-full btn-mozuk-primary font-bold flex items-center gap-2"
-                >
-                  <CheckCircle2 className="w-4 h-4" /> Save Assignment
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* MODAL 3: CREW MEMBER PROFILE */}
-      {viewingProfileCrew && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+      <AnimatePresence>
+        {viewingProfileCrew && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setViewingProfileCrew(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+            >
             {/* Profile Header */}
             <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
               <div className="flex items-center gap-4">
@@ -1201,16 +1268,19 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
             {/* Footer */}
             <div className="px-6 py-3 border-t border-[var(--color-glass-border)] bg-[var(--color-surface)] flex justify-end shrink-0">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => setViewingProfileCrew(null)}
                 className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs"
               >
                 Close Profile
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
+      </AnimatePresence>
     </div>
   );
 };

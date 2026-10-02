@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog, getEffectiveVesselHistory } from '../types/vessel';
 import {
   ArrowLeft,
@@ -645,7 +646,9 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
       {/* 3 Main Sections Tabs Bar */}
       <div className="flex border border-[var(--color-glass-border)] bg-[var(--color-surface)] rounded-2xl p-1.5 overflow-x-auto gap-2">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setActiveTab('crew')}
           className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
             activeTab === 'crew'
@@ -655,9 +658,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         >
           <Users className="w-4 h-4" />
           Crew Command Hierarchy ({ship.crew.length})
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setActiveTab('maintenance')}
           className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
             activeTab === 'maintenance'
@@ -667,9 +672,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         >
           <Wrench className="w-4 h-4" />
           Maintenance & Repair Log ({ship.maintenance.length})
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setActiveTab('documents')}
           className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
             activeTab === 'documents'
@@ -679,9 +686,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         >
           <FileCheck className="w-4 h-4" />
           Technical Documents ({ship.documents.length})
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setActiveTab('visitors')}
           className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
             activeTab === 'visitors'
@@ -691,7 +700,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         >
           <ClipboardList className="w-4 h-4" />
           Visitor Logbook ({(ship.visitors || []).length})
-        </button>
+        </motion.button>
       </div>
 
       {/* SECTION 1: CREW COMMAND TREE HIERARCHY */}
@@ -1755,21 +1764,40 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       })()}
 
       {/* MODAL 1: ADD CREW MEMBER */}
-      {isAddCrewModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-              <div>
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 text-[var(--color-primary)]" /> Add Crew Member to {ship.name}
-                </h3>
-                <p className="text-xs text-[var(--text-muted)]">Assign existing company personnel or register a new crew member</p>
+      <AnimatePresence>
+        {isAddCrewModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsAddCrewModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col"
+            >
+              {/* Modal Header */}
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+                <div>
+                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                    <UserPlus className="w-4 h-4 text-[var(--color-primary)]" /> Add Crew Member to {ship.name}
+                  </h3>
+                  <p className="text-xs text-[var(--text-muted)]">Assign existing company personnel or register a new crew member</p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsAddCrewModalOpen(false)}
+                  className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
               </div>
-              <button onClick={() => setIsAddCrewModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
             {/* Mode Switcher Tabs */}
             <div className="px-6 pt-4 pb-2 border-b border-[var(--color-glass-border)] bg-[var(--color-bg-alt)]">
@@ -2102,38 +2130,62 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </div>
 
               <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setIsAddCrewModalOpen(false)}
                   className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
                 >
                   Cancel
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
                 >
                   Add Crew Member
-                </button>
+                </motion.button>
               </div>
             </form>
             )}
-          </div>
+          </motion.div>
         </div>
       )}
+      </AnimatePresence>
 
       {/* MODAL 2: ADD TECHNICAL DOCUMENT */}
-      {isAddDocModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-[var(--color-primary)]" /> Add Technical Document
-              </h3>
-              <button onClick={() => setIsAddDocModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <AnimatePresence>
+        {isAddDocModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsAddDocModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl"
+            >
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                  <FileCheck className="w-4 h-4 text-[var(--color-primary)]" /> Add Technical Document
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsAddDocModalOpen(false)}
+                  className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              </div>
 
             <form onSubmit={handleAddDocument} className="p-6 space-y-4 text-xs">
               <div>
@@ -2207,37 +2259,61 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </div>
 
               <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setIsAddDocModalOpen(false)}
                   className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
                 >
                   Cancel
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
                 >
                   Save Document
-                </button>
+                </motion.button>
               </div>
             </form>
-          </div>
+          </motion.div>
         </div>
       )}
+      </AnimatePresence>
 
       {/* MODAL 3: LOG REPAIR / MAINTENANCE WORK ORDER */}
-      {isAddRepairModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
-            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                <Wrench className="w-4 h-4 text-[var(--color-primary)]" /> Log Repair / Maintenance Task
-              </h3>
-              <button onClick={() => setIsAddRepairModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <AnimatePresence>
+        {isAddRepairModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsAddRepairModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+            >
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                  <Wrench className="w-4 h-4 text-[var(--color-primary)]" /> Log Repair / Maintenance Task
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsAddRepairModalOpen(false)}
+                  className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              </div>
 
             <form onSubmit={handleLogRepair} className="p-6 space-y-4 text-xs">
               <div>
@@ -2317,31 +2393,50 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </div>
 
               <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setIsAddRepairModalOpen(false)}
                   className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
                 >
                   Cancel
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
                 >
                   Log Repair Task
-                </button>
+                </motion.button>
               </div>
             </form>
-          </div>
+          </motion.div>
         </div>
       )}
+      </AnimatePresence>
 
       {/* MODAL 4: CREW MEMBER PROFILE */}
-      {selectedCrewMember && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
-            {/* Profile Header */}
-            <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
+      <AnimatePresence>
+        {selectedCrewMember && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setSelectedCrewMember(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+            >
+              {/* Profile Header */}
+              <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary)]/20 border-2 border-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary)] font-extrabold text-2xl shadow-md">
                   {selectedCrewMember.name.charAt(0)}
@@ -2526,29 +2621,51 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
             {/* Footer */}
             <div className="px-6 py-3 border-t border-[var(--color-glass-border)] bg-[var(--color-surface)] flex justify-end shrink-0">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => setSelectedCrewMember(null)}
                 className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs"
               >
                 Close Profile
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
+      </AnimatePresence>
 
       {/* MODAL 5: LOG NEW SHIP VISITOR */}
-      {isAddVisitorModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
-            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                <ClipboardList className="w-4 h-4 text-[var(--color-primary)]" /> Log New Visitor to {ship.name}
-              </h3>
-              <button onClick={() => setIsAddVisitorModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <AnimatePresence>
+        {isAddVisitorModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsAddVisitorModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+            >
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                  <ClipboardList className="w-4 h-4 text-[var(--color-primary)]" /> Log New Visitor to {ship.name}
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsAddVisitorModalOpen(false)}
+                  className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              </div>
 
             <form onSubmit={handleAddVisitor} className="p-6 space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-3">
@@ -2633,24 +2750,29 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </div>
 
               <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setIsAddVisitorModalOpen(false)}
                   className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
                 >
                   Cancel
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
                 >
                   Save Visitor Entry
-                </button>
+                </motion.button>
               </div>
             </form>
-          </div>
+          </motion.div>
         </div>
       )}
+      </AnimatePresence>
     </div>
   );
 };
