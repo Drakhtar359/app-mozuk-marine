@@ -383,294 +383,316 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         </div>
       </div>
 
-      {/* Directory Tabs Navigation */}
-      <div className="flex items-center gap-3 border-b border-[var(--color-glass-border)] pb-4 pt-2">
-        <button
-          onClick={() => setActiveTab('employees')}
-          className={`px-5 py-3 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center gap-2.5 shadow-sm ${
-            activeTab === 'employees'
-              ? 'bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/40 font-extrabold'
-              : 'bg-[var(--color-bg-alt)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--color-glass-border-hover)] border border-[var(--color-glass-border)]'
-          }`}
-        >
-          <Briefcase className="w-4 h-4 text-[#28ada4]" />
-          <span>Employees Directory</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
-            activeTab === 'employees'
-              ? 'bg-[#28ada4] text-slate-950'
-              : 'bg-[var(--color-glass-border)] text-[var(--text-muted)]'
-          }`}>
-            {employeesList.length}
-          </span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('contacts')}
-          className={`px-5 py-3 rounded-2xl font-bold text-xs transition-all duration-200 flex items-center gap-2.5 shadow-sm ${
-            activeTab === 'contacts'
-              ? 'bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/40 font-extrabold'
-              : 'bg-[var(--color-bg-alt)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--color-glass-border-hover)] border border-[var(--color-glass-border)]'
-          }`}
-        >
-          <UserCheck className="w-4 h-4 text-[#28ada4]" />
-          <span>Contacts & Company Directory</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
-            activeTab === 'contacts'
-              ? 'bg-[#28ada4] text-slate-950'
-              : 'bg-[var(--color-glass-border)] text-[var(--text-muted)]'
-          }`}>
-            {contactPeopleList.length}
-          </span>
-        </button>
-      </div>
-
-      {/* TAB 1: EMPLOYEES DIRECTORY */}
-      {activeTab === 'employees' && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-[#28ada4]" />
-                Employees Directory ({employeesList.length})
-              </h3>
-              <p className="text-xs text-[var(--text-muted)]">
-                Shore-based corporate personnel, superintendents, operations leads, and company staff.
-              </p>
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={handleOpenAddEmployeeModal}
-              className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm self-start sm:self-auto"
+      {/* Folder Directory Tabs Container */}
+      <div className="pt-2">
+        {/* Folder Flap Handles */}
+        <div className="flex items-end gap-2 px-2 -mb-px relative z-10">
+          <button
+            onClick={() => setActiveTab('employees')}
+            className={`relative px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 ${
+              activeTab === 'employees'
+                ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+            }`}
+          >
+            {activeTab === 'employees' && (
+              <motion.div
+                layoutId="activeFolderTabTopLine"
+                className="absolute top-0 left-0 right-0 h-1 bg-[#28ada4] rounded-t-full"
+              />
+            )}
+            <Briefcase className="w-4 h-4 text-[#28ada4]" />
+            <span>Employees Directory</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
+                activeTab === 'employees'
+                  ? 'bg-[#28ada4] text-slate-950'
+                  : 'bg-[var(--color-glass-border)] text-[var(--text-muted)]'
+              }`}
             >
-              <Plus className="w-4 h-4" /> Register Employee
-            </motion.button>
-          </div>
+              {employeesList.length}
+            </span>
+          </button>
 
-          <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs min-w-[950px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
-                  <tr>
-                    <th className="py-3.5 px-4">Employee Name & Position</th>
-                    <th className="py-3.5 px-4">Date of Birth</th>
-                    <th className="py-3.5 px-4">Date of Joining</th>
-                    <th className="py-3.5 px-4">Email Address</th>
-                    <th className="py-3.5 px-4">Phone Number</th>
-                    <th className="py-3.5 px-4">Country & City</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--color-glass-border)]">
-                  {employeesList.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-10 text-center text-[var(--text-muted)]">
-                        <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
-                        No company employees registered yet. Click "+ Register Employee" to populate directory.
-                      </td>
-                    </tr>
-                  ) : (
-                    employeesList.map((emp) => (
-                      <tr key={emp.id} className="hover:bg-[var(--color-glass-border)] transition">
-                        {/* Name & Position */}
-                        <td className="py-3.5 px-4 align-middle">
-                          <div className="font-extrabold text-[var(--text-main)] text-xs">
-                            {emp.name}
-                          </div>
-                          <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
-                            {emp.position}
-                          </div>
-                        </td>
-
-                        {/* Date of Birth */}
-                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
-                          {emp.dateOfBirth || '—'}
-                        </td>
-
-                        {/* Date of Joining */}
-                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
-                          {emp.dateOfJoining || '—'}
-                        </td>
-
-                        {/* Email */}
-                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
-                          {emp.email ? (
-                            <a href={`mailto:${emp.email}`} className="hover:underline flex items-center gap-1">
-                              <Mail className="w-3 h-3 text-[#28ada4]" />
-                              {emp.email}
-                            </a>
-                          ) : (
-                            '—'
-                          )}
-                        </td>
-
-                        {/* Phone */}
-                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
-                          {emp.phoneNumber || '—'}
-                        </td>
-
-                        {/* Country & City */}
-                        <td className="py-3.5 px-4 align-middle whitespace-nowrap">
-                          <div className="font-bold text-[var(--text-main)]">{emp.country}</div>
-                          <div className="text-[11px] text-[var(--text-muted)]">{emp.city}</div>
-                        </td>
-
-                        {/* Actions */}
-                        <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => handleOpenEditEmployeeModal(emp)}
-                              className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
-                            >
-                              <Edit className="w-3.5 h-3.5" /> Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteEmployee(emp.id)}
-                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
-                              title="Delete employee record"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <button
+            onClick={() => setActiveTab('contacts')}
+            className={`relative px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 ${
+              activeTab === 'contacts'
+                ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+            }`}
+          >
+            {activeTab === 'contacts' && (
+              <motion.div
+                layoutId="activeFolderTabTopLine"
+                className="absolute top-0 left-0 right-0 h-1 bg-[#28ada4] rounded-t-full"
+              />
+            )}
+            <UserCheck className="w-4 h-4 text-[#28ada4]" />
+            <span>Contacts & Company Directory</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
+                activeTab === 'contacts'
+                  ? 'bg-[#28ada4] text-slate-950'
+                  : 'bg-[var(--color-glass-border)] text-[var(--text-muted)]'
+              }`}
+            >
+              {contactPeopleList.length}
+            </span>
+          </button>
         </div>
-      )}
 
-      {/* TAB 2: CONTACTS & COMPANY DIRECTORY */}
-      {activeTab === 'contacts' && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
-                <UserCheck className="w-5 h-5 text-[#28ada4]" />
-                Contacts & Company Directory ({filteredContactPeople.length})
-              </h3>
-              <p className="text-xs text-[var(--text-muted)]">
-                Authorized company representatives, DPAs, technical superintendents, and crewing directors.
-              </p>
-            </div>
+        {/* Folder Content Body Container */}
+        <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
+          {/* TAB 1: EMPLOYEES DIRECTORY */}
+          {activeTab === 'employees' && (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+                    <Briefcase className="w-5 h-5 text-[#28ada4]" />
+                    Employees Directory ({employeesList.length})
+                  </h3>
+                  <p className="text-xs text-[var(--text-muted)]">
+                    Shore-based corporate personnel, superintendents, operations leads, and company staff.
+                  </p>
+                </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-64">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-                <input
-                  type="text"
-                  placeholder="Search contacts..."
-                  value={contactSearchTerm}
-                  onChange={(e) => setContactSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition shadow-sm"
-                />
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleOpenAddEmployeeModal}
+                  className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm self-start sm:self-auto"
+                >
+                  <Plus className="w-4 h-4" /> Register Employee
+                </motion.button>
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={handleOpenAddContactModal}
-                className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm shrink-0"
-              >
-                <Plus className="w-4 h-4" /> Register Contact
-              </motion.button>
-            </div>
-          </div>
-
-          <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs min-w-[950px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
-                  <tr>
-                    <th className="py-3.5 px-4">Contact Person & Position</th>
-                    <th className="py-3.5 px-4">Country</th>
-                    <th className="py-3.5 px-4">Email Address</th>
-                    <th className="py-3.5 px-4">Phone Number</th>
-                    <th className="py-3.5 px-4">Responsibilities / Notes</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--color-glass-border)]">
-                  {filteredContactPeople.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-10 text-center text-[var(--text-muted)]">
-                        <UserCheck className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
-                        {contactPeopleList.length === 0
-                          ? 'No internal contacts listed. Click "+ Register Contact" to add team members.'
-                          : 'No internal contacts match your search query.'}
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredContactPeople.map((person) => (
-                      <tr key={person.id} className="hover:bg-[var(--color-glass-border)] transition">
-                        {/* Name & Position */}
-                        <td className="py-3.5 px-4 align-middle">
-                          <div className="font-extrabold text-[var(--text-main)] text-xs">
-                            {person.fullName}
-                          </div>
-                          <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
-                            {person.position}
-                          </div>
-                        </td>
-
-                        {/* Country */}
-                        <td className="py-3.5 px-4 align-middle font-bold text-[var(--text-main)] whitespace-nowrap">
-                          {person.country}
-                        </td>
-
-                        {/* Email */}
-                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
-                          {person.email ? (
-                            <a href={`mailto:${person.email}`} className="hover:underline flex items-center gap-1">
-                              <Mail className="w-3 h-3 text-[#28ada4]" />
-                              {person.email}
-                            </a>
-                          ) : (
-                            '—'
-                          )}
-                        </td>
-
-                        {/* Phone */}
-                        <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
-                          {person.phoneNumber || '—'}
-                        </td>
-
-                        {/* Description */}
-                        <td className="py-3.5 px-4 align-middle text-[var(--text-muted)] max-w-xs truncate">
-                          {person.description || '—'}
-                        </td>
-
-                        {/* Actions */}
-                        <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => handleOpenEditContactModal(person)}
-                              className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
-                            >
-                              <Edit className="w-3.5 h-3.5" /> Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteContact(person.id)}
-                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
-                              title="Delete contact record"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
+              <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs min-w-[950px]">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                      <tr>
+                        <th className="py-3.5 px-4">Employee Name & Position</th>
+                        <th className="py-3.5 px-4">Date of Birth</th>
+                        <th className="py-3.5 px-4">Date of Joining</th>
+                        <th className="py-3.5 px-4">Email Address</th>
+                        <th className="py-3.5 px-4">Phone Number</th>
+                        <th className="py-3.5 px-4">Country & City</th>
+                        <th className="py-3.5 px-4 text-right">Actions</th>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--color-glass-border)]">
+                      {employeesList.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="py-10 text-center text-[var(--text-muted)]">
+                            <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
+                            No company employees registered yet. Click "+ Register Employee" to populate directory.
+                          </td>
+                        </tr>
+                      ) : (
+                        employeesList.map((emp) => (
+                          <tr key={emp.id} className="hover:bg-[var(--color-glass-border)] transition">
+                            {/* Name & Position */}
+                            <td className="py-3.5 px-4 align-middle">
+                              <div className="font-extrabold text-[var(--text-main)] text-xs">
+                                {emp.name}
+                              </div>
+                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                                {emp.position}
+                              </div>
+                            </td>
+
+                            {/* Date of Birth */}
+                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
+                              {emp.dateOfBirth || '—'}
+                            </td>
+
+                            {/* Date of Joining */}
+                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
+                              {emp.dateOfJoining || '—'}
+                            </td>
+
+                            {/* Email */}
+                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                              {emp.email ? (
+                                <a href={`mailto:${emp.email}`} className="hover:underline flex items-center gap-1">
+                                  <Mail className="w-3 h-3 text-[#28ada4]" />
+                                  {emp.email}
+                                </a>
+                              ) : (
+                                '—'
+                              )}
+                            </td>
+
+                            {/* Phone */}
+                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                              {emp.phoneNumber || '—'}
+                            </td>
+
+                            {/* Country & City */}
+                            <td className="py-3.5 px-4 align-middle whitespace-nowrap">
+                              <div className="font-bold text-[var(--text-main)]">{emp.country}</div>
+                              <div className="text-[11px] text-[var(--text-muted)]">{emp.city}</div>
+                            </td>
+
+                            {/* Actions */}
+                            <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => handleOpenEditEmployeeModal(emp)}
+                                  className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                                >
+                                  <Edit className="w-3.5 h-3.5" /> Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteEmployee(emp.id)}
+                                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                                  title="Delete employee record"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* TAB 2: CONTACTS & COMPANY DIRECTORY */}
+          {activeTab === 'contacts' && (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+                    <UserCheck className="w-5 h-5 text-[#28ada4]" />
+                    Contacts & Company Directory ({filteredContactPeople.length})
+                  </h3>
+                  <p className="text-xs text-[var(--text-muted)]">
+                    Authorized company representatives, DPAs, technical superintendents, and crewing directors.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                    <input
+                      type="text"
+                      placeholder="Search contacts..."
+                      value={contactSearchTerm}
+                      onChange={(e) => setContactSearchTerm(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition shadow-sm"
+                    />
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handleOpenAddContactModal}
+                    className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm shrink-0"
+                  >
+                    <Plus className="w-4 h-4" /> Register Contact
+                  </motion.button>
+                </div>
+              </div>
+
+              <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs min-w-[950px]">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                      <tr>
+                        <th className="py-3.5 px-4">Contact Person & Position</th>
+                        <th className="py-3.5 px-4">Country</th>
+                        <th className="py-3.5 px-4">Email Address</th>
+                        <th className="py-3.5 px-4">Phone Number</th>
+                        <th className="py-3.5 px-4">Responsibilities / Notes</th>
+                        <th className="py-3.5 px-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--color-glass-border)]">
+                      {filteredContactPeople.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="py-10 text-center text-[var(--text-muted)]">
+                            <UserCheck className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
+                            {contactPeopleList.length === 0
+                              ? 'No internal contacts listed. Click "+ Register Contact" to add team members.'
+                              : 'No internal contacts match your search query.'}
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredContactPeople.map((person) => (
+                          <tr key={person.id} className="hover:bg-[var(--color-glass-border)] transition">
+                            {/* Name & Position */}
+                            <td className="py-3.5 px-4 align-middle">
+                              <div className="font-extrabold text-[var(--text-main)] text-xs">
+                                {person.fullName}
+                              </div>
+                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                                {person.position}
+                              </div>
+                            </td>
+
+                            {/* Country */}
+                            <td className="py-3.5 px-4 align-middle font-bold text-[var(--text-main)] whitespace-nowrap">
+                              {person.country}
+                            </td>
+
+                            {/* Email */}
+                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                              {person.email ? (
+                                <a href={`mailto:${person.email}`} className="hover:underline flex items-center gap-1">
+                                  <Mail className="w-3 h-3 text-[#28ada4]" />
+                                  {person.email}
+                                </a>
+                              ) : (
+                                '—'
+                              )}
+                            </td>
+
+                            {/* Phone */}
+                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                              {person.phoneNumber || '—'}
+                            </td>
+
+                            {/* Description */}
+                            <td className="py-3.5 px-4 align-middle text-[var(--text-muted)] max-w-xs truncate">
+                              {person.description || '—'}
+                            </td>
+
+                            {/* Actions */}
+                            <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => handleOpenEditContactModal(person)}
+                                  className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                                >
+                                  <Edit className="w-3.5 h-3.5" /> Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteContact(person.id)}
+                                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                                  title="Delete contact record"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* MODAL: REGISTER / EDIT COMPANY EMPLOYEE */}
       <AnimatePresence>
