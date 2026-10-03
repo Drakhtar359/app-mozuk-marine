@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShipOwnerDetails, Ship, CrewMember, CompanyEmployee, CompanyContactPerson } from '../types/vessel';
+import { ShipOwnerDetails, Ship, CrewMember, CompanyEmployee, CompanyContactPerson, CompanyCustomer } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
 import {
@@ -25,6 +25,42 @@ import {
   Search,
 } from 'lucide-react';
 
+const DEFAULT_CUSTOMERS: CompanyCustomer[] = [
+  {
+    id: 'cust-1',
+    name: 'Maputo Logistics & Shipping S.A.',
+    contactPerson: 'Maria Santos',
+    contractType: 'Port Logistics & Vessel Chartering',
+    email: 'm.santos@maputologistics.co.mz',
+    phoneNumber: '+258 21 445 889',
+    country: 'Mozambique',
+    city: 'Maputo',
+    notes: 'Long-term offshore supply vessel charter partner.',
+  },
+  {
+    id: 'cust-2',
+    name: 'Gulf Marine Energy Chartering Ltd',
+    contactPerson: 'Ahmed Al-Mansoor',
+    contractType: 'Offshore Energy Charterer',
+    email: 'ahmed.mansoor@gulfenergy.ae',
+    phoneNumber: '+971 4 399 2200',
+    country: 'United Arab Emirates',
+    city: 'Dubai',
+    notes: 'Heavy lift & tug assistance charter agreements.',
+  },
+  {
+    id: 'cust-3',
+    name: 'Indian Ocean Bulk Carriers Pvt',
+    contactPerson: 'Rajesh Kumar',
+    contractType: 'Dry Bulk Cargo Partner',
+    email: 'r.kumar@indianoceanbulk.in',
+    phoneNumber: '+91 22 6789 4433',
+    country: 'India',
+    city: 'Mumbai',
+    notes: 'Seasonal grain & mineral shipment contract holder.',
+  },
+];
+
 interface CompanyProfilePageProps {
   ownerDetails: ShipOwnerDetails;
   ships: Ship[];
@@ -44,8 +80,16 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   onSelectShip,
   onUpdateOwnerDetails,
 }) => {
-  const [activeTab, setActiveTab] = useState<'employees' | 'contacts'>('employees');
+  const [activeTab, setActiveTab] = useState<'customers' | 'employees' | 'contacts'>('customers');
   const [contactSearchTerm, setContactSearchTerm] = useState('');
+  const [customerSearchTerm, setCustomerSearchTerm] = useState('');
+
+  // Local state for Customers list initialized from ownerDetails
+  const [customersList, setCustomersList] = useState<CompanyCustomer[]>(
+    ownerDetails.customers && ownerDetails.customers.length > 0
+      ? ownerDetails.customers
+      : DEFAULT_CUSTOMERS
+  );
 
   // Local state for Employees list initialized from ownerDetails
   const [employeesList, setEmployeesList] = useState<CompanyEmployee[]>(
@@ -58,6 +102,12 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   );
 
   useEffect(() => {
+    if (ownerDetails.customers && ownerDetails.customers.length > 0) {
+      setCustomersList(ownerDetails.customers);
+    }
+  }, [ownerDetails.customers]);
+
+  useEffect(() => {
     if (ownerDetails.employees) {
       setEmployeesList(ownerDetails.employees);
     }
@@ -68,6 +118,18 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
       setContactPeopleList(ownerDetails.contactPeople);
     }
   }, [ownerDetails.contactPeople]);
+
+  // Customer Modal States
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
+  const [custName, setCustName] = useState('');
+  const [custContactPerson, setCustContactPerson] = useState('');
+  const [custContractType, setCustContractType] = useState('');
+  const [custEmail, setCustEmail] = useState('');
+  const [custPhoneNumber, setCustPhoneNumber] = useState('');
+  const [custCountry, setCustCountry] = useState('Mozambique');
+  const [custCity, setCustCity] = useState('Maputo');
+  const [custNotes, setCustNotes] = useState('');
 
   // Employee Modal States
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
@@ -100,6 +162,21 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
     0
   );
 
+  const filteredCustomers = customersList.filter((c) => {
+    const query = customerSearchTerm.toLowerCase().trim();
+    if (!query) return true;
+    return (
+      c.name.toLowerCase().includes(query) ||
+      c.contactPerson.toLowerCase().includes(query) ||
+      (c.contractType && c.contractType.toLowerCase().includes(query)) ||
+      c.country.toLowerCase().includes(query) ||
+      (c.city && c.city.toLowerCase().includes(query)) ||
+      (c.email && c.email.toLowerCase().includes(query)) ||
+      (c.phoneNumber && c.phoneNumber.toLowerCase().includes(query)) ||
+      (c.notes && c.notes.toLowerCase().includes(query))
+    );
+  });
+
   const filteredContactPeople = contactPeopleList.filter((person) => {
     const query = contactSearchTerm.toLowerCase().trim();
     if (!query) return true;
@@ -112,6 +189,90 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
       (person.description && person.description.toLowerCase().includes(query))
     );
   });
+
+  // Customer Handlers
+  const handleOpenAddCustomerModal = () => {
+    setEditingCustomerId(null);
+    setCustName('');
+    setCustContactPerson('');
+    setCustContractType('');
+    setCustEmail('');
+    setCustPhoneNumber('');
+    setCustCountry(ownerDetails.country || 'Mozambique');
+    setCustCity('Maputo');
+    setCustNotes('');
+    setIsCustomerModalOpen(true);
+  };
+
+  const handleOpenEditCustomerModal = (cust: CompanyCustomer) => {
+    setEditingCustomerId(cust.id);
+    setCustName(cust.name);
+    setCustContactPerson(cust.contactPerson);
+    setCustContractType(cust.contractType || '');
+    setCustEmail(cust.email || '');
+    setCustPhoneNumber(cust.phoneNumber || '');
+    setCustCountry(cust.country || 'Mozambique');
+    setCustCity(cust.city || '');
+    setCustNotes(cust.notes || '');
+    setIsCustomerModalOpen(true);
+  };
+
+  const handleDeleteCustomer = (id: string) => {
+    const updated = customersList.filter((c) => c.id !== id);
+    setCustomersList(updated);
+    if (onUpdateOwnerDetails) {
+      onUpdateOwnerDetails({
+        ...ownerDetails,
+        customers: updated,
+      });
+    }
+  };
+
+  const handleSaveCustomerSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!custName.trim()) return;
+
+    let updatedList: CompanyCustomer[];
+    if (editingCustomerId) {
+      updatedList = customersList.map((cust) =>
+        cust.id === editingCustomerId
+          ? {
+              ...cust,
+              name: custName.trim(),
+              contactPerson: custContactPerson.trim() || 'Primary Contact',
+              contractType: custContractType.trim() || 'Client',
+              email: custEmail.trim(),
+              phoneNumber: custPhoneNumber.trim(),
+              country: custCountry.trim() || 'Mozambique',
+              city: custCity.trim() || 'Maputo',
+              notes: custNotes.trim(),
+            }
+          : cust
+      );
+    } else {
+      const newCustomer: CompanyCustomer = {
+        id: `cust-${Date.now()}`,
+        name: custName.trim(),
+        contactPerson: custContactPerson.trim() || 'Primary Contact',
+        contractType: custContractType.trim() || 'Client',
+        email: custEmail.trim(),
+        phoneNumber: custPhoneNumber.trim(),
+        country: custCountry.trim() || 'Mozambique',
+        city: custCity.trim() || 'Maputo',
+        notes: custNotes.trim(),
+      };
+      updatedList = [newCustomer, ...customersList];
+    }
+
+    setCustomersList(updatedList);
+    if (onUpdateOwnerDetails) {
+      onUpdateOwnerDetails({
+        ...ownerDetails,
+        customers: updatedList,
+      });
+    }
+    setIsCustomerModalOpen(false);
+  };
 
   // Contact Handlers
   const handleOpenAddContactModal = () => {
@@ -386,10 +547,30 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
       {/* Folder Directory Tabs Container */}
       <div className="pt-2">
         {/* Folder Flap Handles */}
-        <div className="flex items-end gap-2 px-2 -mb-px relative z-10">
+        <div className="flex items-end gap-2 px-2 -mb-px relative z-10 overflow-x-auto">
+          {/* Tab 1: Customers */}
+          <button
+            onClick={() => setActiveTab('customers')}
+            className={`relative px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap ${
+              activeTab === 'customers'
+                ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+            }`}
+          >
+            {activeTab === 'customers' && (
+              <motion.div
+                layoutId="activeFolderTabBottomLine"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-b-full z-30"
+              />
+            )}
+            <Globe className="w-4 h-4 text-[#28ada4]" />
+            <span>Customers</span>
+          </button>
+
+          {/* Tab 2: Employees */}
           <button
             onClick={() => setActiveTab('employees')}
-            className={`relative px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 ${
+            className={`relative px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap ${
               activeTab === 'employees'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                 : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -402,21 +583,13 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
               />
             )}
             <Briefcase className="w-4 h-4 text-[#28ada4]" />
-            <span>Employees Directory</span>
-            <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
-                activeTab === 'employees'
-                  ? 'bg-[#28ada4] text-slate-950'
-                  : 'bg-[var(--color-glass-border)] text-[var(--text-muted)]'
-              }`}
-            >
-              {employeesList.length}
-            </span>
+            <span>Employees</span>
           </button>
 
+          {/* Tab 3: Contacts & Company Directory */}
           <button
             onClick={() => setActiveTab('contacts')}
-            className={`relative px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 ${
+            className={`relative px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap ${
               activeTab === 'contacts'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                 : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -430,28 +603,148 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             )}
             <UserCheck className="w-4 h-4 text-[#28ada4]" />
             <span>Contacts & Company Directory</span>
-            <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
-                activeTab === 'contacts'
-                  ? 'bg-[#28ada4] text-slate-950'
-                  : 'bg-[var(--color-glass-border)] text-[var(--text-muted)]'
-              }`}
-            >
-              {contactPeopleList.length}
-            </span>
           </button>
         </div>
 
         {/* Folder Content Body Container */}
         <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
-          {/* TAB 1: EMPLOYEES DIRECTORY */}
+          {/* TAB 1: CUSTOMERS */}
+          {activeTab === 'customers' && (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-[#28ada4]" />
+                    Customers Directory ({filteredCustomers.length})
+                  </h3>
+                  <p className="text-xs text-[var(--text-muted)]">
+                    Vessel charterers, cargo owners, port logistics partners, and commercial maritime clients.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                    <input
+                      type="text"
+                      placeholder="Search customers..."
+                      value={customerSearchTerm}
+                      onChange={(e) => setCustomerSearchTerm(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition shadow-sm"
+                    />
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handleOpenAddCustomerModal}
+                    className="px-4 py-2 rounded-full btn-mozuk-primary text-xs font-bold flex items-center gap-1.5 transition shadow-sm shrink-0"
+                  >
+                    <Plus className="w-4 h-4" /> Register Customer
+                  </motion.button>
+                </div>
+              </div>
+
+              <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs min-w-[950px]">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                      <tr>
+                        <th className="py-3.5 px-4">Customer Company & Contact</th>
+                        <th className="py-3.5 px-4">Contract / Service Type</th>
+                        <th className="py-3.5 px-4">Email Address</th>
+                        <th className="py-3.5 px-4">Phone Number</th>
+                        <th className="py-3.5 px-4">Country & City</th>
+                        <th className="py-3.5 px-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--color-glass-border)]">
+                      {filteredCustomers.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="py-10 text-center text-[var(--text-muted)]">
+                            <Globe className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
+                            {customersList.length === 0
+                              ? 'No commercial customers registered yet. Click "+ Register Customer" to populate directory.'
+                              : 'No customers match your search query.'}
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredCustomers.map((cust) => (
+                          <tr key={cust.id} className="hover:bg-[var(--color-glass-border)] transition">
+                            {/* Name & Contact Person */}
+                            <td className="py-3.5 px-4 align-middle">
+                              <div className="font-extrabold text-[var(--text-main)] text-xs">
+                                {cust.name}
+                              </div>
+                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                                Rep: {cust.contactPerson}
+                              </div>
+                            </td>
+
+                            {/* Contract Type */}
+                            <td className="py-3.5 px-4 align-middle font-semibold text-[var(--text-main)] whitespace-nowrap">
+                              {cust.contractType || 'General Client'}
+                            </td>
+
+                            {/* Email */}
+                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                              {cust.email ? (
+                                <a href={`mailto:${cust.email}`} className="hover:underline flex items-center gap-1">
+                                  <Mail className="w-3 h-3 text-[#28ada4]" />
+                                  {cust.email}
+                                </a>
+                              ) : (
+                                '—'
+                              )}
+                            </td>
+
+                            {/* Phone */}
+                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                              {cust.phoneNumber || '—'}
+                            </td>
+
+                            {/* Country & City */}
+                            <td className="py-3.5 px-4 align-middle whitespace-nowrap">
+                              <div className="font-bold text-[var(--text-main)]">{cust.country}</div>
+                              <div className="text-[11px] text-[var(--text-muted)]">{cust.city}</div>
+                            </td>
+
+                            {/* Actions */}
+                            <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => handleOpenEditCustomerModal(cust)}
+                                  className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                                >
+                                  <Edit className="w-3.5 h-3.5" /> Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteCustomer(cust.id)}
+                                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                                  title="Delete customer record"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: EMPLOYEES */}
           {activeTab === 'employees' && (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
                     <Briefcase className="w-5 h-5 text-[#28ada4]" />
-                    Employees Directory ({employeesList.length})
+                    Employees ({employeesList.length})
                   </h3>
                   <p className="text-xs text-[var(--text-muted)]">
                     Shore-based corporate personnel, superintendents, operations leads, and company staff.
@@ -564,7 +857,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             </div>
           )}
 
-          {/* TAB 2: CONTACTS & COMPANY DIRECTORY */}
+          {/* TAB 3: CONTACTS & COMPANY DIRECTORY */}
           {activeTab === 'contacts' && (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -693,6 +986,188 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
           )}
         </div>
       </div>
+
+      {/* MODAL: REGISTER / EDIT COMPANY CUSTOMER */}
+      <AnimatePresence>
+        {isCustomerModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsCustomerModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col"
+            >
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] sticky top-0 z-20">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-[#28ada4]/10 text-[#28ada4] border border-[#28ada4]/30">
+                    <Globe className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      {editingCustomerId ? 'Edit Customer Details' : 'Register New Customer Company'}
+                    </h3>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      Fill in client credentials, representative contact, and contract details.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsCustomerModalOpen(false)}
+                  className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleSaveCustomerSubmit} className="p-6 space-y-4 text-xs">
+                {/* Customer Company Name */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Customer / Client Company Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Maputo Logistics & Shipping S.A."
+                    value={custName}
+                    onChange={(e) => setCustName(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
+
+                {/* Contact Person & Contract Type */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Primary Contact Person <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Maria Santos"
+                      value={custContactPerson}
+                      onChange={(e) => setCustContactPerson(e.target.value)}
+                      required
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Contract / Service Type
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Vessel Chartering, Bulk Cargo"
+                      value={custContractType}
+                      onChange={(e) => setCustContractType(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+                </div>
+
+                {/* Email & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="e.g. m.santos@maputologistics.co.mz"
+                      value={custEmail}
+                      onChange={(e) => setCustEmail(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="e.g. +258 21 445 889"
+                      value={custPhoneNumber}
+                      onChange={(e) => setCustPhoneNumber(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+                </div>
+
+                {/* Country & City */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      Country
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Mozambique, UAE"
+                      value={custCountry}
+                      onChange={(e) => setCustCountry(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Maputo, Dubai"
+                      value={custCity}
+                      onChange={(e) => setCustCity(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                    />
+                  </div>
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Notes / Contract Details
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="e.g. Long-term offshore supply vessel charter agreement..."
+                    value={custNotes}
+                    onChange={(e) => setCustNotes(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
+
+                {/* Actions */}
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setIsCustomerModalOpen(false)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs shadow-md"
+                  >
+                    {editingCustomerId ? 'Save Changes' : 'Register Customer'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* MODAL: REGISTER / EDIT COMPANY EMPLOYEE */}
       <AnimatePresence>

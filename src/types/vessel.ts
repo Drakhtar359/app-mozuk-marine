@@ -98,12 +98,25 @@ export interface CompanyEmployee {
   city: string;
 }
 
+export interface CompanyCustomer {
+  id: string;
+  name: string;
+  contactPerson: string;
+  email: string;
+  phoneNumber: string;
+  country: string;
+  city: string;
+  contractType?: string;
+  notes?: string;
+}
+
 export interface ShipOwnerDetails {
   companyName: string;
   country: string;
   phoneNumber: string;
   contactPeople: CompanyContactPerson[];
   employees?: CompanyEmployee[];
+  customers?: CompanyCustomer[];
 }
 
 export const getEffectiveVesselHistory = (crew: CrewMember): VesselHistoryEntry[] => {
