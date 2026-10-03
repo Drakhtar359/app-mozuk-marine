@@ -765,90 +765,90 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
       </div>
 
-      {/* 3 Main Sections Tabs Bar */}
-      <div className="flex border border-[var(--color-glass-border)] bg-[var(--color-surface)] rounded-2xl p-1.5 overflow-x-auto flex-nowrap whitespace-nowrap gap-2">
+      {/* Main Sections Tabs Container (4 tabs per row layout) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 border border-[var(--color-glass-border)] bg-[var(--color-surface)] rounded-2xl p-2">
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('crew')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'crew'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
           }`}
         >
-          <Users className="w-4 h-4" />
-          Crew Command Hierarchy ({ship.crew.length})
+          <Users className="w-4 h-4 shrink-0" />
+          <span className="truncate">Crew Command Hierarchy ({ship.crew.length})</span>
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('maintenance')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'maintenance'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
           }`}
         >
-          <Wrench className="w-4 h-4" />
-          Maintenance & Repair Log ({ship.maintenance.length})
+          <Wrench className="w-4 h-4 shrink-0" />
+          <span className="truncate">Maintenance & Repair Log ({ship.maintenance.length})</span>
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('documents')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'documents'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
           }`}
         >
-          <FileCheck className="w-4 h-4" />
-          Technical Documents ({ship.documents.length})
+          <FileCheck className="w-4 h-4 shrink-0" />
+          <span className="truncate">Technical Documents ({ship.documents.length})</span>
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('visitors')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'visitors'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
           }`}
         >
-          <ClipboardList className="w-4 h-4" />
-          Visitor Logbook ({(ship.visitors || []).length})
+          <ClipboardList className="w-4 h-4 shrink-0" />
+          <span className="truncate">Visitor Logbook ({(ship.visitors || []).length})</span>
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('ballast')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'ballast'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
           }`}
         >
-          <Droplets className="w-4 h-4 text-cyan-400" />
-          Ballast Water Record Book ({(ship.ballastWaterLogs || []).length})
+          <Droplets className="w-4 h-4 text-cyan-400 shrink-0" />
+          <span className="truncate">Ballast Water Log ({(ship.ballastWaterLogs || []).length})</span>
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('sewage')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'sewage'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
           }`}
         >
-          <Recycle className="w-4 h-4 text-emerald-400" />
-          Sewage & Grey Water Log ({(ship.sewageWaterLogs || []).length})
+          <Recycle className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span className="truncate">Sewage & Grey Water Log ({(ship.sewageWaterLogs || []).length})</span>
         </motion.button>
       </div>
 
