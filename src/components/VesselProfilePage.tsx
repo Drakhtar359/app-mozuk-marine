@@ -645,12 +645,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       </div>
 
       {/* 3 Main Sections Tabs Bar */}
-      <div className="flex border border-[var(--color-glass-border)] bg-[var(--color-surface)] rounded-2xl p-1.5 overflow-x-auto gap-2">
+      <div className="flex border border-[var(--color-glass-border)] bg-[var(--color-surface)] rounded-2xl p-1.5 overflow-x-auto flex-nowrap whitespace-nowrap gap-2">
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setActiveTab('crew')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
+          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
             activeTab === 'crew'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
@@ -664,7 +664,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setActiveTab('maintenance')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
+          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
             activeTab === 'maintenance'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
@@ -678,7 +678,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setActiveTab('documents')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
+          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
             activeTab === 'documents'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
@@ -692,7 +692,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setActiveTab('visitors')}
-          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition ${
+          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
             activeTab === 'visitors'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
@@ -1276,8 +1276,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </button>
             </div>
 
-            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
-              <table className="w-full text-left text-xs">
+            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+              <table className="w-full text-left text-xs min-w-[850px]">
                 <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
                   <tr>
                     <th className="py-3 px-4">Certificate Title</th>
@@ -1362,8 +1362,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </button>
             </div>
 
-            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
-              <table className="w-full text-left text-xs">
+            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+              <table className="w-full text-left text-xs min-w-[850px]">
                 <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
                   <tr>
                     <th className="py-3 px-4">Document / Manual Title</th>
@@ -1436,8 +1436,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </button>
             </div>
 
-            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
-              <table className="w-full text-left text-xs">
+            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+              <table className="w-full text-left text-xs min-w-[850px]">
                 <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
                   <tr>
                     <th className="py-3 px-4">Record Title</th>

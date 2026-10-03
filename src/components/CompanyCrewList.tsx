@@ -411,7 +411,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
         {/* Sort & Reset Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[var(--color-glass-border)] text-xs">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-[var(--text-muted)] font-bold flex items-center gap-1">
               <ArrowUpDown className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Sort By:
             </span>
@@ -469,7 +469,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
       {/* MASTER CREW ROSTER TABLE */}
       <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs min-w-[900px]">
             <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
               <tr>
                 <th className="py-3.5 px-4">Crew Member Name & Role</th>

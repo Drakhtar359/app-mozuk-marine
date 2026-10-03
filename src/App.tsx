@@ -611,26 +611,26 @@ export function App() {
 
       {/* Header matching marine.mozuk.net */}
       <header className="header-nav sticky top-0 z-30 px-4 lg:px-8 py-3.5 border-b border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] shadow-lg">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
           {/* Logo & Mozuk Marine Branding */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <div
               onClick={() => {
                 setSelectedShipId(null);
                 setViewMode('fleet');
               }}
-              className="flex items-center gap-3 cursor-pointer group"
+              className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group"
             >
               <img
                 src="https://marine.mozuk.net/images/logo.png"
                 alt="Mozuk Marine Logo"
-                className="h-9 w-auto drop-shadow-[0_0_12px_rgba(0,242,254,0.4)] group-hover:scale-105 transition-transform"
+                className="h-8 sm:h-9 w-auto drop-shadow-[0_0_12px_rgba(0,242,254,0.4)] group-hover:scale-105 transition-transform"
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
               <div>
-                <h1 className="font-['Montserrat',sans-serif] text-xl tracking-tight transition">
+                <h1 className="font-['Montserrat',sans-serif] text-lg sm:text-xl tracking-tight transition">
                   <span className="text-[var(--text-main)] font-normal">MOZUK</span><span className="text-[#28ada4] font-bold">APP</span>
                 </h1>
               </div>
@@ -638,13 +638,13 @@ export function App() {
           </div>
 
           {/* Nav Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Theme Toggle Button (Light/Dark Mode) */}
             <motion.button
               whileHover={{ scale: 1.08, rotate: 12 }}
               whileTap={{ scale: 0.92 }}
               onClick={toggleTheme}
-              className="p-2 rounded-full btn-mozuk-secondary text-[var(--text-main)] transition-colors"
+              className="p-1.5 sm:p-2 rounded-full btn-mozuk-secondary text-[var(--text-main)] transition-colors shrink-0"
               title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
             >
               {theme === 'dark' ? (
@@ -662,7 +662,7 @@ export function App() {
                   setSelectedShipId(null);
                   setViewMode('fleet');
                 }}
-                className="px-3.5 py-2 rounded-full btn-mozuk-secondary font-bold text-xs"
+                className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full btn-mozuk-secondary font-bold text-[11px] sm:text-xs shrink-0"
               >
                 ← Back to Fleet Directory
               </motion.button>
@@ -676,9 +676,9 @@ export function App() {
                   setSelectedShipId(null);
                   setViewMode('profile');
                 }}
-                className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs flex items-center gap-2"
+                className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full btn-mozuk-secondary font-bold text-[11px] sm:text-xs flex items-center gap-1.5 sm:gap-2 shrink-0"
               >
-                <Building2 className="w-4 h-4 text-[#28ada4]" /> Company Profile
+                <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#28ada4]" /> Company Profile
               </motion.button>
             )}
 
@@ -690,7 +690,7 @@ export function App() {
                 setSelectedShipId(null);
                 setViewMode('fleet');
               }}
-              className="px-3.5 py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
+              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 font-bold text-[11px] sm:text-xs flex items-center gap-1.5 transition shadow-sm shrink-0"
               title="Log out of Mozuk Marine Portal"
             >
               <LogOut className="w-3.5 h-3.5" />
