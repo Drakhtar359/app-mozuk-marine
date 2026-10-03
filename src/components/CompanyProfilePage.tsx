@@ -397,8 +397,8 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
           >
             {activeTab === 'employees' && (
               <motion.div
-                layoutId="activeFolderTabTopLine"
-                className="absolute top-0 left-0 right-0 h-1 bg-[#28ada4] rounded-t-full"
+                layoutId="activeFolderTabBottomLine"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-b-full z-30"
               />
             )}
             <Briefcase className="w-4 h-4 text-[#28ada4]" />
@@ -424,8 +424,8 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
           >
             {activeTab === 'contacts' && (
               <motion.div
-                layoutId="activeFolderTabTopLine"
-                className="absolute top-0 left-0 right-0 h-1 bg-[#28ada4] rounded-t-full"
+                layoutId="activeFolderTabBottomLine"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-b-full z-30"
               />
             )}
             <UserCheck className="w-4 h-4 text-[#28ada4]" />
