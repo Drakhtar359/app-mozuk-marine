@@ -457,10 +457,6 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 <h1 className="font-['Space_Grotesk',sans-serif] font-black text-2xl sm:text-3xl text-[var(--text-main)] tracking-tight">
                   {ownerDetails.companyName}
                 </h1>
-                <span className="px-3 py-1 rounded-full bg-[#2c6498]/20 text-[#28ada4] border border-[#28ada4]/40 text-xs font-extrabold inline-flex items-center gap-1.5 shrink-0 shadow-sm">
-                  <Globe className="w-3.5 h-3.5 text-[#28ada4]" />
-                  {ownerDetails.country}
-                </span>
               </div>
 
               <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-[var(--text-muted)] pt-1">
