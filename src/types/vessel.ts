@@ -60,6 +60,33 @@ export interface VisitorLog {
   location: string;
 }
 
+export interface BallastWaterLog {
+  id: string;
+  date: string;
+  time: string;
+  operation: 'Ballasting' | 'Deballasting' | 'Internal Transfer' | 'Ballast Exchange (BWM)';
+  tanks: string;
+  volumeM3: number;
+  gpsCoordinates: string;
+  treatmentMethod?: string;
+  officerInCharge: string;
+  remarks?: string;
+}
+
+export interface SewageWaterLog {
+  id: string;
+  date: string;
+  time: string;
+  type: 'Sewage (Black Water)' | 'Grey Water';
+  operation: 'Discharge to Sea (Outside Special Area)' | 'Discharge to Shore Facility' | 'Internal Transfer to Holding Tank' | 'Treatment Plant Disinfection';
+  tankSource: string;
+  volumeM3: number;
+  gpsCoordinates: string;
+  shipSpeedKnots?: number;
+  officerInCharge: string;
+  remarks?: string;
+}
+
 export interface Ship {
   id: string;
   name: string;
@@ -73,6 +100,8 @@ export interface Ship {
   documents: TechnicalDoc[];
   maintenance: MaintenanceLog[];
   visitors?: VisitorLog[];
+  ballastWaterLogs?: BallastWaterLog[];
+  sewageWaterLogs?: SewageWaterLog[];
   addedAt: string;
 }
 

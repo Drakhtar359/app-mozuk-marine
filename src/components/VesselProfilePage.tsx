@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog, getEffectiveVesselHistory } from '../types/vessel';
+import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog, BallastWaterLog, SewageWaterLog, getEffectiveVesselHistory } from '../types/vessel';
 import {
   ArrowLeft,
   Users,
@@ -41,6 +41,11 @@ import {
   Filter,
   Mail,
   Phone,
+  Droplets,
+  Waves,
+  Recycle,
+  Gauge,
+  Search,
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
@@ -62,7 +67,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   onAssignExistingCrewToShip,
   onUnassignCrewFromShip,
 }) => {
-  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'visitors'>('crew');
+  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'visitors' | 'ballast' | 'sewage'>('crew');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
 
   // Modal & Detail States
@@ -71,6 +76,36 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [isAddDocModalOpen, setIsAddDocModalOpen] = useState(false);
   const [isAddRepairModalOpen, setIsAddRepairModalOpen] = useState(false);
   const [isAddVisitorModalOpen, setIsAddVisitorModalOpen] = useState(false);
+  const [isAddBallastModalOpen, setIsAddBallastModalOpen] = useState(false);
+  const [isAddSewageModalOpen, setIsAddSewageModalOpen] = useState(false);
+
+  // Form & Filter states for Ballast Water Record Book
+  const [ballastDate, setBallastDate] = useState('');
+  const [ballastTime, setBallastTime] = useState('');
+  const [ballastOperation, setBallastOperation] = useState<'Ballasting' | 'Deballasting' | 'Internal Transfer' | 'Ballast Exchange (BWM)'>('Ballasting');
+  const [ballastTanks, setBallastTanks] = useState('');
+  const [ballastVolumeM3, setBallastVolumeM3] = useState('');
+  const [ballastGpsCoordinates, setBallastGpsCoordinates] = useState('');
+  const [ballastTreatmentMethod, setBallastTreatmentMethod] = useState('UV Disinfection (Mozuk BWTS)');
+  const [ballastOfficerInCharge, setBallastOfficerInCharge] = useState('');
+  const [ballastRemarks, setBallastRemarks] = useState('');
+  const [ballastFilterOp, setBallastFilterOp] = useState<string>('all');
+  const [ballastSearchTerm, setBallastSearchTerm] = useState('');
+
+  // Form & Filter states for Sewage / Grey Water Record Book
+  const [sewageDate, setSewageDate] = useState('');
+  const [sewageTime, setSewageTime] = useState('');
+  const [sewageType, setSewageType] = useState<'Sewage (Black Water)' | 'Grey Water'>('Sewage (Black Water)');
+  const [sewageOperation, setSewageOperation] = useState<'Discharge to Sea (Outside Special Area)' | 'Discharge to Shore Facility' | 'Internal Transfer to Holding Tank' | 'Treatment Plant Disinfection'>('Discharge to Sea (Outside Special Area)');
+  const [sewageTankSource, setSewageTankSource] = useState('');
+  const [sewageVolumeM3, setSewageVolumeM3] = useState('');
+  const [sewageGpsCoordinates, setSewageGpsCoordinates] = useState('');
+  const [sewageShipSpeedKnots, setSewageShipSpeedKnots] = useState('');
+  const [sewageOfficerInCharge, setSewageOfficerInCharge] = useState('');
+  const [sewageRemarks, setSewageRemarks] = useState('');
+  const [sewageFilterType, setSewageFilterType] = useState<string>('all');
+  const [sewageFilterOp, setSewageFilterOp] = useState<string>('all');
+  const [sewageSearchTerm, setSewageSearchTerm] = useState('');
 
   // Add Crew Modal Mode (Select from company roster vs Register new)
   const [addCrewTab, setAddCrewTab] = useState<'select' | 'create'>('select');
@@ -533,6 +568,92 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     });
   };
 
+  // Ballast Water Handlers
+  const handleAddBallastLog = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ballastTanks.trim() || !ballastVolumeM3) return;
+
+    const newLog: BallastWaterLog = {
+      id: `bw-${Date.now()}`,
+      date: formatDate(ballastDate || getTodayDDMMYYYY()),
+      time: ballastTime || '08:00',
+      operation: ballastOperation,
+      tanks: ballastTanks.trim(),
+      volumeM3: parseFloat(ballastVolumeM3) || 0,
+      gpsCoordinates: ballastGpsCoordinates.trim() || 'Anchor / Port Location',
+      treatmentMethod: ballastTreatmentMethod.trim() || 'UV Disinfection (Mozuk BWTS)',
+      officerInCharge: ballastOfficerInCharge.trim() || 'Chief Officer',
+      remarks: ballastRemarks.trim() || undefined,
+    };
+
+    onUpdateShip({
+      ...ship,
+      ballastWaterLogs: [newLog, ...(ship.ballastWaterLogs || [])],
+    });
+
+    setBallastDate('');
+    setBallastTime('');
+    setBallastOperation('Ballasting');
+    setBallastTanks('');
+    setBallastVolumeM3('');
+    setBallastGpsCoordinates('');
+    setBallastTreatmentMethod('UV Disinfection (Mozuk BWTS)');
+    setBallastOfficerInCharge('');
+    setBallastRemarks('');
+    setIsAddBallastModalOpen(false);
+  };
+
+  const handleRemoveBallastLog = (logId: string) => {
+    onUpdateShip({
+      ...ship,
+      ballastWaterLogs: (ship.ballastWaterLogs || []).filter((l) => l.id !== logId),
+    });
+  };
+
+  // Sewage / Grey Water Handlers
+  const handleAddSewageLog = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sewageTankSource.trim() || !sewageVolumeM3) return;
+
+    const newLog: SewageWaterLog = {
+      id: `sw-${Date.now()}`,
+      date: formatDate(sewageDate || getTodayDDMMYYYY()),
+      time: sewageTime || '10:00',
+      type: sewageType,
+      operation: sewageOperation,
+      tankSource: sewageTankSource.trim(),
+      volumeM3: parseFloat(sewageVolumeM3) || 0,
+      gpsCoordinates: sewageGpsCoordinates.trim() || 'Port / Sea Position',
+      shipSpeedKnots: sewageShipSpeedKnots ? parseFloat(sewageShipSpeedKnots) : undefined,
+      officerInCharge: sewageOfficerInCharge.trim() || 'Second Engineer',
+      remarks: sewageRemarks.trim() || undefined,
+    };
+
+    onUpdateShip({
+      ...ship,
+      sewageWaterLogs: [newLog, ...(ship.sewageWaterLogs || [])],
+    });
+
+    setSewageDate('');
+    setSewageTime('');
+    setSewageType('Sewage (Black Water)');
+    setSewageOperation('Discharge to Sea (Outside Special Area)');
+    setSewageTankSource('');
+    setSewageVolumeM3('');
+    setSewageGpsCoordinates('');
+    setSewageShipSpeedKnots('');
+    setSewageOfficerInCharge('');
+    setSewageRemarks('');
+    setIsAddSewageModalOpen(false);
+  };
+
+  const handleRemoveSewageLog = (logId: string) => {
+    onUpdateShip({
+      ...ship,
+      sewageWaterLogs: (ship.sewageWaterLogs || []).filter((l) => l.id !== logId),
+    });
+  };
+
   // Maintenance Counters
   const openRepairsCount = ship.maintenance.filter((m) => m.status === 'open').length;
   const inProgressCount = ship.maintenance.filter((m) => m.status === 'in_progress').length;
@@ -700,6 +821,34 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         >
           <ClipboardList className="w-4 h-4" />
           Visitor Logbook ({(ship.visitors || []).length})
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setActiveTab('ballast')}
+          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
+            activeTab === 'ballast'
+              ? 'btn-mozuk-primary shadow-lg'
+              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+          }`}
+        >
+          <Droplets className="w-4 h-4 text-cyan-400" />
+          Ballast Water Record Book ({(ship.ballastWaterLogs || []).length})
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setActiveTab('sewage')}
+          className={`flex items-center gap-2 py-2.5 px-5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition shrink-0 ${
+            activeTab === 'sewage'
+              ? 'btn-mozuk-primary shadow-lg'
+              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+          }`}
+        >
+          <Recycle className="w-4 h-4 text-emerald-400" />
+          Sewage & Grey Water Log ({(ship.sewageWaterLogs || []).length})
         </motion.button>
       </div>
 
@@ -1763,6 +1912,462 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         );
       })()}
 
+      {/* SECTION 5: BALLAST WATER RECORD BOOK */}
+      {activeTab === 'ballast' && (() => {
+        const allBallastLogs = ship.ballastWaterLogs || [];
+
+        const totalBallasted = allBallastLogs
+          .filter((l) => l.operation === 'Ballasting')
+          .reduce((acc, l) => acc + l.volumeM3, 0);
+
+        const totalDeballasted = allBallastLogs
+          .filter((l) => l.operation === 'Deballasting')
+          .reduce((acc, l) => acc + l.volumeM3, 0);
+
+        const filteredLogs = allBallastLogs.filter((log) => {
+          if (ballastFilterOp !== 'all' && log.operation !== ballastFilterOp) {
+            return false;
+          }
+          if (ballastSearchTerm.trim()) {
+            const q = ballastSearchTerm.toLowerCase();
+            const matchTanks = log.tanks.toLowerCase().includes(q);
+            const matchGps = log.gpsCoordinates.toLowerCase().includes(q);
+            const matchOfficer = log.officerInCharge.toLowerCase().includes(q);
+            const matchRemarks = (log.remarks || '').toLowerCase().includes(q);
+            if (!matchTanks && !matchGps && !matchOfficer && !matchRemarks) return false;
+          }
+          return true;
+        });
+
+        return (
+          <div className="space-y-6">
+            {/* Section Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
+              <div>
+                <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                  <Droplets className="w-5 h-5 text-cyan-400" />
+                  Ballast Water Record Book (IMO BWM Convention)
+                </h2>
+                <p className="text-xs text-[var(--text-muted)] mt-1">
+                  Official digital logbook for ballast water operations (ballasting, deballasting, internal transfer & BWM exchange) in compliance with IMO D-2 standards.
+                </p>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setIsAddBallastModalOpen(true)}
+                className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0 shadow-sm"
+              >
+                <Plus className="w-4 h-4" /> Log Ballast Operation
+              </motion.button>
+            </div>
+
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+              <div className="mozuk-glass-card p-4 rounded-xl border border-[var(--color-glass-border)]">
+                <div className="text-[var(--text-muted)] font-bold text-[11px] uppercase">Total Operations Logged</div>
+                <div className="font-extrabold text-[var(--text-main)] text-xl font-mono mt-1">
+                  {allBallastLogs.length}
+                </div>
+              </div>
+
+              <div className="mozuk-glass-card p-4 rounded-xl border border-cyan-500/30 bg-cyan-500/5">
+                <div className="text-cyan-400 font-bold text-[11px] uppercase flex items-center gap-1">
+                  <Waves className="w-3.5 h-3.5" /> Total Volume Ballasted
+                </div>
+                <div className="font-extrabold text-cyan-400 text-xl font-mono mt-1">
+                  {totalBallasted.toLocaleString()} m³
+                </div>
+              </div>
+
+              <div className="mozuk-glass-card p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
+                <div className="text-amber-400 font-bold text-[11px] uppercase flex items-center gap-1">
+                  <RotateCcw className="w-3.5 h-3.5" /> Total Volume Deballasted
+                </div>
+                <div className="font-extrabold text-amber-400 text-xl font-mono mt-1">
+                  {totalDeballasted.toLocaleString()} m³
+                </div>
+              </div>
+
+              <div className="mozuk-glass-card p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
+                <div className="text-emerald-400 font-bold text-[11px] uppercase flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" /> BWTS Compliance Status
+                </div>
+                <div className="font-extrabold text-emerald-400 text-xs mt-1">
+                  Mozuk UV System Operational (IMO D-2)
+                </div>
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            <div className="mozuk-glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto flex-1">
+                <div className="relative flex-1 sm:w-64">
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search tanks, GPS, officer or remarks..."
+                    value={ballastSearchTerm}
+                    onChange={(e) => setBallastSearchTerm(e.target.value)}
+                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-cyan-400 transition"
+                  />
+                </div>
+
+                <select
+                  value={ballastFilterOp}
+                  onChange={(e) => setBallastFilterOp(e.target.value)}
+                  className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
+                >
+                  <option value="all">All Operations</option>
+                  <option value="Ballasting">Ballasting</option>
+                  <option value="Deballasting">Deballasting</option>
+                  <option value="Internal Transfer">Internal Transfer</option>
+                  <option value="Ballast Exchange (BWM)">Ballast Exchange (BWM)</option>
+                </select>
+              </div>
+
+              {(ballastSearchTerm !== '' || ballastFilterOp !== 'all') && (
+                <button
+                  onClick={() => {
+                    setBallastSearchTerm('');
+                    setBallastFilterOp('all');
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-bold text-xs flex items-center gap-1.5 transition shrink-0"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Clear Filters
+                </button>
+              )}
+            </div>
+
+            {/* Table */}
+            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+              <table className="w-full text-left text-xs min-w-[950px]">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4">Date & Time</th>
+                    <th className="py-3.5 px-4">Operation Type</th>
+                    <th className="py-3.5 px-4">Tank(s) / Compartment</th>
+                    <th className="py-3.5 px-4">Volume (m³)</th>
+                    <th className="py-3.5 px-4">GPS Coordinates / Location</th>
+                    <th className="py-3.5 px-4">Treatment Method</th>
+                    <th className="py-3.5 px-4">Officer in Charge</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-glass-border)]">
+                  {filteredLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="py-8 text-center text-[var(--text-muted)] text-xs">
+                        No ballast water operations recorded match criteria.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredLogs.map((log) => {
+                      return (
+                        <tr key={log.id} className="hover:bg-[var(--color-glass-border)] transition">
+                          <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-main)] whitespace-nowrap">
+                            {formatDate(log.date)} {log.time ? `@ ${log.time}` : ''}
+                          </td>
+
+                          <td className="py-3.5 px-4 whitespace-nowrap">
+                            {log.operation === 'Ballasting' && (
+                              <span className="px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-bold text-[11px]">
+                                Ballasting
+                              </span>
+                            )}
+                            {log.operation === 'Deballasting' && (
+                              <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold text-[11px]">
+                                Deballasting
+                              </span>
+                            )}
+                            {log.operation === 'Internal Transfer' && (
+                              <span className="px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 font-bold text-[11px]">
+                                Internal Transfer
+                              </span>
+                            )}
+                            {log.operation === 'Ballast Exchange (BWM)' && (
+                              <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold text-[11px]">
+                                Ballast Exchange (BWM)
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3.5 px-4 font-extrabold text-[var(--text-main)]">
+                            {log.tanks}
+                          </td>
+
+                          <td className="py-3.5 px-4 font-mono font-extrabold text-cyan-400 text-sm whitespace-nowrap">
+                            {log.volumeM3.toLocaleString()} m³
+                          </td>
+
+                          <td className="py-3.5 px-4 text-[var(--text-main)] font-mono text-xs whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                              <span>{log.gpsCoordinates}</span>
+                            </div>
+                          </td>
+
+                          <td className="py-3.5 px-4 text-[var(--text-muted)] font-semibold">
+                            {log.treatmentMethod || 'Mozuk BWTS UV'}
+                          </td>
+
+                          <td className="py-3.5 px-4 text-[var(--text-main)] font-bold">
+                            {log.officerInCharge}
+                          </td>
+
+                          <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                            <button
+                              onClick={() => handleRemoveBallastLog(log.id)}
+                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
+                              title="Delete record"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* SECTION 6: SEWAGE & GREY WATER RECORD BOOK */}
+      {activeTab === 'sewage' && (() => {
+        const allSewageLogs = ship.sewageWaterLogs || [];
+
+        const totalSeaDischarge = allSewageLogs
+          .filter((l) => l.operation.includes('Sea'))
+          .reduce((acc, l) => acc + l.volumeM3, 0);
+
+        const totalShoreDischarge = allSewageLogs
+          .filter((l) => l.operation.includes('Shore'))
+          .reduce((acc, l) => acc + l.volumeM3, 0);
+
+        const filteredLogs = allSewageLogs.filter((log) => {
+          if (sewageFilterType !== 'all' && log.type !== sewageFilterType) {
+            return false;
+          }
+          if (sewageFilterOp !== 'all' && log.operation !== sewageFilterOp) {
+            return false;
+          }
+          if (sewageSearchTerm.trim()) {
+            const q = sewageSearchTerm.toLowerCase();
+            const matchSource = log.tankSource.toLowerCase().includes(q);
+            const matchGps = log.gpsCoordinates.toLowerCase().includes(q);
+            const matchOfficer = log.officerInCharge.toLowerCase().includes(q);
+            const matchRemarks = (log.remarks || '').toLowerCase().includes(q);
+            if (!matchSource && !matchGps && !matchOfficer && !matchRemarks) return false;
+          }
+          return true;
+        });
+
+        return (
+          <div className="space-y-6">
+            {/* Section Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
+              <div>
+                <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                  <Recycle className="w-5 h-5 text-emerald-400" />
+                  Sewage & Grey Water Record Book (MARPOL Annex IV)
+                </h2>
+                <p className="text-xs text-[var(--text-muted)] mt-1">
+                  Official environmental logbook for black water sewage discharges and galley/accommodation grey water handling in accordance with MARPOL Annex IV regulations.
+                </p>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setIsAddSewageModalOpen(true)}
+                className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0 shadow-sm"
+              >
+                <Plus className="w-4 h-4" /> Log Sewage / Grey Water Operation
+              </motion.button>
+            </div>
+
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+              <div className="mozuk-glass-card p-4 rounded-xl border border-[var(--color-glass-border)]">
+                <div className="text-[var(--text-muted)] font-bold text-[11px] uppercase">Total Logged Operations</div>
+                <div className="font-extrabold text-[var(--text-main)] text-xl font-mono mt-1">
+                  {allSewageLogs.length}
+                </div>
+              </div>
+
+              <div className="mozuk-glass-card p-4 rounded-xl border border-blue-500/30 bg-blue-500/5">
+                <div className="text-blue-400 font-bold text-[11px] uppercase flex items-center gap-1">
+                  <Navigation className="w-3.5 h-3.5" /> Discharged to Sea (Offshore)
+                </div>
+                <div className="font-extrabold text-blue-400 text-xl font-mono mt-1">
+                  {totalSeaDischarge.toLocaleString()} m³
+                </div>
+              </div>
+
+              <div className="mozuk-glass-card p-4 rounded-xl border border-purple-500/30 bg-purple-500/5">
+                <div className="text-purple-400 font-bold text-[11px] uppercase flex items-center gap-1">
+                  <Anchor className="w-3.5 h-3.5" /> Discharged to Shore Reception
+                </div>
+                <div className="font-extrabold text-purple-400 text-xl font-mono mt-1">
+                  {totalShoreDischarge.toLocaleString()} m³
+                </div>
+              </div>
+
+              <div className="mozuk-glass-card p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
+                <div className="text-emerald-400 font-bold text-[11px] uppercase flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" /> MARPOL Annex IV Status
+                </div>
+                <div className="font-extrabold text-emerald-400 text-xs mt-1">
+                  Certified STP & Holding Tank Compliant
+                </div>
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            <div className="mozuk-glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto flex-1">
+                <div className="relative flex-1 sm:w-64">
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search tank, GPS, officer or remarks..."
+                    value={sewageSearchTerm}
+                    onChange={(e) => setSewageSearchTerm(e.target.value)}
+                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-emerald-400 transition"
+                  />
+                </div>
+
+                <select
+                  value={sewageFilterType}
+                  onChange={(e) => setSewageFilterType(e.target.value)}
+                  className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
+                >
+                  <option value="all">All Water Types</option>
+                  <option value="Sewage (Black Water)">Sewage (Black Water)</option>
+                  <option value="Grey Water">Grey Water</option>
+                </select>
+
+                <select
+                  value={sewageFilterOp}
+                  onChange={(e) => setSewageFilterOp(e.target.value)}
+                  className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
+                >
+                  <option value="all">All Operations</option>
+                  <option value="Discharge to Sea (Outside Special Area)">Discharge to Sea</option>
+                  <option value="Discharge to Shore Facility">Discharge to Shore Facility</option>
+                  <option value="Internal Transfer to Holding Tank">Internal Transfer</option>
+                  <option value="Treatment Plant Disinfection">STP Treatment</option>
+                </select>
+              </div>
+
+              {(sewageSearchTerm !== '' || sewageFilterType !== 'all' || sewageFilterOp !== 'all') && (
+                <button
+                  onClick={() => {
+                    setSewageSearchTerm('');
+                    setSewageFilterType('all');
+                    setSewageFilterOp('all');
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-bold text-xs flex items-center gap-1.5 transition shrink-0"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Clear Filters
+                </button>
+              )}
+            </div>
+
+            {/* Table */}
+            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+              <table className="w-full text-left text-xs min-w-[950px]">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4">Date & Time</th>
+                    <th className="py-3.5 px-4">Water Category</th>
+                    <th className="py-3.5 px-4">Operation</th>
+                    <th className="py-3.5 px-4">Tank / Source</th>
+                    <th className="py-3.5 px-4">Volume (m³)</th>
+                    <th className="py-3.5 px-4">GPS Coordinates / Location</th>
+                    <th className="py-3.5 px-4">Ship Speed</th>
+                    <th className="py-3.5 px-4">Officer in Charge</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--color-glass-border)]">
+                  {filteredLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="py-8 text-center text-[var(--text-muted)] text-xs">
+                        No sewage or grey water operations recorded match criteria.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredLogs.map((log) => {
+                      return (
+                        <tr key={log.id} className="hover:bg-[var(--color-glass-border)] transition">
+                          <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-main)] whitespace-nowrap">
+                            {formatDate(log.date)} {log.time ? `@ ${log.time}` : ''}
+                          </td>
+
+                          <td className="py-3.5 px-4 whitespace-nowrap">
+                            {log.type === 'Sewage (Black Water)' ? (
+                              <span className="px-2.5 py-1 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 font-bold text-[11px]">
+                                Black Water (Sewage)
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 rounded bg-slate-500/10 text-slate-300 border border-slate-500/30 font-bold text-[11px]">
+                                Grey Water
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3.5 px-4 font-semibold text-[var(--text-main)]">
+                            {log.operation}
+                          </td>
+
+                          <td className="py-3.5 px-4 font-extrabold text-[var(--text-main)]">
+                            {log.tankSource}
+                          </td>
+
+                          <td className="py-3.5 px-4 font-mono font-extrabold text-emerald-400 text-sm whitespace-nowrap">
+                            {log.volumeM3.toLocaleString()} m³
+                          </td>
+
+                          <td className="py-3.5 px-4 text-[var(--text-main)] font-mono text-xs whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                              <span>{log.gpsCoordinates}</span>
+                            </div>
+                          </td>
+
+                          <td className="py-3.5 px-4 font-mono text-xs font-bold text-[var(--text-muted)] whitespace-nowrap">
+                            {log.shipSpeedKnots !== undefined ? `${log.shipSpeedKnots} kn` : '—'}
+                          </td>
+
+                          <td className="py-3.5 px-4 text-[var(--text-main)] font-bold">
+                            {log.officerInCharge}
+                          </td>
+
+                          <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                            <button
+                              onClick={() => handleRemoveSewageLog(log.id)}
+                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
+                              title="Delete record"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* MODAL 1: ADD CREW MEMBER */}
       <AnimatePresence>
         {isAddCrewModalOpen && (
@@ -2772,6 +3377,356 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           </motion.div>
         </div>
       )}
+      </AnimatePresence>
+
+      {/* MODAL 6: LOG BALLAST WATER OPERATION */}
+      <AnimatePresence>
+        {isAddBallastModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsAddBallastModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+            >
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                  <Droplets className="w-4 h-4 text-cyan-400" /> Log Ballast Operation to {ship.name}
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsAddBallastModalOpen(false)}
+                  className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              </div>
+
+              <form onSubmit={handleAddBallastLog} className="p-6 space-y-4 text-xs max-h-[80vh] overflow-y-auto">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Date *</label>
+                    <DateInput
+                      value={ballastDate}
+                      onChange={(val) => setBallastDate(val)}
+                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Time (HH:mm) *</label>
+                    <input
+                      type="time"
+                      value={ballastTime}
+                      onChange={(e) => setBallastTime(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Operation Type *</label>
+                    <select
+                      value={ballastOperation}
+                      onChange={(e) => setBallastOperation(e.target.value as any)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold"
+                    >
+                      <option value="Ballasting">Ballasting</option>
+                      <option value="Deballasting">Deballasting</option>
+                      <option value="Internal Transfer">Internal Transfer</option>
+                      <option value="Ballast Exchange (BWM)">Ballast Exchange (BWM)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Volume (m³) *</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 450"
+                      step="0.1"
+                      min="0"
+                      value={ballastVolumeM3}
+                      onChange={(e) => setBallastVolumeM3(e.target.value)}
+                      required
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Tank(s) / Compartments *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Fore Peak Tank (FPT) & DBT 1P/1S"
+                    value={ballastTanks}
+                    onChange={(e) => setBallastTanks(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">GPS Coordinates / Location *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 51° 55' N, 003° 02' E or Rotterdam Port"
+                    value={ballastGpsCoordinates}
+                    onChange={(e) => setBallastGpsCoordinates(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Treatment Method / Status</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. UV Disinfection (Mozuk BWTS) / Un-treated"
+                    value={ballastTreatmentMethod}
+                    onChange={(e) => setBallastTreatmentMethod(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Officer in Charge *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Chief Officer Alexey Ivanov"
+                    value={ballastOfficerInCharge}
+                    onChange={(e) => setBallastOfficerInCharge(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Remarks / Operation Purpose</label>
+                  <textarea
+                    rows={2}
+                    placeholder="e.g. Deballasting during cargo loading at Berth 4."
+                    value={ballastRemarks}
+                    onChange={(e) => setBallastRemarks(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="button"
+                    onClick={() => setIsAddBallastModalOpen(false)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
+                  >
+                    Save Ballast Log
+                  </motion.button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL 7: LOG SEWAGE / GREY WATER OPERATION */}
+      <AnimatePresence>
+        {isAddSewageModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsAddSewageModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+            >
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                  <Recycle className="w-4 h-4 text-emerald-400" /> Log Sewage / Grey Water Operation to {ship.name}
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsAddSewageModalOpen(false)}
+                  className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              </div>
+
+              <form onSubmit={handleAddSewageLog} className="p-6 space-y-4 text-xs max-h-[80vh] overflow-y-auto">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Date *</label>
+                    <DateInput
+                      value={sewageDate}
+                      onChange={(val) => setSewageDate(val)}
+                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Time (HH:mm) *</label>
+                    <input
+                      type="time"
+                      value={sewageTime}
+                      onChange={(e) => setSewageTime(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Water Category *</label>
+                    <select
+                      value={sewageType}
+                      onChange={(e) => setSewageType(e.target.value as any)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold"
+                    >
+                      <option value="Sewage (Black Water)">Sewage (Black Water)</option>
+                      <option value="Grey Water">Grey Water</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Volume (m³) *</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 12.5"
+                      step="0.1"
+                      min="0"
+                      value={sewageVolumeM3}
+                      onChange={(e) => setSewageVolumeM3(e.target.value)}
+                      required
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Operation Type *</label>
+                  <select
+                    value={sewageOperation}
+                    onChange={(e) => setSewageOperation(e.target.value as any)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold"
+                  >
+                    <option value="Discharge to Sea (Outside Special Area)">Discharge to Sea (Outside Special Area)</option>
+                    <option value="Discharge to Shore Facility">Discharge to Shore Reception Facility</option>
+                    <option value="Internal Transfer to Holding Tank">Internal Transfer to Holding Tank</option>
+                    <option value="Treatment Plant Disinfection">STP Treatment Plant Disinfection</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Tank / Source Compartment *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Sewage Holding Tank #1 / Galley Grey Water Tank"
+                    value={sewageTankSource}
+                    onChange={(e) => setSewageTankSource(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">GPS Coordinates / Location *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 53° 12' N, 004° 10' E"
+                      value={sewageGpsCoordinates}
+                      onChange={(e) => setSewageGpsCoordinates(e.target.value)}
+                      required
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Ship Speed (knots)</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 14.2"
+                      step="0.1"
+                      min="0"
+                      value={sewageShipSpeedKnots}
+                      onChange={(e) => setSewageShipSpeedKnots(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Officer in Charge *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Second Engineer Elena Rostova"
+                    value={sewageOfficerInCharge}
+                    onChange={(e) => setSewageOfficerInCharge(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Remarks / MARPOL Compliance Notes</label>
+                  <textarea
+                    rows={2}
+                    placeholder="e.g. Discharged through certified STP at speed >4 knots (>12 NM off coast)."
+                    value={sewageRemarks}
+                    onChange={(e) => setSewageRemarks(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="button"
+                    onClick={() => setIsAddSewageModalOpen(false)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
+                  >
+                    Save Sewage Log
+                  </motion.button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
     </div>
   );
