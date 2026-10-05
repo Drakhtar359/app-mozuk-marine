@@ -87,6 +87,19 @@ export interface SewageWaterLog {
   remarks?: string;
 }
 
+export interface ProcurementOrder {
+  id: string;
+  partName: string;
+  partNumber: string;
+  provider: string;
+  orderDate: string;
+  deliveryPort: string;
+  quantity: number;
+  status: 'ordered' | 'in_transit' | 'delivered';
+  officerInCharge?: string;
+  remarks?: string;
+}
+
 export interface Ship {
   id: string;
   name: string;
@@ -102,6 +115,7 @@ export interface Ship {
   visitors?: VisitorLog[];
   ballastWaterLogs?: BallastWaterLog[];
   sewageWaterLogs?: SewageWaterLog[];
+  procurementOrders?: ProcurementOrder[];
   addedAt: string;
 }
 

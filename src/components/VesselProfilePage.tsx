@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog, BallastWaterLog, SewageWaterLog, getEffectiveVesselHistory } from '../types/vessel';
+import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog, BallastWaterLog, SewageWaterLog, ProcurementOrder, getEffectiveVesselHistory } from '../types/vessel';
 import {
   ArrowLeft,
   Users,
@@ -46,6 +46,9 @@ import {
   Recycle,
   Gauge,
   Search,
+  ShoppingCart,
+  Package,
+  Truck,
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
@@ -70,6 +73,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'logbooks'>('crew');
   const [activeLogbookTab, setActiveLogbookTab] = useState<'visitors' | 'ballast' | 'sewage'>('visitors');
   const [activeDocTab, setActiveDocTab] = useState<'certifications' | 'technical_documentation' | 'misc'>('certifications');
+  const [activeMaintTab, setActiveMaintTab] = useState<'active' | 'logs' | 'procurement'>('active');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
 
   // Modal & Detail States
@@ -80,6 +84,18 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [isAddVisitorModalOpen, setIsAddVisitorModalOpen] = useState(false);
   const [isAddBallastModalOpen, setIsAddBallastModalOpen] = useState(false);
   const [isAddSewageModalOpen, setIsAddSewageModalOpen] = useState(false);
+  const [isAddProcurementModalOpen, setIsAddProcurementModalOpen] = useState(false);
+
+  // Form states for Procurement Order
+  const [procPartName, setProcPartName] = useState('');
+  const [procPartNumber, setProcPartNumber] = useState('');
+  const [procProvider, setProcProvider] = useState('');
+  const [procOrderDate, setProcOrderDate] = useState('');
+  const [procDeliveryPort, setProcDeliveryPort] = useState('');
+  const [procQuantity, setProcQuantity] = useState('1');
+  const [procStatus, setProcStatus] = useState<'ordered' | 'in_transit' | 'delivered'>('ordered');
+  const [procOfficer, setProcOfficer] = useState('');
+  const [procRemarks, setProcRemarks] = useState('');
 
   // Form & Filter states for Ballast Water Record Book
   const [ballastDate, setBallastDate] = useState('');
@@ -656,6 +672,57 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     });
   };
 
+  // Procurement Handlers
+  const handleAddProcurementOrder = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!procPartName.trim()) return;
+
+    const newOrder: ProcurementOrder = {
+      id: `po-${Date.now()}`,
+      partName: procPartName.trim(),
+      partNumber: procPartNumber.trim() || 'N/A',
+      provider: procProvider.trim() || 'General Supplier',
+      orderDate: procOrderDate ? formatDate(procOrderDate) : formatDate(getTodayDDMMYYYY()),
+      deliveryPort: procDeliveryPort.trim() || 'Next Port of Call',
+      quantity: parseInt(procQuantity) || 1,
+      status: procStatus,
+      officerInCharge: procOfficer.trim() || 'Chief Engineer',
+      remarks: procRemarks.trim(),
+    };
+
+    onUpdateShip({
+      ...ship,
+      procurementOrders: [newOrder, ...(ship.procurementOrders || [])],
+    });
+
+    setProcPartName('');
+    setProcPartNumber('');
+    setProcProvider('');
+    setProcOrderDate('');
+    setProcDeliveryPort('');
+    setProcQuantity('1');
+    setProcStatus('ordered');
+    setProcOfficer('');
+    setProcRemarks('');
+    setIsAddProcurementModalOpen(false);
+  };
+
+  const handleRemoveProcurementOrder = (id: string) => {
+    onUpdateShip({
+      ...ship,
+      procurementOrders: (ship.procurementOrders || []).filter((p) => p.id !== id),
+    });
+  };
+
+  const handleUpdateProcurementStatus = (id: string, newStatus: 'ordered' | 'in_transit' | 'delivered') => {
+    onUpdateShip({
+      ...ship,
+      procurementOrders: (ship.procurementOrders || []).map((p) =>
+        p.id === id ? { ...p, status: newStatus } : p
+      ),
+    });
+  };
+
   // Maintenance Counters
   const openRepairsCount = ship.maintenance.filter((m) => m.status === 'open').length;
   const inProgressCount = ship.maintenance.filter((m) => m.status === 'in_progress').length;
@@ -1187,175 +1254,419 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       )}
 
       {/* SECTION 2: MAINTENANCE & REPAIR LOG */}
-      {activeTab === 'maintenance' && (
-        <div className="space-y-5">
-          {/* Maintenance KPIs */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
-              <div>
-                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">Open Repairs</div>
-                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-rose-400 mt-1">{openRepairsCount}</div>
-              </div>
-              <div className="p-3 rounded-xl bg-rose-950/40 text-rose-400 border border-rose-800/40">
-                <AlertTriangle className="w-5 h-5" />
-              </div>
-            </div>
+      {activeTab === 'maintenance' && (() => {
+        const activeRepairs = ship.maintenance.filter(
+          (m) => m.status === 'open' || m.status === 'in_progress'
+        );
+        const completedRepairs = ship.maintenance.filter(
+          (m) => m.status === 'completed'
+        );
+        const procurementList = ship.procurementOrders || [];
 
-            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
+        return (
+          <div className="space-y-6">
+            {/* Section Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
               <div>
-                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">In Progress</div>
-                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-amber-400 mt-1">{inProgressCount}</div>
+                <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                  <Wrench className="w-5 h-5 text-[var(--color-primary)]" />
+                  Vessel Maintenance & Technical Requisitions
+                </h2>
+                <p className="text-xs text-[var(--text-muted)] mt-1">
+                  Active work orders, completed machinery repair logs, and spare parts procurement tracking.
+                </p>
               </div>
-              <div className="p-3 rounded-xl bg-amber-950/40 text-amber-400 border border-amber-800/40">
-                <Clock className="w-5 h-5" />
-              </div>
-            </div>
 
-            <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between">
-              <div>
-                <div className="text-[var(--text-muted)] text-xs font-bold uppercase">Completed</div>
-                <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-emerald-400 mt-1">{completedCount}</div>
-              </div>
-              <div className="p-3 rounded-xl bg-emerald-950/40 text-emerald-400 border border-emerald-800/40">
-                <CheckCircle2 className="w-5 h-5" />
-              </div>
-            </div>
-          </div>
-
-          {/* Filter Bar & Add Button */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-1.5 bg-[var(--color-surface)] p-1 rounded-xl border border-[var(--color-glass-border)] text-xs">
-              {[
-                { id: 'all', label: `All (${ship.maintenance.length})` },
-                { id: 'open', label: `Open (${openRepairsCount})` },
-                { id: 'in_progress', label: `In Progress (${inProgressCount})` },
-                { id: 'completed', label: `Completed (${completedCount})` },
-              ].map((filter) => (
+              {activeMaintTab === 'procurement' ? (
                 <button
-                  key={filter.id}
-                  onClick={() => setMaintenanceFilter(filter.id as any)}
-                  className={`px-3 py-1.5 rounded-lg font-bold transition ${
-                    maintenanceFilter === filter.id
-                      ? 'bg-[var(--color-bg-alt)] text-[var(--text-main)] shadow-sm'
-                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                  }`}
+                  onClick={() => setIsAddProcurementModalOpen(true)}
+                  className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0 shadow-sm"
                 >
-                  {filter.label}
+                  <Plus className="w-4 h-4" /> Order Spare Parts
                 </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() => setIsAddRepairModalOpen(true)}
-              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" /> Log New Repair / Work Order
-            </button>
-          </div>
-
-          {/* Maintenance Logs List */}
-          {filteredMaintenance.length === 0 ? (
-            <div className="mozuk-glass-card rounded-2xl p-10 text-center text-[var(--text-muted)]">
-              <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
-              <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-base">No Maintenance Repairs Found</h4>
-              <p className="text-xs mt-1">There are no repair logs matching the selected filter.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {filteredMaintenance.map((log) => (
-                <div
-                  key={log.id}
-                  className="mozuk-glass-card rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4"
+              ) : (
+                <button
+                  onClick={() => setIsAddRepairModalOpen(true)}
+                  className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0 shadow-sm"
                 >
-                  <div className="space-y-1.5 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {/* Priority Badge */}
-                      <span
-                        className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase border ${
-                          log.priority === 'urgent'
-                            ? 'bg-rose-950/60 text-rose-300 border-rose-800'
-                            : log.priority === 'high'
-                            ? 'bg-orange-950/60 text-orange-300 border-orange-800'
-                            : log.priority === 'medium'
-                            ? 'bg-amber-950/60 text-amber-300 border-amber-800'
-                            : 'bg-slate-800/60 text-slate-300 border-slate-700'
-                        }`}
-                      >
-                        {log.priority} priority
-                      </span>
+                  <Plus className="w-4 h-4" /> Log Work Order
+                </button>
+              )}
+            </div>
 
-                      {/* Category Badge */}
-                      <span className="px-2.5 py-0.5 rounded bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-semibold text-[10px] text-[var(--color-primary)]">
-                        {log.category}
-                      </span>
+            {/* Folder Sub-Tabs Bar */}
+            <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-0.5 border-b border-[var(--color-glass-border)]">
+              <button
+                onClick={() => setActiveMaintTab('active')}
+                className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                  activeMaintTab === 'active'
+                    ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                    : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+                }`}
+              >
+                {activeMaintTab === 'active' && (
+                  <motion.div
+                    layoutId="activeMaintTabBottomLine"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  />
+                )}
+                <Wrench className="w-4 h-4 text-amber-400" />
+                <span>Active Maintenance</span>
+              </button>
 
-                      {/* Status Badge */}
-                      <span
-                        className={`px-2.5 py-0.5 rounded font-bold text-[10px] uppercase border ${
-                          log.status === 'open'
-                            ? 'bg-rose-950/60 text-rose-400 border-rose-800/60'
-                            : log.status === 'in_progress'
-                            ? 'bg-amber-950/60 text-amber-400 border-amber-800/60'
-                            : 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
-                        }`}
-                      >
-                        {log.status.replace('_', ' ')}
-                      </span>
+              <button
+                onClick={() => setActiveMaintTab('logs')}
+                className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                  activeMaintTab === 'logs'
+                    ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                    : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+                }`}
+              >
+                {activeMaintTab === 'logs' && (
+                  <motion.div
+                    layoutId="activeMaintTabBottomLine"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  />
+                )}
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Repair Logs</span>
+              </button>
+
+              <button
+                onClick={() => setActiveMaintTab('procurement')}
+                className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                  activeMaintTab === 'procurement'
+                    ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                    : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+                }`}
+              >
+                {activeMaintTab === 'procurement' && (
+                  <motion.div
+                    layoutId="activeMaintTabBottomLine"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  />
+                )}
+                <ShoppingCart className="w-4 h-4 text-cyan-400" />
+                <span>Procurement</span>
+              </button>
+            </div>
+
+            {/* Folder Content Body Container */}
+            <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
+              {/* SUB-TAB 1: ACTIVE MAINTENANCE */}
+              {activeMaintTab === 'active' && (
+                <div className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-rose-500/20 bg-rose-500/5">
+                      <div>
+                        <div className="text-rose-400 text-xs font-bold uppercase">Open Work Orders</div>
+                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-rose-400 mt-1">{openRepairsCount}</div>
+                      </div>
+                      <div className="p-3 rounded-xl bg-rose-950/40 text-rose-400 border border-rose-800/40">
+                        <AlertTriangle className="w-5 h-5" />
+                      </div>
                     </div>
 
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">{log.title}</h3>
-                    <p className="text-xs text-[var(--text-muted)] leading-relaxed">{log.description}</p>
-
-                    <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)] pt-1">
-                      <span>Logged: <strong className="text-[var(--text-main)]">{formatDate(log.loggedDate)}</strong></span>
-                      <span>Target Due: <strong className="text-[var(--text-main)]">{formatDate(log.dueDate)}</strong></span>
-                      <span>Reported by: <strong className="text-[var(--color-primary)]">{log.reportedBy}</strong></span>
+                    <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-amber-500/20 bg-amber-500/5">
+                      <div>
+                        <div className="text-amber-400 text-xs font-bold uppercase">In Progress Overhauls</div>
+                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-amber-400 mt-1">{inProgressCount}</div>
+                      </div>
+                      <div className="p-3 rounded-xl bg-amber-950/40 text-amber-400 border border-amber-800/40">
+                        <Clock className="w-5 h-5" />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Log Action Buttons */}
-                  <div className="flex items-center gap-2 shrink-0 border-t md:border-t-0 md:border-l border-[var(--color-glass-border)] pt-3 md:pt-0 md:pl-4">
-                    {log.status === 'open' && (
-                      <button
-                        onClick={() => handleUpdateRepairStatus(log.id, 'in_progress')}
-                        className="px-3 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 border border-amber-800/80 text-amber-300 font-bold text-xs transition flex items-center gap-1.5"
-                      >
-                        <Play className="w-3.5 h-3.5" /> Start Repair
-                      </button>
-                    )}
+                  {activeRepairs.length === 0 ? (
+                    <div className="mozuk-glass-card rounded-2xl p-10 text-center text-[var(--text-muted)]">
+                      <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
+                      <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-base">No Active Maintenance Orders</h4>
+                      <p className="text-xs mt-1">All logged repairs are completed or verified.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {activeRepairs.map((log) => (
+                        <div
+                          key={log.id}
+                          className="mozuk-glass-card rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[var(--color-glass-border)]"
+                        >
+                          <div className="space-y-1.5 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span
+                                className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase border ${
+                                  log.priority === 'urgent'
+                                    ? 'bg-rose-950/60 text-rose-300 border-rose-800'
+                                    : log.priority === 'high'
+                                    ? 'bg-orange-950/60 text-orange-300 border-orange-800'
+                                    : log.priority === 'medium'
+                                    ? 'bg-amber-950/60 text-amber-300 border-amber-800'
+                                    : 'bg-slate-800/60 text-slate-300 border-slate-700'
+                                }`}
+                              >
+                                {log.priority} priority
+                              </span>
 
-                    {log.status === 'in_progress' && (
-                      <button
-                        onClick={() => handleUpdateRepairStatus(log.id, 'completed')}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-800/80 text-emerald-300 font-bold text-xs transition flex items-center gap-1.5"
-                      >
-                        <Check className="w-3.5 h-3.5" /> Mark Completed
-                      </button>
-                    )}
+                              <span className="px-2.5 py-0.5 rounded bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-semibold text-[10px] text-[var(--color-primary)]">
+                                {log.category}
+                              </span>
 
-                    {log.status === 'completed' && (
-                      <button
-                        onClick={() => handleUpdateRepairStatus(log.id, 'open')}
-                        className="px-3 py-1.5 rounded-lg btn-mozuk-secondary text-xs font-bold transition flex items-center gap-1.5"
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" /> Re-open
-                      </button>
-                    )}
+                              <span
+                                className={`px-2.5 py-0.5 rounded font-bold text-[10px] uppercase border ${
+                                  log.status === 'open'
+                                    ? 'bg-rose-950/60 text-rose-400 border-rose-800/60'
+                                    : 'bg-amber-950/60 text-amber-400 border-amber-800/60'
+                                }`}
+                              >
+                                {log.status.replace('_', ' ')}
+                              </span>
+                            </div>
+
+                            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">{log.title}</h3>
+                            <p className="text-xs text-[var(--text-muted)] leading-relaxed">{log.description}</p>
+
+                            <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)] pt-1">
+                              <span>Logged: <strong className="text-[var(--text-main)]">{formatDate(log.loggedDate)}</strong></span>
+                              <span>Target Due: <strong className="text-[var(--text-main)]">{formatDate(log.dueDate)}</strong></span>
+                              <span>Reported by: <strong className="text-[var(--color-primary)]">{log.reportedBy}</strong></span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0 border-t md:border-t-0 md:border-l border-[var(--color-glass-border)] pt-3 md:pt-0 md:pl-4">
+                            {log.status === 'open' && (
+                              <button
+                                onClick={() => handleUpdateRepairStatus(log.id, 'in_progress')}
+                                className="px-3 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 border border-amber-800/80 text-amber-300 font-bold text-xs transition flex items-center gap-1.5"
+                              >
+                                <Play className="w-3.5 h-3.5" /> Start Repair
+                              </button>
+                            )}
+
+                            {log.status === 'in_progress' && (
+                              <button
+                                onClick={() => handleUpdateRepairStatus(log.id, 'completed')}
+                                className="px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-800/80 text-emerald-300 font-bold text-xs transition flex items-center gap-1.5 shadow-sm"
+                              >
+                                <Check className="w-3.5 h-3.5" /> Mark Completed
+                              </button>
+                            )}
+
+                            <button
+                              onClick={() => handleRemoveRepair(log.id)}
+                              className="p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                              title="Delete log entry"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* SUB-TAB 2: REPAIR LOGS (COMPLETED) */}
+              {activeMaintTab === 'logs' && (
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                        Completed Repair History ({completedRepairs.length})
+                      </h3>
+                    </div>
+                    <span className="text-xs text-[var(--text-muted)]">
+                      Closed technical work orders & signed-off overhaul records
+                    </span>
+                  </div>
+
+                  {completedRepairs.length === 0 ? (
+                    <div className="mozuk-glass-card rounded-2xl p-10 text-center text-[var(--text-muted)]">
+                      <History className="w-10 h-10 text-[var(--text-muted)] mx-auto mb-2 opacity-50" />
+                      <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-base">No Completed Repair Logs</h4>
+                      <p className="text-xs mt-1">Repairs completed in Active Maintenance will automatically archive here.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {completedRepairs.map((log) => (
+                        <div
+                          key={log.id}
+                          className="mozuk-glass-card rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[var(--color-glass-border)]"
+                        >
+                          <div className="space-y-1.5 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="px-2.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-extrabold text-[10px] uppercase">
+                                COMPLETED & CLOSED
+                              </span>
+                              <span className="px-2.5 py-0.5 rounded bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-semibold text-[10px] text-[var(--color-primary)]">
+                                {log.category}
+                              </span>
+                            </div>
+
+                            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)] line-through opacity-85">{log.title}</h3>
+                            <p className="text-xs text-[var(--text-muted)] leading-relaxed">{log.description}</p>
+
+                            <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)] pt-1">
+                              <span>Completed Date: <strong className="text-emerald-400">{formatDate(log.dueDate)}</strong></span>
+                              <span>Reported by: <strong className="text-[var(--color-primary)]">{log.reportedBy}</strong></span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0 border-t md:border-t-0 md:border-l border-[var(--color-glass-border)] pt-3 md:pt-0 md:pl-4">
+                            <button
+                              onClick={() => handleUpdateRepairStatus(log.id, 'open')}
+                              className="px-3 py-1.5 rounded-lg btn-mozuk-secondary text-xs font-bold transition flex items-center gap-1.5"
+                              title="Re-open repair and move back to Active Maintenance"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" /> Re-open Work Order
+                            </button>
+
+                            <button
+                              onClick={() => handleRemoveRepair(log.id)}
+                              className="p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                              title="Delete log entry"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* SUB-TAB 3: PROCUREMENT */}
+              {activeMaintTab === 'procurement' && (
+                <div className="space-y-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--color-glass-border)] pb-3">
+                    <div>
+                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)] flex items-center gap-2">
+                        <ShoppingCart className="w-5 h-5 text-cyan-400" />
+                        Spare Parts Procurement & Technical Requisitions ({procurementList.length})
+                      </h3>
+                      <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                        Machinery spare parts orders, OEM supply tracking, delivery ports, and part numbers.
+                      </p>
+                    </div>
 
                     <button
-                      onClick={() => handleRemoveRepair(log.id)}
-                      className="p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
-                      title="Delete log entry"
+                      onClick={() => setIsAddProcurementModalOpen(true)}
+                      className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-1.5 shrink-0 shadow-sm"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Plus className="w-4 h-4" /> Order Spare Parts
                     </button>
                   </div>
+
+                  <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+                    <table className="w-full text-left text-xs min-w-[900px]">
+                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                        <tr>
+                          <th className="py-3.5 px-4">Order Date</th>
+                          <th className="py-3.5 px-4">Spare Part Name & Part Number</th>
+                          <th className="py-3.5 px-4">Provider / OEM Supplier</th>
+                          <th className="py-3.5 px-4">Delivery Port</th>
+                          <th className="py-3.5 px-4 text-center">Qty</th>
+                          <th className="py-3.5 px-4 text-center">Order Status</th>
+                          <th className="py-3.5 px-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--color-glass-border)]">
+                        {procurementList.length === 0 ? (
+                          <tr>
+                            <td colSpan={7} className="py-8 text-center text-[var(--text-muted)] text-xs">
+                              No spare parts procurement orders registered yet. Click "Order Spare Parts" to create a technical requisition.
+                            </td>
+                          </tr>
+                        ) : (
+                          procurementList.map((item) => (
+                            <tr key={item.id} className="hover:bg-[var(--color-glass-border)] transition">
+                              <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-main)] whitespace-nowrap">
+                                {formatDate(item.orderDate)}
+                              </td>
+
+                              <td className="py-3.5 px-4">
+                                <div className="font-bold text-[var(--text-main)] text-xs">{item.partName}</div>
+                                <div className="font-mono text-[11px] text-[var(--color-primary)] font-semibold mt-0.5">
+                                  PN: {item.partNumber}
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4 font-semibold text-[var(--text-main)]">
+                                <div className="flex items-center gap-1.5">
+                                  <Building2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                  <span>{item.provider}</span>
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4 font-semibold text-[var(--text-muted)]">
+                                <div className="flex items-center gap-1.5">
+                                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                  <span>{item.deliveryPort}</span>
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4 text-center font-mono font-bold text-xs text-[var(--text-main)]">
+                                {item.quantity}
+                              </td>
+
+                              <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                                {item.status === 'ordered' && (
+                                  <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/30 font-bold text-[10px]">
+                                    ORDERED
+                                  </span>
+                                )}
+                                {item.status === 'in_transit' && (
+                                  <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold text-[10px] inline-flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                    IN TRANSIT
+                                  </span>
+                                )}
+                                {item.status === 'delivered' && (
+                                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold text-[10px]">
+                                    DELIVERED
+                                  </span>
+                                )}
+                              </td>
+
+                              <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  {item.status !== 'delivered' && (
+                                    <button
+                                      onClick={() =>
+                                        handleUpdateProcurementStatus(
+                                          item.id,
+                                          item.status === 'ordered' ? 'in_transit' : 'delivered'
+                                        )
+                                      }
+                                      className="px-2.5 py-1 rounded bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-800/80 text-[11px] font-bold transition shadow-sm"
+                                    >
+                                      {item.status === 'ordered' ? 'Ship Item' : 'Mark Delivered'}
+                                    </button>
+                                  )}
+
+                                  <button
+                                    onClick={() => handleRemoveProcurementOrder(item.id)}
+                                    className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
+                                    title="Delete order"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        );
+      })()}
 
       {/* SECTION 3: TECHNICAL DOCUMENTS */}
       {activeTab === 'documents' && (
@@ -3828,6 +4139,172 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
                   >
                     Save Sewage Log
+                  </motion.button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL 8: LOG PROCUREMENT ORDER */}
+      <AnimatePresence>
+        {isAddProcurementModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
+              onClick={() => setIsAddProcurementModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+            >
+              <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
+                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                  <ShoppingCart className="w-5 h-5 text-cyan-400" /> Log Spare Part Procurement Order
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsAddProcurementModalOpen(false)}
+                  className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              </div>
+
+              <form onSubmit={handleAddProcurementOrder} className="p-6 space-y-4 text-xs max-h-[80vh] overflow-y-auto">
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Spare Part Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Main Engine Fuel Injection Pump Valves"
+                    value={procPartName}
+                    onChange={(e) => setProcPartName(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Part Number *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. MAN-B&W-50MC-08"
+                      value={procPartNumber}
+                      onChange={(e) => setProcPartNumber(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Provider / OEM Supplier *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. MAN Energy Solutions"
+                      value={procProvider}
+                      onChange={(e) => setProcProvider(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Order Date</label>
+                    <DateInput
+                      value={procOrderDate}
+                      onChange={(val) => setProcOrderDate(val)}
+                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Delivery Port</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Rotterdam Berth 4"
+                      value={procDeliveryPort}
+                      onChange={(e) => setProcDeliveryPort(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Quantity</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={procQuantity}
+                      onChange={(e) => setProcQuantity(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Order Status</label>
+                    <select
+                      value={procStatus}
+                      onChange={(e) => setProcStatus(e.target.value as any)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold cursor-pointer"
+                    >
+                      <option value="ordered">Ordered</option>
+                      <option value="in_transit">In Transit</option>
+                      <option value="delivered">Delivered</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Requisition Officer</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Chief Engineer Dimitrios Pappas"
+                      value={procOfficer}
+                      onChange={(e) => setProcOfficer(e.target.value)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Requisition Remarks</label>
+                  <textarea
+                    rows={2}
+                    placeholder="e.g. Urgent spare part requisition for upcoming main engine overhaul."
+                    value={procRemarks}
+                    onChange={(e) => setProcRemarks(e.target.value)}
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl p-3 text-xs text-[var(--text-main)]"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end gap-3 border-t border-[var(--color-glass-border)]">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="button"
+                    onClick={() => setIsAddProcurementModalOpen(false)}
+                    className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    className="px-5 py-2 rounded-full btn-mozuk-primary font-bold"
+                  >
+                    Save Procurement Order
                   </motion.button>
                 </div>
               </form>
