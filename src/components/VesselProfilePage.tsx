@@ -67,7 +67,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   onAssignExistingCrewToShip,
   onUnassignCrewFromShip,
 }) => {
-  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'visitors' | 'ballast' | 'sewage'>('crew');
+  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'logbooks'>('crew');
+  const [activeLogbookTab, setActiveLogbookTab] = useState<'visitors' | 'ballast' | 'sewage'>('visitors');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
 
   // Modal & Detail States
@@ -765,7 +766,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
       </div>
 
-      {/* Main Sections Tabs Container (4 tabs per row layout) */}
+      {/* Main Sections Tabs Container (4 top-level tabs) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 border border-[var(--color-glass-border)] bg-[var(--color-surface)] rounded-2xl p-2">
         <motion.button
           whileHover={{ scale: 1.01 }}
@@ -812,43 +813,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         <motion.button
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
-          onClick={() => setActiveTab('visitors')}
+          onClick={() => setActiveTab('logbooks')}
           className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
-            activeTab === 'visitors'
+            activeTab === 'logbooks'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
           }`}
         >
-          <ClipboardList className="w-4 h-4 shrink-0" />
-          <span className="truncate">Visitor Logbook ({(ship.visitors || []).length})</span>
-        </motion.button>
-
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          onClick={() => setActiveTab('ballast')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
-            activeTab === 'ballast'
-              ? 'btn-mozuk-primary shadow-lg'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-          }`}
-        >
-          <Droplets className="w-4 h-4 text-cyan-400 shrink-0" />
-          <span className="truncate">Ballast Water Log ({(ship.ballastWaterLogs || []).length})</span>
-        </motion.button>
-
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          onClick={() => setActiveTab('sewage')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
-            activeTab === 'sewage'
-              ? 'btn-mozuk-primary shadow-lg'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-          }`}
-        >
-          <Recycle className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span className="truncate">Sewage & Grey Water Log ({(ship.sewageWaterLogs || []).length})</span>
+          <BookOpen className="w-4 h-4 shrink-0 text-[#28ada4]" />
+          <span className="truncate">
+            Ship Logbooks & Registries ({ (ship.visitors?.length || 0) + (ship.ballastWaterLogs?.length || 0) + (ship.sewageWaterLogs?.length || 0) })
+          </span>
         </motion.button>
       </div>
 
@@ -1639,8 +1614,70 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
       )}
 
-      {/* SECTION 4: VISITOR LOGBOOK */}
-      {activeTab === 'visitors' && (() => {
+      {/* SECTION 4: SHIP LOGBOOKS & REGISTRIES */}
+      {activeTab === 'logbooks' && (
+        <div className="space-y-6">
+          {/* Folder Sub-Tabs Bar */}
+          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-0.5 border-b border-[var(--color-glass-border)]">
+            <button
+              onClick={() => setActiveLogbookTab('visitors')}
+              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                activeLogbookTab === 'visitors'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+              }`}
+            >
+              {activeLogbookTab === 'visitors' && (
+                <motion.div
+                  layoutId="activeLogbookTabBottomLine"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                />
+              )}
+              <ClipboardList className="w-4 h-4 text-[var(--color-primary)]" />
+              <span>Visitor Logbook</span>
+            </button>
+
+            <button
+              onClick={() => setActiveLogbookTab('ballast')}
+              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                activeLogbookTab === 'ballast'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+              }`}
+            >
+              {activeLogbookTab === 'ballast' && (
+                <motion.div
+                  layoutId="activeLogbookTabBottomLine"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                />
+              )}
+              <Droplets className="w-4 h-4 text-cyan-400" />
+              <span>Ballast Water Record Book</span>
+            </button>
+
+            <button
+              onClick={() => setActiveLogbookTab('sewage')}
+              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                activeLogbookTab === 'sewage'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+              }`}
+            >
+              {activeLogbookTab === 'sewage' && (
+                <motion.div
+                  layoutId="activeLogbookTabBottomLine"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                />
+              )}
+              <Recycle className="w-4 h-4 text-emerald-400" />
+              <span>Sewage & Grey Water Log</span>
+            </button>
+          </div>
+
+          {/* Folder Content Container */}
+          <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
+            {/* SUB-TAB 1: VISITOR LOGBOOK */}
+            {activeLogbookTab === 'visitors' && (() => {
         const allVisitors = ship.visitors || [];
 
         const uniqueLocations = Array.from(
@@ -1912,8 +1949,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         );
       })()}
 
-      {/* SECTION 5: BALLAST WATER RECORD BOOK */}
-      {activeTab === 'ballast' && (() => {
+      {/* SUB-TAB 2: BALLAST WATER RECORD BOOK */}
+      {activeLogbookTab === 'ballast' && (() => {
         const allBallastLogs = ship.ballastWaterLogs || [];
 
         const totalBallasted = allBallastLogs
@@ -2136,8 +2173,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         );
       })()}
 
-      {/* SECTION 6: SEWAGE & GREY WATER RECORD BOOK */}
-      {activeTab === 'sewage' && (() => {
+      {/* SUB-TAB 3: SEWAGE & GREY WATER RECORD BOOK */}
+      {activeLogbookTab === 'sewage' && (() => {
         const allSewageLogs = ship.sewageWaterLogs || [];
 
         const totalSeaDischarge = allSewageLogs
@@ -2367,6 +2404,9 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           </div>
         );
       })()}
+    </div>
+  </div>
+)}
 
       {/* MODAL 1: ADD CREW MEMBER */}
       <AnimatePresence>
