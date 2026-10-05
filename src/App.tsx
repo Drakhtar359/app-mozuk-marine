@@ -577,10 +577,84 @@ export function App() {
 
   const selectedShip = ships.find((s) => s.id === selectedShipId) || null;
 
+  // URL & IMO Navigation Routing logic
+  const handleSelectShip = (ship: Ship | null) => {
+    if (ship) {
+      const imoSlug = ship.imo ? ship.imo.replace(/[^0-9]/g, '') || ship.imo.toLowerCase().trim().replace(/\s+/g, '-') : ship.id;
+      const targetPath = `/${imoSlug}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState({ shipId: ship.id }, '', targetPath);
+      }
+      setSelectedShipId(ship.id);
+      setViewMode('fleet');
+    } else {
+      if (window.location.pathname !== '/') {
+        window.history.pushState({ shipId: null }, '', '/');
+      }
+      setSelectedShipId(null);
+    }
+  };
+
+  const handleSelectCompanyProfile = () => {
+    if (window.location.pathname !== '/company-profile') {
+      window.history.pushState({ view: 'profile' }, '', '/company-profile');
+    }
+    setSelectedShipId(null);
+    setViewMode('profile');
+  };
+
+  const handleSelectFleetDirectory = () => {
+    if (window.location.pathname !== '/') {
+      window.history.pushState({ view: 'fleet' }, '', '/');
+    }
+    setSelectedShipId(null);
+    setViewMode('fleet');
+  };
+
+  useEffect(() => {
+    const syncRouteFromUrl = () => {
+      const pathname = decodeURIComponent(window.location.pathname).trim().replace(/^\/+|\/+$/g, '');
+      if (!pathname) {
+        setSelectedShipId(null);
+        setViewMode('fleet');
+        return;
+      }
+      if (pathname === 'company-profile') {
+        setSelectedShipId(null);
+        setViewMode('profile');
+        return;
+      }
+
+      const pathDigits = pathname.replace(/[^0-9]/g, '');
+      const matchingShip = rawShips.find((ship) => {
+        const shipDigits = ship.imo ? ship.imo.replace(/[^0-9]/g, '') : '';
+        if (pathDigits && shipDigits && pathDigits === shipDigits) {
+          return true;
+        }
+        return (
+          pathname.toLowerCase() === (ship.imo || '').toLowerCase() ||
+          pathname.toLowerCase() === ship.id.toLowerCase()
+        );
+      });
+
+      if (matchingShip) {
+        setSelectedShipId(matchingShip.id);
+        setViewMode('fleet');
+      } else {
+        setSelectedShipId(null);
+        setViewMode('fleet');
+      }
+    };
+
+    syncRouteFromUrl();
+    window.addEventListener('popstate', syncRouteFromUrl);
+    return () => window.removeEventListener('popstate', syncRouteFromUrl);
+  }, [rawShips]);
+
   // Handlers for Ships
   const handleAddShip = (newShip: Ship) => {
     setRawShips((prev) => [newShip, ...prev]);
-    setSelectedShipId(newShip.id);
+    handleSelectShip(newShip);
   };
 
   const handleRemoveShip = (shipId: string) => {
@@ -710,10 +784,7 @@ export function App() {
           {/* Logo & Mozuk Marine Branding */}
           <div className="flex items-center gap-3 shrink-0">
             <div
-              onClick={() => {
-                setSelectedShipId(null);
-                setViewMode('fleet');
-              }}
+              onClick={handleSelectFleetDirectory}
               className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group"
             >
               <img
@@ -753,10 +824,7 @@ export function App() {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => {
-                  setSelectedShipId(null);
-                  setViewMode('fleet');
-                }}
+                onClick={handleSelectFleetDirectory}
                 className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full btn-mozuk-secondary font-bold text-[11px] sm:text-xs shrink-0"
               >
                 ← Back to Fleet Directory
@@ -767,10 +835,7 @@ export function App() {
               <motion.button
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
-                onClick={() => {
-                  setSelectedShipId(null);
-                  setViewMode('profile');
-                }}
+                onClick={handleSelectCompanyProfile}
                 className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full btn-mozuk-secondary font-bold text-[11px] sm:text-xs flex items-center gap-1.5 sm:gap-2 shrink-0"
               >
                 <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#28ada4]" /> Company Profile
@@ -781,10 +846,7 @@ export function App() {
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              onClick={() => {
-                setSelectedShipId(null);
-                setViewMode('fleet');
-              }}
+              onClick={handleSelectFleetDirectory}
               className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 font-bold text-[11px] sm:text-xs flex items-center gap-1.5 transition shadow-sm shrink-0"
               title="Log out of Mozuk Marine Portal"
             >
@@ -809,7 +871,7 @@ export function App() {
               <VesselProfilePage
                 ship={selectedShip}
                 companyCrew={companyCrew}
-                onBack={() => setSelectedShipId(null)}
+                onBack={handleSelectFleetDirectory}
                 onUpdateShip={handleUpdateShip}
                 onAssignExistingCrewToShip={handleAssignExistingCrewToShip}
                 onUnassignCrewFromShip={handleUnassignCrewFromShip}
@@ -827,9 +889,9 @@ export function App() {
                 ownerDetails={ownerDetails}
                 ships={ships}
                 companyCrew={companyCrew}
-                onBack={() => setViewMode('fleet')}
+                onBack={handleSelectFleetDirectory}
                 onOpenEditModal={() => setIsOwnerModalOpen(true)}
-                onSelectShip={(ship) => setSelectedShipId(ship.id)}
+                onSelectShip={(ship) => handleSelectShip(ship)}
                 onUpdateOwnerDetails={handleSaveOwnerDetails}
               />
             </motion.div>
@@ -845,7 +907,7 @@ export function App() {
               {/* 1. Fleet Directory */}
               <ShipList
                 ships={ships}
-                onSelectShip={(ship) => setSelectedShipId(ship.id)}
+                onSelectShip={(ship) => handleSelectShip(ship)}
                 onRemoveShip={handleRemoveShip}
                 onRegisterVessel={() => setIsAddModalOpen(true)}
               />
@@ -854,7 +916,7 @@ export function App() {
               <CompanyCrewList
                 companyCrew={companyCrew}
                 ships={ships}
-                onSelectShip={(ship) => setSelectedShipId(ship.id)}
+                onSelectShip={(ship) => handleSelectShip(ship)}
                 onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
                 onAddCrewMember={handleAddCompanyCrew}
                 onUpdateCrewMember={handleUpdateCompanyCrew}

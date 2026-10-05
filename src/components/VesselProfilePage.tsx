@@ -69,6 +69,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'logbooks'>('crew');
   const [activeLogbookTab, setActiveLogbookTab] = useState<'visitors' | 'ballast' | 'sewage'>('visitors');
+  const [activeDocTab, setActiveDocTab] = useState<'certifications' | 'technical_documentation' | 'misc'>('certifications');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
 
   // Modal & Detail States
@@ -1356,9 +1357,9 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
       )}
 
-      {/* SECTION 3: TECHNICAL DOCUMENTS (3 SECTIONS) */}
+      {/* SECTION 3: TECHNICAL DOCUMENTS */}
       {activeTab === 'documents' && (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Main Tab Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
             <div>
@@ -1371,245 +1372,311 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </p>
             </div>
             <button
-              onClick={() => openAddDocModal('certifications')}
-              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0"
+              onClick={() => openAddDocModal(activeDocTab)}
+              className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0 shadow-sm"
             >
               <Plus className="w-4 h-4" /> Add Document
             </button>
           </div>
 
-          {/* SECTION 1: CERTIFICATIONS */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  <ShieldCheck className="w-4 h-4" />
-                </div>
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
-                  Certifications (Class, Flag, Statutory & ISM)
-                </h3>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs border border-emerald-500/20">
-                  {ship.documents.filter((d) => getDocCategory(d) === 'certifications').length}
-                </span>
-              </div>
-              <button
-                onClick={() => openAddDocModal('certifications')}
-                className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add Certification
-              </button>
-            </div>
+          {/* Folder Sub-Tabs Bar */}
+          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-0.5 border-b border-[var(--color-glass-border)]">
+            <button
+              onClick={() => setActiveDocTab('certifications')}
+              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                activeDocTab === 'certifications'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+              }`}
+            >
+              {activeDocTab === 'certifications' && (
+                <motion.div
+                  layoutId="activeDocTabBottomLine"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                />
+              )}
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Certifications</span>
+            </button>
 
-            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-              <table className="w-full text-left text-xs min-w-[850px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
-                  <tr>
-                    <th className="py-3 px-4">Certificate Title</th>
-                    <th className="py-3 px-4">Doc / Reg Number</th>
-                    <th className="py-3 px-4">Issuing Authority</th>
-                    <th className="py-3 px-4">Issue Date</th>
-                    <th className="py-3 px-4">Expiry Date</th>
-                    <th className="py-3 px-4 text-right">Status</th>
-                    <th className="py-3 px-4 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--color-glass-border)]">
-                  {ship.documents.filter((d) => getDocCategory(d) === 'certifications').length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
-                        No statutory or class certificates logged yet.
-                      </td>
-                    </tr>
-                  ) : (
-                    ship.documents
-                      .filter((d) => getDocCategory(d) === 'certifications')
-                      .map((doc) => (
-                        <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
-                          <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
-                          <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
-                          <td className="py-3 px-4 text-right">
-                            {doc.status === 'valid' && (
-                              <span className="px-2.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold text-[10px]">
-                                VALID
-                              </span>
-                            )}
-                            {doc.status === 'expiring' && (
-                              <span className="px-2.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-800/60 font-bold text-[10px]">
-                                EXPIRING SOON
-                              </span>
-                            )}
-                            {doc.status === 'expired' && (
-                              <span className="px-2.5 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/60 font-bold text-[10px]">
-                                EXPIRED
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-3 px-4 text-right">
-                            <button
-                              onClick={() => handleRemoveDocument(doc.id)}
-                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
-                              title="Delete document"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <button
+              onClick={() => setActiveDocTab('technical_documentation')}
+              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                activeDocTab === 'technical_documentation'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+              }`}
+            >
+              {activeDocTab === 'technical_documentation' && (
+                <motion.div
+                  layoutId="activeDocTabBottomLine"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                />
+              )}
+              <FileText className="w-4 h-4 text-blue-400" />
+              <span>Technical Documentation</span>
+            </button>
+
+            <button
+              onClick={() => setActiveDocTab('misc')}
+              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                activeDocTab === 'misc'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+              }`}
+            >
+              {activeDocTab === 'misc' && (
+                <motion.div
+                  layoutId="activeDocTabBottomLine"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                />
+              )}
+              <Folder className="w-4 h-4 text-purple-400" />
+              <span>Miscellaneous Records</span>
+            </button>
           </div>
 
-          {/* SECTION 2: TECHNICAL DOCUMENTATION */}
-          <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                  <FileText className="w-4 h-4" />
+          {/* Folder Content Body Container */}
+          <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
+            {/* SUB-TAB 1: CERTIFICATIONS */}
+            {activeDocTab === 'certifications' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      Certifications (Class, Flag, Statutory & ISM)
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs border border-emerald-500/20">
+                      {ship.documents.filter((d) => getDocCategory(d) === 'certifications').length}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => openAddDocModal('certifications')}
+                    className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Certification
+                  </button>
                 </div>
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
-                  Technical Documentation (Manuals, Schematics & Drawings)
-                </h3>
-                <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-xs border border-blue-500/20">
-                  {ship.documents.filter((d) => getDocCategory(d) === 'technical_documentation').length}
-                </span>
-              </div>
-              <button
-                onClick={() => openAddDocModal('technical_documentation')}
-                className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add Technical Doc
-              </button>
-            </div>
 
-            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-              <table className="w-full text-left text-xs min-w-[850px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
-                  <tr>
-                    <th className="py-3 px-4">Document / Manual Title</th>
-                    <th className="py-3 px-4">Drawing / Manual ID</th>
-                    <th className="py-3 px-4">OEM / Authority</th>
-                    <th className="py-3 px-4">Registered Date</th>
-                    <th className="py-3 px-4">Revision Expiry</th>
-                    <th className="py-3 px-4 text-right">Status</th>
-                    <th className="py-3 px-4 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--color-glass-border)]">
-                  {ship.documents.filter((d) => getDocCategory(d) === 'technical_documentation').length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
-                        No technical manuals or engineering schematics registered.
-                      </td>
-                    </tr>
-                  ) : (
-                    ship.documents
-                      .filter((d) => getDocCategory(d) === 'technical_documentation')
-                      .map((doc) => (
-                        <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
-                          <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
-                          <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
-                          <td className="py-3 px-4 text-right">
-                            <span className="px-2.5 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-800/60 font-bold text-[10px]">
-                              ACTIVE MANUAL
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-right">
-                            <button
-                              onClick={() => handleRemoveDocument(doc.id)}
-                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
-                              title="Delete document"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+                  <table className="w-full text-left text-xs min-w-[850px]">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                      <tr>
+                        <th className="py-3 px-4">Certificate Title</th>
+                        <th className="py-3 px-4">Doc / Reg Number</th>
+                        <th className="py-3 px-4">Issuing Authority</th>
+                        <th className="py-3 px-4">Issue Date</th>
+                        <th className="py-3 px-4">Expiry Date</th>
+                        <th className="py-3 px-4 text-right">Status</th>
+                        <th className="py-3 px-4 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--color-glass-border)]">
+                      {ship.documents.filter((d) => getDocCategory(d) === 'certifications').length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
+                            No statutory or class certificates logged yet.
                           </td>
                         </tr>
-                      ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* SECTION 3: MISCELLANEOUS */}
-          <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
-                  <Folder className="w-4 h-4" />
+                      ) : (
+                        ship.documents
+                          .filter((d) => getDocCategory(d) === 'certifications')
+                          .map((doc) => (
+                            <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
+                              <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
+                              <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
+                              <td className="py-3 px-4 text-right">
+                                {doc.status === 'valid' && (
+                                  <span className="px-2.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold text-[10px]">
+                                    VALID
+                                  </span>
+                                )}
+                                {doc.status === 'expiring' && (
+                                  <span className="px-2.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-800/60 font-bold text-[10px]">
+                                    EXPIRING SOON
+                                  </span>
+                                )}
+                                {doc.status === 'expired' && (
+                                  <span className="px-2.5 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/60 font-bold text-[10px]">
+                                    EXPIRED
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-3 px-4 text-right">
+                                <button
+                                  onClick={() => handleRemoveDocument(doc.id)}
+                                  className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                                  title="Delete document"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                      )}
+                    </tbody>
+                  </table>
                 </div>
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
-                  Miscellaneous (Invoices, Cargo Chartering Orders, Port Access & Contracts)
-                </h3>
-                <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-xs border border-purple-500/20">
-                  {ship.documents.filter((d) => getDocCategory(d) === 'misc').length}
-                </span>
               </div>
-              <button
-                onClick={() => openAddDocModal('misc')}
-                className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add Misc Record
-              </button>
-            </div>
+            )}
 
-            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-              <table className="w-full text-left text-xs min-w-[850px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
-                  <tr>
-                    <th className="py-3 px-4">Record Title</th>
-                    <th className="py-3 px-4">Reference / Invoice No</th>
-                    <th className="py-3 px-4">Issuing Party / Agency</th>
-                    <th className="py-3 px-4">Filing Date</th>
-                    <th className="py-3 px-4">Valid / Due Until</th>
-                    <th className="py-3 px-4 text-right">Status</th>
-                    <th className="py-3 px-4 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--color-glass-border)]">
-                  {ship.documents.filter((d) => getDocCategory(d) === 'misc').length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
-                        No invoices, charter party orders, or port permits filed yet.
-                      </td>
-                    </tr>
-                  ) : (
-                    ship.documents
-                      .filter((d) => getDocCategory(d) === 'misc')
-                      .map((doc) => (
-                        <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
-                          <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
-                          <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
-                          <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
-                          <td className="py-3 px-4 text-right">
-                            <span className="px-2.5 py-0.5 rounded bg-purple-950/60 text-purple-400 border border-purple-800/60 font-bold text-[10px]">
-                              FILED RECORD
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-right">
-                            <button
-                              onClick={() => handleRemoveDocument(doc.id)}
-                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
-                              title="Delete record"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+            {/* SUB-TAB 2: TECHNICAL DOCUMENTATION */}
+            {activeDocTab === 'technical_documentation' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      Technical Documentation (Manuals, Schematics & Drawings)
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-xs border border-blue-500/20">
+                      {ship.documents.filter((d) => getDocCategory(d) === 'technical_documentation').length}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => openAddDocModal('technical_documentation')}
+                    className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Technical Doc
+                  </button>
+                </div>
+
+                <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+                  <table className="w-full text-left text-xs min-w-[850px]">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                      <tr>
+                        <th className="py-3 px-4">Document / Manual Title</th>
+                        <th className="py-3 px-4">Drawing / Manual ID</th>
+                        <th className="py-3 px-4">OEM / Authority</th>
+                        <th className="py-3 px-4">Registered Date</th>
+                        <th className="py-3 px-4">Revision Expiry</th>
+                        <th className="py-3 px-4 text-right">Status</th>
+                        <th className="py-3 px-4 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--color-glass-border)]">
+                      {ship.documents.filter((d) => getDocCategory(d) === 'technical_documentation').length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
+                            No technical manuals or engineering schematics registered.
                           </td>
                         </tr>
-                      ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                      ) : (
+                        ship.documents
+                          .filter((d) => getDocCategory(d) === 'technical_documentation')
+                          .map((doc) => (
+                            <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
+                              <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
+                              <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
+                              <td className="py-3 px-4 text-right">
+                                <span className="px-2.5 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-800/60 font-bold text-[10px]">
+                                  ACTIVE MANUAL
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-right">
+                                <button
+                                  onClick={() => handleRemoveDocument(doc.id)}
+                                  className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                                  title="Delete document"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* SUB-TAB 3: MISCELLANEOUS */}
+            {activeDocTab === 'misc' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                      <Folder className="w-4 h-4" />
+                    </div>
+                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      Miscellaneous (Invoices, Cargo Chartering Orders, Port Access & Contracts)
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-xs border border-purple-500/20">
+                      {ship.documents.filter((d) => getDocCategory(d) === 'misc').length}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => openAddDocModal('misc')}
+                    className="text-xs font-bold text-[var(--color-primary)] hover:underline flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add Misc Record
+                  </button>
+                </div>
+
+                <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
+                  <table className="w-full text-left text-xs min-w-[850px]">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                      <tr>
+                        <th className="py-3 px-4">Record Title</th>
+                        <th className="py-3 px-4">Reference / Invoice No</th>
+                        <th className="py-3 px-4">Issuing Party / Agency</th>
+                        <th className="py-3 px-4">Filing Date</th>
+                        <th className="py-3 px-4">Valid / Due Until</th>
+                        <th className="py-3 px-4 text-right">Status</th>
+                        <th className="py-3 px-4 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--color-glass-border)]">
+                      {ship.documents.filter((d) => getDocCategory(d) === 'misc').length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="py-6 text-center text-[var(--text-muted)] text-xs">
+                            No invoices, charter party orders, or port permits filed yet.
+                          </td>
+                        </tr>
+                      ) : (
+                        ship.documents
+                          .filter((d) => getDocCategory(d) === 'misc')
+                          .map((doc) => (
+                            <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
+                              <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
+                              <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
+                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
+                              <td className="py-3 px-4 text-right">
+                                <span className="px-2.5 py-0.5 rounded bg-purple-950/60 text-purple-400 border border-purple-800/60 font-bold text-[10px]">
+                                  FILED RECORD
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-right">
+                                <button
+                                  onClick={() => handleRemoveDocument(doc.id)}
+                                  className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                                  title="Delete record"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
