@@ -10,7 +10,6 @@ import { CompanyCrewList } from './components/CompanyCrewList';
 import { CompanyProfilePage } from './components/CompanyProfilePage';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
 import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut } from 'lucide-react';
-import taneetLogo from './assets/taneet-logo.png';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -817,12 +816,9 @@ export function App() {
               title="Fleet Directory"
             >
               <img
-                src={taneetLogo}
+                src="/taneet-logo.png"
                 alt="Taneet Logo"
                 className="h-7 sm:h-8 md:h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-[0_0_10px_rgba(40,173,164,0.18)]"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/taneet-logo.png';
-                }}
               />
             </div>
           </div>
