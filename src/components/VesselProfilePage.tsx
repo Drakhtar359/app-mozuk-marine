@@ -744,16 +744,6 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
-      {/* Top Navigation Back Button */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={onBack}
-          className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4 text-[var(--color-primary)]" /> Back to Fleet Directory
-        </button>
-      </div>
-
       {/* Ship Basic Specifications Header Card */}
       <div className="mozuk-glass-card rounded-2xl p-6 relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5 mb-5">
