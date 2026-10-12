@@ -10,6 +10,7 @@ import { CompanyCrewList } from './components/CompanyCrewList';
 import { CompanyProfilePage } from './components/CompanyProfilePage';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
 import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut } from 'lucide-react';
+import taneetLogo from './assets/taneet-logo.png';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -808,25 +809,21 @@ export function App() {
       {/* Header matching marine.mozuk.net */}
       <header className="header-nav sticky top-0 z-30 px-4 lg:px-8 py-3.5 border-b border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] shadow-lg">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
-          {/* Logo & Mozuk Marine Branding */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* Taneet Branding */}
+          <div className="flex items-center shrink-0">
             <div
               onClick={handleSelectFleetDirectory}
-              className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group"
+              className="flex items-center cursor-pointer group py-0.5"
+              title="Fleet Directory"
             >
               <img
-                src="https://marine.mozuk.net/images/logo.png"
-                alt="Mozuk Marine Logo"
-                className="h-8 sm:h-9 w-auto drop-shadow-[0_0_12px_rgba(0,242,254,0.4)] group-hover:scale-105 transition-transform"
+                src={taneetLogo}
+                alt="Taneet Logo"
+                className="h-7 sm:h-8 md:h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-[0_0_10px_rgba(40,173,164,0.18)]"
                 onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
+                  (e.target as HTMLImageElement).src = '/taneet-logo.png';
                 }}
               />
-              <div>
-                <h1 className="font-['Montserrat',sans-serif] text-lg sm:text-xl tracking-tight transition">
-                  <span className="text-[var(--text-main)] font-normal">MOZUK</span><span className="text-[#28ada4] font-bold">APP</span>
-                </h1>
-              </div>
             </div>
           </div>
 
