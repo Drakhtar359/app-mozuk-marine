@@ -322,14 +322,14 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <strong className="text-[var(--text-main)] font-mono text-sm">{companyCrew.length}</strong>
           </div>
 
-          <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs text-emerald-700 dark:text-emerald-300 font-bold">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <div className="flex items-center gap-2 bg-[#28ada4]/10 border border-[#28ada4]/30 px-3 py-1.5 rounded-xl text-xs text-[#28ada4] font-bold">
+            <span className="w-2 h-2 rounded-full bg-[#28ada4] animate-pulse"></span>
             <span>Onboard:</span>
             <strong className="font-mono text-sm">{assignedCount}</strong>
           </div>
 
-          <div className="flex items-center gap-2 bg-rose-500/10 border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs text-rose-700 dark:text-rose-400 font-bold">
-            <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+          <div className="flex items-center gap-2 bg-[#7b0b76]/10 border border-[#7b0b76]/30 px-3 py-1.5 rounded-xl text-xs text-[#7b0b76] dark:text-[#c432bd] font-bold">
+            <span className="w-2 h-2 rounded-full bg-[#7b0b76]"></span>
             <span>Unassigned:</span>
             <strong className="font-mono text-sm">{unassignedCount}</strong>
           </div>
@@ -531,30 +531,30 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                         </div>
                       </td>
 
-                      {/* Department (Unified Mozuk Blue #2c6498 Palette) */}
+                      {/* Department Badges */}
                       <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                         {crew.department === 'master' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/15 text-[#2c6498] dark:text-[#5a9ad4] border border-[#2c6498]/30 font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-extrabold text-[10px]">
                             MASTER
                           </span>
                         )}
                         {crew.department === 'deck' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/15 text-[#2c6498] dark:text-[#5a9ad4] border border-[#2c6498]/30 font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-extrabold text-[10px]">
                             DECK DEPT
                           </span>
                         )}
                         {crew.department === 'engine' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/15 text-[#2c6498] dark:text-[#5a9ad4] border border-[#2c6498]/30 font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
                             ENGINE DEPT
                           </span>
                         )}
                         {crew.department === 'kitchen' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/15 text-[#2c6498] dark:text-[#5a9ad4] border border-[#2c6498]/30 font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-black/30 text-[var(--text-muted)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
                             GALLEY & MESS
                           </span>
                         )}
                         {!crew.department && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#2c6498]/15 text-[#2c6498] dark:text-[#5a9ad4] border border-[#2c6498]/30 font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-black/30 text-[var(--text-muted)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
                             GENERAL CREW
                           </span>
                         )}
@@ -568,7 +568,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               e.stopPropagation();
                               onSelectShip(assignedShip);
                             }}
-                            className="px-2.5 py-1 rounded-full bg-[#2c6498]/15 hover:bg-[#2c6498]/30 text-[var(--text-main)] border border-[#2c6498]/40 text-[10px] font-extrabold inline-flex items-center gap-1 transition shadow-sm group/btn"
+                            className="px-2.5 py-1 rounded-full bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[var(--text-main)] border border-[#28ada4]/30 text-[10px] font-extrabold inline-flex items-center gap-1 transition shadow-sm group/btn"
                             title={`Click to open ${assignedShip.name} vessel profile`}
                           >
                             <ShipIcon className="w-3 h-3 text-[#28ada4] shrink-0 group-hover/btn:scale-110 transition-transform" />
@@ -576,8 +576,8 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                             <ExternalLink className="w-2.5 h-2.5 opacity-70 ml-0.5 text-[#28ada4]" />
                           </button>
                         ) : (
-                          <span className="px-2.5 py-1 rounded-full bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30 text-[10px] font-bold inline-flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-rose-600 dark:text-rose-400 shrink-0" />
+                          <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 text-[10px] font-bold inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-[#7b0b76] dark:text-[#c432bd] shrink-0" />
                             <span>UNASSIGNED</span>
                           </span>
                         )}
@@ -610,17 +610,17 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               setViewingProfileCrew(crew);
                               onSelectCrewMember(crew);
                             }}
-                            className="p-1.5 px-2 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-blue-700 dark:text-blue-300 border border-blue-500/30 transition inline-flex items-center gap-1 text-[11px] font-extrabold"
+                            className="p-1.5 px-2 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 transition inline-flex items-center gap-1 text-[11px] font-extrabold"
                             title="View full crew profile"
                           >
-                            <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
+                            <FileText className="w-3.5 h-3.5 text-[#28ada4]" />
                             <span>Profile</span>
                           </button>
 
                           {/* Delete Button */}
                           <button
                             onClick={() => onRemoveCrewMember(crew.id)}
-                            className="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-700 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                            className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#7b0b76]/20 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
                             title="Remove crew member from company roster"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -702,7 +702,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               {/* Modal Header */}
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] sticky top-0 z-20">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[var(--color-primary)]">
+                  <div className="w-9 h-9 rounded-xl bg-[#28ada4]/10 border border-[#28ada4]/20 flex items-center justify-center text-[#28ada4]">
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
@@ -730,7 +730,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">
-                      Full Name <span className="text-rose-400">*</span>
+                      Full Name <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
                     </label>
                     <input
                       type="text"
@@ -814,13 +814,13 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                 {/* Vessel Assignment Selection */}
                 <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] space-y-2">
                   <label className="block text-[var(--text-main)] font-bold flex items-center gap-1.5 text-xs">
-                    <Anchor className="w-4 h-4 text-cyan-400" />
+                    <Anchor className="w-4 h-4 text-[var(--color-primary)]" />
                     Initial Ship Assignment
                   </label>
                   <select
                     value={targetShipId}
                     onChange={(e) => setTargetShipId(e.target.value)}
-                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-cyan-400 cursor-pointer"
+                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-[#28ada4] cursor-pointer"
                   >
                     <option value="unassigned">Unassigned Pool (Available for future assignment)</option>
                     {ships.map((s) => (
@@ -956,7 +956,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                  <div className="w-9 h-9 rounded-xl bg-[#28ada4]/10 border border-[#28ada4]/20 flex items-center justify-center text-[#28ada4]">
                     <Anchor className="w-5 h-5" />
                   </div>
                   <div>
@@ -987,7 +987,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                   <select
                     value={quickShipId}
                     onChange={(e) => setQuickShipId(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-cyan-400 cursor-pointer"
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-[#28ada4] cursor-pointer"
                   >
                     <option value="unassigned">Unassign / Set to Unassigned Pool</option>
                     {ships.map((s) => (
@@ -1254,7 +1254,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                         <div className="text-[11px] text-[var(--text-muted)] font-mono sm:text-right">
                           <span>{formatDate(entry.startDate)}</span>
                           <span className="mx-1.5">→</span>
-                          <span className={!entry.endDate ? 'text-emerald-500 font-bold' : ''}>
+                          <span className={!entry.endDate ? 'text-[#28ada4] font-bold' : ''}>
                             {entry.endDate ? formatDate(entry.endDate) : 'Present (Current Assignment)'}
                           </span>
                         </div>

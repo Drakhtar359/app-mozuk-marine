@@ -453,32 +453,32 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   const getTierBadgeStyles = (tier: SubscriptionTier) => {
     switch (tier) {
       case 'Diamond':
-        return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30 hover:border-cyan-400 shadow-[0_0_14px_rgba(6,182,212,0.18)]';
+        return 'bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border-[#7b0b76]/40 hover:border-[#7b0b76] shadow-[0_0_14px_rgba(123,11,118,0.22)]';
       case 'Platinum':
-        return 'bg-purple-500/10 text-purple-400 border-purple-500/30 hover:border-purple-400 shadow-[0_0_14px_rgba(168,85,247,0.18)]';
+        return 'bg-[#28ada4]/15 text-[#28ada4] border-[#28ada4]/40 hover:border-[#28ada4] shadow-[0_0_14px_rgba(40,173,164,0.22)]';
       case 'Gold':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/30 hover:border-amber-400 shadow-[0_0_14px_rgba(245,158,11,0.18)]';
+        return 'bg-black/5 dark:bg-white/10 text-[var(--text-main)] border-[var(--color-glass-border-hover)] hover:border-[var(--text-main)]';
       case 'Silver':
-        return 'bg-slate-400/10 text-slate-300 border-slate-400/30 hover:border-slate-300 shadow-[0_0_14px_rgba(148,163,184,0.15)]';
+        return 'bg-black/5 dark:bg-black/30 text-[var(--text-muted)] border-[var(--color-glass-border)] hover:border-[var(--text-muted)]';
       case 'Free':
       default:
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:border-emerald-400 shadow-[0_0_14px_rgba(16,185,129,0.15)]';
+        return 'bg-transparent text-[var(--text-dim)] border-[var(--color-glass-border)] hover:border-[var(--color-glass-border-hover)]';
     }
   };
 
   const getTierIcon = (tier: SubscriptionTier) => {
     switch (tier) {
       case 'Diamond':
-        return <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />;
+        return <Sparkles className="w-3.5 h-3.5 text-[#7b0b76] dark:text-[#c432bd] shrink-0" />;
       case 'Platinum':
-        return <Crown className="w-3.5 h-3.5 text-purple-400 shrink-0" />;
+        return <Crown className="w-3.5 h-3.5 text-[#28ada4] shrink-0" />;
       case 'Gold':
-        return <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />;
+        return <Crown className="w-3.5 h-3.5 text-[var(--text-main)] shrink-0" />;
       case 'Silver':
-        return <ShieldCheck className="w-3.5 h-3.5 text-slate-300 shrink-0" />;
+        return <ShieldCheck className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />;
       case 'Free':
       default:
-        return <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />;
+        return <Shield className="w-3.5 h-3.5 text-[var(--text-dim)] shrink-0" />;
     }
   };
 
@@ -581,20 +581,20 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
           </div>
 
           <div className="p-4 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3.5">
-            <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+            <div className="p-3 rounded-xl bg-[#28ada4]/10 text-[#28ada4] shrink-0">
               <Users className="w-6 h-6" />
             </div>
             <div>
               <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-wider">Total Crew Personnel</div>
               <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-2xl leading-none">{totalCrewCount}</div>
-              <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold mt-1">
+              <div className="text-xs text-[#28ada4] font-bold mt-1">
                 ({totalOnboardCrewCount} onboard)
               </div>
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3.5">
-            <div className="p-3 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
+            <div className="p-3 rounded-xl bg-black/5 dark:bg-white/10 text-[var(--text-main)] shrink-0">
               <FileCheck className="w-6 h-6" />
             </div>
             <div>
@@ -604,12 +604,12 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
           </div>
 
           <div className="p-4 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-3.5">
-            <div className="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
+            <div className="p-3 rounded-xl bg-[#7b0b76]/10 text-[#7b0b76] dark:text-[#c432bd] shrink-0">
               <Wrench className="w-6 h-6" />
             </div>
             <div>
               <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-wider">Open Work Orders</div>
-              <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-amber-600 dark:text-amber-400 text-2xl">{totalOpenRepairsCount} Pending</div>
+              <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[#7b0b76] dark:text-[#c432bd] text-2xl">{totalOpenRepairsCount} Pending</div>
             </div>
           </div>
         </div>
@@ -791,7 +791,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                 </button>
                                 <button
                                   onClick={() => handleDeleteCustomer(cust.id)}
-                                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#7b0b76]/20 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
                                   title="Delete customer record"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -911,7 +911,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                 </button>
                                 <button
                                   onClick={() => handleDeleteEmployee(emp.id)}
-                                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#7b0b76]/20 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
                                   title="Delete employee record"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -1039,7 +1039,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                 </button>
                                 <button
                                   onClick={() => handleDeleteContact(person.id)}
-                                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#7b0b76]/20 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
                                   title="Delete contact record"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -1104,7 +1104,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 {/* Customer Company Name */}
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">
-                    Customer / Client Company Name <span className="text-rose-500">*</span>
+                    Customer / Client Company Name <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1120,7 +1120,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">
-                      Primary Contact Person <span className="text-rose-500">*</span>
+                      Primary Contact Person <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
                     </label>
                     <input
                       type="text"
@@ -1286,7 +1286,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 {/* Employee Name */}
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">
-                    Employee Full Name <span className="text-rose-500">*</span>
+                    Employee Full Name <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1301,7 +1301,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 {/* Position */}
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">
-                    Position / Job Title <span className="text-rose-500">*</span>
+                    Position / Job Title <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1464,7 +1464,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 {/* Contact Person Name */}
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">
-                    Contact Person Full Name <span className="text-rose-500">*</span>
+                    Contact Person Full Name <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1479,7 +1479,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                 {/* Position */}
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">
-                    Position / Responsibilities <span className="text-rose-500">*</span>
+                    Position / Responsibilities <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
                   </label>
                   <input
                     type="text"

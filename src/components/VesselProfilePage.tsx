@@ -773,10 +773,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               }
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-full bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-bold text-xs flex items-center gap-2 transition"
+              className="px-4 py-2.5 rounded-full bg-[#7b0b76]/15 hover:bg-[#7b0b76]/25 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/35 font-bold text-xs flex items-center gap-2 transition shadow-sm"
               title={`Track ${ship.name} (${ship.imo}) on MarineTraffic`}
             >
-              <Navigation className="w-4 h-4 text-blue-500 fill-blue-500/20" />
+              <Navigation className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" />
               <span>Track on MarineTraffic</span>
               <ExternalLink className="w-3.5 h-3.5 opacity-70" />
             </a>
@@ -892,7 +892,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
             <div>
               <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
-                <Crown className="w-5 h-5 text-amber-400" />
+                <Crown className="w-5 h-5 text-[#7b0b76] dark:text-[#c432bd]" />
                 Vessel Command Organization Tree
               </h2>
               <p className="text-xs text-[var(--text-muted)] mt-1">
@@ -912,22 +912,22 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           <div className="relative">
             {/* TOP COMMAND NODE: MASTER / CAPTAIN */}
             <div className="flex flex-col items-center">
-              <div className="w-full max-w-md mozuk-glass-card rounded-2xl p-5 border border-amber-500/40 shadow-xl relative">
+              <div className="w-full max-w-md mozuk-glass-card rounded-2xl p-5 border border-[#7b0b76]/40 shadow-xl relative">
                 {masterCrew.length > 0 ? (
                   masterCrew.map((master) => (
                     <div
                       key={master.id}
                       onClick={() => setSelectedCrewMember(master)}
-                      className="pt-2 text-center relative group cursor-pointer hover:bg-[var(--color-bg-alt)]/60 rounded-xl p-3 transition border border-transparent hover:border-amber-400/50 shadow-sm"
+                      className="pt-2 text-center relative group cursor-pointer hover:bg-[var(--color-bg-alt)]/60 rounded-xl p-3 transition border border-transparent hover:border-[#7b0b76]/50 shadow-sm"
                       title="Click to view full crew profile"
                     >
-                      <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-400 font-extrabold text-xl mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform">
+                      <div className="w-14 h-14 rounded-2xl bg-[#7b0b76]/20 border-2 border-[#7b0b76] flex items-center justify-center text-[#7b0b76] dark:text-[#c432bd] font-extrabold text-xl mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform">
                         {master.name.charAt(0)}
                       </div>
-                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-amber-400 transition">
+                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#7b0b76] dark:group-hover:text-[#c432bd] transition">
                         {master.name}
                       </h3>
-                      <div className="text-xs text-amber-400 font-bold uppercase tracking-wider mt-0.5">
+                      <div className="text-xs text-[#7b0b76] dark:text-[#c432bd] font-bold uppercase tracking-wider mt-0.5">
                         {master.role}
                       </div>
                       <div className="text-[11px] text-[var(--text-muted)] mt-1 flex items-center justify-center gap-3">
@@ -939,7 +939,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           Seaman Book: {master.seamanBookNo}
                         </div>
                       )}
-                      <div className="text-[10px] text-amber-400/80 font-semibold mt-2 opacity-0 group-hover:opacity-100 transition">
+                      <div className="text-[10px] text-[#7b0b76]/80 dark:text-[#c432bd]/80 font-semibold mt-2 opacity-0 group-hover:opacity-100 transition">
                         🔍 Click to open full profile
                       </div>
 
@@ -948,7 +948,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           e.stopPropagation();
                           handleRemoveCrew(master.id);
                         }}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-[#7b0b76]/20 hover:bg-[#7b0b76]/40 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/40 transition opacity-0 group-hover:opacity-100"
                         title="Remove Master"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -963,7 +963,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         handleDepartmentChange('master');
                         setIsAddCrewModalOpen(true);
                       }}
-                      className="px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 shadow-md"
+                      className="px-4 py-2 rounded-full btn-mozuk-purple text-xs inline-flex items-center gap-1.5 shadow-md"
                     >
                       <UserPlus className="w-4 h-4" /> Assign Master / Captain
                     </button>
@@ -1001,11 +1001,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* COLUMN 1: DECK DEPARTMENT */}
               <div className="flex flex-col">
-                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-orange-500 flex-1 flex flex-col">
+                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-[#28ada4] flex-1 flex flex-col">
                   {/* Column Header */}
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-orange-950/60 text-orange-400 border border-orange-800/60">
+                      <div className="p-2 rounded-xl bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30">
                         <Compass className="w-5 h-5" />
                       </div>
                       <div>
@@ -1017,7 +1017,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         </span>
                       </div>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-orange-950/60 text-orange-400 font-bold text-xs border border-orange-800/60">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] font-bold text-xs border border-[#28ada4]/30">
                       {deckCrew.length}
                     </span>
                   </div>
@@ -1033,16 +1033,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         <div
                           key={member.id}
                           onClick={() => setSelectedCrewMember(member)}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-orange-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-[#28ada4]/80 transition group cursor-pointer shadow-sm hover:shadow-md"
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-orange-950/80 border border-orange-800/80 flex items-center justify-center text-orange-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-[#28ada4]/20 border border-[#28ada4]/40 flex items-center justify-center text-[#28ada4] font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-orange-400 transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-orange-950/60 text-orange-300 font-semibold text-[10px] mt-0.5 border border-orange-800/40">
+                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-[#28ada4] transition">{member.name}</h4>
+                              <span className="inline-block px-2 py-0.5 rounded bg-[#28ada4]/15 text-[#28ada4] font-semibold text-[10px] mt-0.5 border border-[#28ada4]/30">
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
@@ -1056,7 +1056,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1072,7 +1072,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       handleDepartmentChange('deck');
                       setIsAddCrewModalOpen(true);
                     }}
-                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-orange-800/80 text-orange-400 hover:bg-orange-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-[#28ada4]/60 text-[#28ada4] hover:bg-[#28ada4]/10 text-xs font-bold transition flex items-center justify-center gap-1.5"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add Deck Crew
                   </button>
@@ -1081,11 +1081,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
               {/* COLUMN 2: ENGINE DEPARTMENT */}
               <div className="flex flex-col">
-                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-rose-500 flex-1 flex flex-col">
+                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-white/40 dark:border-white/30 flex-1 flex flex-col">
                   {/* Column Header */}
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-rose-950/60 text-rose-400 border border-rose-800/60">
+                      <div className="p-2 rounded-xl bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)]">
                         <Wrench className="w-5 h-5" />
                       </div>
                       <div>
@@ -1097,7 +1097,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         </span>
                       </div>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-rose-950/60 text-rose-400 font-bold text-xs border border-rose-800/60">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] font-bold text-xs border border-[var(--color-glass-border)]">
                       {engineCrew.length}
                     </span>
                   </div>
@@ -1113,16 +1113,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         <div
                           key={member.id}
                           onClick={() => setSelectedCrewMember(member)}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-rose-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-[var(--color-primary)] transition group cursor-pointer shadow-sm hover:shadow-md"
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-rose-950/80 border border-rose-800/80 flex items-center justify-center text-rose-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--text-main)] font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-rose-400 transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-rose-950/60 text-rose-300 font-semibold text-[10px] mt-0.5 border border-rose-800/40">
+                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-[var(--color-primary)] transition">{member.name}</h4>
+                              <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-main)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
@@ -1136,7 +1136,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1152,7 +1152,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       handleDepartmentChange('engine');
                       setIsAddCrewModalOpen(true);
                     }}
-                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-rose-800/80 text-rose-400 hover:bg-rose-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-[var(--color-glass-border)] text-[var(--text-main)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] text-xs font-bold transition flex items-center justify-center gap-1.5"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add Engine Crew
                   </button>
@@ -1161,11 +1161,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
               {/* COLUMN 3: KITCHEN / MESS DEPARTMENT */}
               <div className="flex flex-col">
-                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-emerald-500 flex-1 flex flex-col">
+                <div className="mozuk-glass-card rounded-2xl p-4 border-t-4 border-white/20 flex-1 flex flex-col">
                   {/* Column Header */}
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3 mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-xl bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
+                      <div className="p-2 rounded-xl bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)]">
                         <Utensils className="w-5 h-5" />
                       </div>
                       <div>
@@ -1177,7 +1177,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         </span>
                       </div>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 font-bold text-xs border border-emerald-800/60">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-muted)] font-bold text-xs border border-[var(--color-glass-border)]">
                       {kitchenCrew.length}
                     </span>
                   </div>
@@ -1193,16 +1193,16 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         <div
                           key={member.id}
                           onClick={() => setSelectedCrewMember(member)}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-emerald-500/80 transition group cursor-pointer shadow-sm hover:shadow-md"
+                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-[var(--color-primary)] transition group cursor-pointer shadow-sm hover:shadow-md"
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-emerald-950/80 border border-emerald-800/80 flex items-center justify-center text-emerald-400 font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--text-muted)] font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-emerald-400 transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300 font-semibold text-[10px] mt-0.5 border border-emerald-800/40">
+                              <h4 className="font-bold text-[var(--text-main)] text-xs group-hover:text-[var(--color-primary)] transition">{member.name}</h4>
+                              <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-muted)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
@@ -1216,7 +1216,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1232,7 +1232,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       handleDepartmentChange('kitchen');
                       setIsAddCrewModalOpen(true);
                     }}
-                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-emerald-800/80 text-emerald-400 hover:bg-emerald-950/30 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                    className="w-full mt-4 py-2 rounded-xl border border-dashed border-[var(--color-glass-border)] text-[var(--text-muted)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] text-xs font-bold transition flex items-center justify-center gap-1.5"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add Kitchen / Mess Staff
                   </button>
@@ -1300,7 +1300,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                   />
                 )}
-                <Wrench className="w-4 h-4 text-amber-400" />
+                <Wrench className="w-4 h-4 text-[#28ada4]" />
                 <span>Active Maintenance</span>
               </button>
 
@@ -1318,7 +1318,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                   />
                 )}
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 text-[#28ada4]" />
                 <span>Repair Logs</span>
               </button>
 
@@ -1336,7 +1336,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                   />
                 )}
-                <ShoppingCart className="w-4 h-4 text-cyan-400" />
+                <ShoppingCart className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" />
                 <span>Procurement</span>
               </button>
             </div>
@@ -1347,22 +1347,22 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {activeMaintTab === 'active' && (
                 <div className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-rose-500/20 bg-rose-500/5">
+                    <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-[#7b0b76]/30 bg-[#7b0b76]/10">
                       <div>
-                        <div className="text-rose-400 text-xs font-bold uppercase">Open Work Orders</div>
-                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-rose-400 mt-1">{openRepairsCount}</div>
+                        <div className="text-[#7b0b76] dark:text-[#c432bd] text-xs font-bold uppercase">Open Work Orders</div>
+                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[#7b0b76] dark:text-[#c432bd] mt-1">{openRepairsCount}</div>
                       </div>
-                      <div className="p-3 rounded-xl bg-rose-950/40 text-rose-400 border border-rose-800/40">
+                      <div className="p-3 rounded-xl bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/40">
                         <AlertTriangle className="w-5 h-5" />
                       </div>
                     </div>
 
-                    <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-amber-500/20 bg-amber-500/5">
+                    <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-[#28ada4]/30 bg-[#28ada4]/10">
                       <div>
-                        <div className="text-amber-400 text-xs font-bold uppercase">In Progress Overhauls</div>
-                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-amber-400 mt-1">{inProgressCount}</div>
+                        <div className="text-[#28ada4] text-xs font-bold uppercase">In Progress Overhauls</div>
+                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[#28ada4] mt-1">{inProgressCount}</div>
                       </div>
-                      <div className="p-3 rounded-xl bg-amber-950/40 text-amber-400 border border-amber-800/40">
+                      <div className="p-3 rounded-xl bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/40">
                         <Clock className="w-5 h-5" />
                       </div>
                     </div>
@@ -1370,7 +1370,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                   {activeRepairs.length === 0 ? (
                     <div className="mozuk-glass-card rounded-2xl p-10 text-center text-[var(--text-muted)]">
-                      <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
+                      <CheckCircle2 className="w-10 h-10 text-[#28ada4] mx-auto mb-2" />
                       <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-base">No Active Maintenance Orders</h4>
                       <p className="text-xs mt-1">All logged repairs are completed or verified.</p>
                     </div>
@@ -1385,13 +1385,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                             <div className="flex flex-wrap items-center gap-2">
                               <span
                                 className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase border ${
-                                  log.priority === 'urgent'
-                                    ? 'bg-rose-950/60 text-rose-300 border-rose-800'
-                                    : log.priority === 'high'
-                                    ? 'bg-orange-950/60 text-orange-300 border-orange-800'
+                                  log.priority === 'urgent' || log.priority === 'high'
+                                    ? 'bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border-[#7b0b76]/40'
                                     : log.priority === 'medium'
-                                    ? 'bg-amber-950/60 text-amber-300 border-amber-800'
-                                    : 'bg-slate-800/60 text-slate-300 border-slate-700'
+                                    ? 'bg-[#28ada4]/15 text-[#28ada4] border-[#28ada4]/30'
+                                    : 'bg-[var(--color-surface)] text-[var(--text-muted)] border-[var(--color-glass-border)]'
                                 }`}
                               >
                                 {log.priority} priority
@@ -1404,8 +1402,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <span
                                 className={`px-2.5 py-0.5 rounded font-bold text-[10px] uppercase border ${
                                   log.status === 'open'
-                                    ? 'bg-rose-950/60 text-rose-400 border-rose-800/60'
-                                    : 'bg-amber-950/60 text-amber-400 border-amber-800/60'
+                                    ? 'bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border-[#7b0b76]/40'
+                                    : 'bg-[#28ada4]/15 text-[#28ada4] border-[#28ada4]/30'
                                 }`}
                               >
                                 {log.status.replace('_', ' ')}
@@ -1426,7 +1424,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                             {log.status === 'open' && (
                               <button
                                 onClick={() => handleUpdateRepairStatus(log.id, 'in_progress')}
-                                className="px-3 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 border border-amber-800/80 text-amber-300 font-bold text-xs transition flex items-center gap-1.5"
+                                className="px-3 py-1.5 rounded-lg bg-[#7b0b76]/20 hover:bg-[#7b0b76]/35 border border-[#7b0b76]/40 text-[#7b0b76] dark:text-[#c432bd] font-bold text-xs transition flex items-center gap-1.5"
                               >
                                 <Play className="w-3.5 h-3.5" /> Start Repair
                               </button>
@@ -1435,7 +1433,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                             {log.status === 'in_progress' && (
                               <button
                                 onClick={() => handleUpdateRepairStatus(log.id, 'completed')}
-                                className="px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-800/80 text-emerald-300 font-bold text-xs transition flex items-center gap-1.5 shadow-sm"
+                                className="px-3 py-1.5 rounded-lg btn-mozuk-primary text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
                               >
                                 <Check className="w-3.5 h-3.5" /> Mark Completed
                               </button>
@@ -1443,7 +1441,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                             <button
                               onClick={() => handleRemoveRepair(log.id)}
-                              className="p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                              className="p-2 rounded-lg bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
                               title="Delete log entry"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -1461,7 +1459,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 <div className="space-y-5">
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                      <CheckCircle2 className="w-5 h-5 text-[#28ada4]" />
                       <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                         Completed Repair History ({completedRepairs.length})
                       </h3>
@@ -1486,7 +1484,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         >
                           <div className="space-y-1.5 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="px-2.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-extrabold text-[10px] uppercase">
+                              <span className="px-2.5 py-0.5 rounded bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-extrabold text-[10px] uppercase">
                                 COMPLETED & CLOSED
                               </span>
                               <span className="px-2.5 py-0.5 rounded bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-semibold text-[10px] text-[var(--color-primary)]">
@@ -1498,7 +1496,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                             <p className="text-xs text-[var(--text-muted)] leading-relaxed">{log.description}</p>
 
                             <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)] pt-1">
-                              <span>Completed Date: <strong className="text-emerald-400">{formatDate(log.dueDate)}</strong></span>
+                              <span>Completed Date: <strong className="text-[#28ada4]">{formatDate(log.dueDate)}</strong></span>
                               <span>Reported by: <strong className="text-[var(--color-primary)]">{log.reportedBy}</strong></span>
                             </div>
                           </div>
@@ -1514,7 +1512,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                             <button
                               onClick={() => handleRemoveRepair(log.id)}
-                              className="p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                              className="p-2 rounded-lg bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
                               title="Delete log entry"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -1533,7 +1531,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--color-glass-border)] pb-3">
                     <div>
                       <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)] flex items-center gap-2">
-                        <ShoppingCart className="w-5 h-5 text-cyan-400" />
+                        <ShoppingCart className="w-5 h-5 text-[#7b0b76] dark:text-[#c432bd]" />
                         Spare Parts Procurement & Technical Requisitions ({procurementList.length})
                       </h3>
                       <p className="text-xs text-[var(--text-muted)] mt-0.5">
@@ -1585,14 +1583,14 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                               <td className="py-3.5 px-4 font-semibold text-[var(--text-main)]">
                                 <div className="flex items-center gap-1.5">
-                                  <Building2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                  <Building2 className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
                                   <span>{item.provider}</span>
                                 </div>
                               </td>
 
                               <td className="py-3.5 px-4 font-semibold text-[var(--text-muted)]">
                                 <div className="flex items-center gap-1.5">
-                                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                  <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
                                   <span>{item.deliveryPort}</span>
                                 </div>
                               </td>
@@ -1603,18 +1601,18 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                               <td className="py-3.5 px-4 text-center whitespace-nowrap">
                                 {item.status === 'ordered' && (
-                                  <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/30 font-bold text-[10px]">
+                                  <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/35 font-bold text-[10px]">
                                     ORDERED
                                   </span>
                                 )}
                                 {item.status === 'in_transit' && (
-                                  <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold text-[10px] inline-flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                  <span className="px-2.5 py-1 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/35 font-bold text-[10px] inline-flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#28ada4] animate-pulse"></span>
                                     IN TRANSIT
                                   </span>
                                 )}
                                 {item.status === 'delivered' && (
-                                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold text-[10px]">
+                                  <span className="px-2.5 py-1 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)] font-bold text-[10px]">
                                     DELIVERED
                                   </span>
                                 )}
@@ -1630,7 +1628,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                                           item.status === 'ordered' ? 'in_transit' : 'delivered'
                                         )
                                       }
-                                      className="px-2.5 py-1 rounded bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-800/80 text-[11px] font-bold transition shadow-sm"
+                                      className="px-2.5 py-1 rounded btn-mozuk-primary text-[11px] font-bold transition shadow-sm"
                                     >
                                       {item.status === 'ordered' ? 'Ship Item' : 'Mark Delivered'}
                                     </button>
@@ -1638,7 +1636,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                                   <button
                                     onClick={() => handleRemoveProcurementOrder(item.id)}
-                                    className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
+                                    className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
                                     title="Delete order"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -1696,7 +1694,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                 />
               )}
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-[#28ada4]" />
               <span>Certifications</span>
             </button>
 
@@ -1714,7 +1712,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                 />
               )}
-              <FileText className="w-4 h-4 text-blue-400" />
+              <FileText className="w-4 h-4 text-[var(--text-main)]" />
               <span>Technical Documentation</span>
             </button>
 
@@ -1732,7 +1730,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                 />
               )}
-              <Folder className="w-4 h-4 text-purple-400" />
+              <Folder className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" />
               <span>Miscellaneous Records</span>
             </button>
           </div>
@@ -1744,13 +1742,13 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    <div className="p-1.5 rounded-lg bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30">
                       <ShieldCheck className="w-4 h-4" />
                     </div>
                     <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Certifications (Class, Flag, Statutory & ISM)
                     </h3>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs border border-emerald-500/20">
+                    <span className="px-2 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] font-bold text-xs border border-[#28ada4]/30">
                       {ship.documents.filter((d) => getDocCategory(d) === 'certifications').length}
                     </span>
                   </div>
@@ -1794,17 +1792,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
                               <td className="py-3 px-4 text-right">
                                 {doc.status === 'valid' && (
-                                  <span className="px-2.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold text-[10px]">
+                                  <span className="px-2.5 py-0.5 rounded bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px]">
                                     VALID
                                   </span>
                                 )}
                                 {doc.status === 'expiring' && (
-                                  <span className="px-2.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-800/60 font-bold text-[10px]">
+                                  <span className="px-2.5 py-0.5 rounded bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/40 font-bold text-[10px]">
                                     EXPIRING SOON
                                   </span>
                                 )}
                                 {doc.status === 'expired' && (
-                                  <span className="px-2.5 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/60 font-bold text-[10px]">
+                                  <span className="px-2.5 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[10px]">
                                     EXPIRED
                                   </span>
                                 )}
@@ -1812,7 +1810,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                                  className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
                                   title="Delete document"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -1832,13 +1830,13 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                    <div className="p-1.5 rounded-lg bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)]">
                       <FileText className="w-4 h-4" />
                     </div>
                     <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Technical Documentation (Manuals, Schematics & Drawings)
                     </h3>
-                    <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-xs border border-blue-500/20">
+                    <span className="px-2 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] font-bold text-xs border border-[var(--color-glass-border)]">
                       {ship.documents.filter((d) => getDocCategory(d) === 'technical_documentation').length}
                     </span>
                   </div>
@@ -1881,14 +1879,14 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
                               <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
                               <td className="py-3 px-4 text-right">
-                                <span className="px-2.5 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-800/60 font-bold text-[10px]">
+                                <span className="px-2.5 py-0.5 rounded bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px]">
                                   ACTIVE MANUAL
                                 </span>
                               </td>
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                                  className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
                                   title="Delete document"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -1908,13 +1906,13 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                    <div className="p-1.5 rounded-lg bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30">
                       <Folder className="w-4 h-4" />
                     </div>
                     <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Miscellaneous (Invoices, Cargo Chartering Orders, Port Access & Contracts)
                     </h3>
-                    <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-xs border border-purple-500/20">
+                    <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] font-bold text-xs border border-[#7b0b76]/30">
                       {ship.documents.filter((d) => getDocCategory(d) === 'misc').length}
                     </span>
                   </div>
@@ -1957,14 +1955,14 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
                               <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
                               <td className="py-3 px-4 text-right">
-                                <span className="px-2.5 py-0.5 rounded bg-purple-950/60 text-purple-400 border border-purple-800/60 font-bold text-[10px]">
+                                <span className="px-2.5 py-0.5 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-bold text-[10px]">
                                   FILED RECORD
                                 </span>
                               </td>
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition"
+                                  className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
                                   title="Delete record"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -2019,7 +2017,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                 />
               )}
-              <Droplets className="w-4 h-4 text-cyan-400" />
+              <Droplets className="w-4 h-4 text-[#28ada4]" />
               <span>Ballast Water Record Book</span>
             </button>
 
@@ -2037,7 +2035,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                 />
               )}
-              <Recycle className="w-4 h-4 text-emerald-400" />
+              <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" />
               <span>Sewage & Grey Water Log</span>
             </button>
           </div>
@@ -2117,9 +2115,9 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
               <div className="flex items-center gap-3 shrink-0">
                 {/* 3. Small "Currently On Board" pill next to Log New Visitor */}
-                <div className="px-3.5 py-2 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 font-extrabold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>On Board: <strong className="text-white ml-0.5">{currentlyOnboardCount}</strong></span>
+                <div className="px-3.5 py-2 rounded-full bg-[#28ada4]/15 border border-[#28ada4]/35 text-[#28ada4] font-extrabold text-xs flex items-center gap-2 shadow-sm whitespace-nowrap">
+                  <span className="w-2 h-2 rounded-full bg-[#28ada4] animate-pulse"></span>
+                  <span>On Board: <strong className="text-[var(--text-main)] ml-0.5">{currentlyOnboardCount}</strong></span>
                 </div>
 
                 <button
@@ -2163,7 +2161,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 {/* Location Filter */}
                 <div className="flex items-center gap-1.5 bg-[var(--color-bg-alt)] px-3 py-1.5 rounded-xl border border-[var(--color-glass-border)]">
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
                   <select
                     value={visitorFilterLocation}
                     onChange={(e) => setVisitorFilterLocation(e.target.value)}
@@ -2260,11 +2258,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           
                           <td className="py-3 px-3 text-[var(--text-muted)] align-middle whitespace-nowrap">
                             <div className="flex items-center gap-1 whitespace-nowrap">
-                              <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                              <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
                               <span>{visitor.location}</span>
                             </div>
                           </td>
-                          <td className="py-3 px-3 font-mono font-bold text-emerald-400 whitespace-nowrap align-middle">
+                          <td className="py-3 px-3 font-mono font-bold text-[#28ada4] whitespace-nowrap align-middle">
                             {visitor.timeIn}
                           </td>
                           <td className="py-3 px-3 font-mono font-bold text-[var(--text-muted)] whitespace-nowrap align-middle">
@@ -2274,12 +2272,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           {/* 4. Single-line status badge */}
                           <td className="py-3 px-3 text-center align-middle whitespace-nowrap">
                             {isOnboard ? (
-                              <span className="px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-extrabold text-[10px] inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                              <span className="px-2.5 py-1 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/35 font-extrabold text-[10px] inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#28ada4] animate-pulse shrink-0"></span>
                                 ON BOARD
                               </span>
                             ) : (
-                              <span className="px-2.5 py-1 rounded bg-slate-800/60 text-slate-400 border border-slate-700/60 font-bold text-[10px] inline-flex items-center whitespace-nowrap shrink-0">
+                              <span className="px-2.5 py-1 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[10px] inline-flex items-center whitespace-nowrap shrink-0">
                                 DEPARTED
                               </span>
                             )}
@@ -2291,7 +2289,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               {isOnboard && (
                                 <button
                                   onClick={() => handleSignOutVisitor(visitor.id)}
-                                  className="px-2.5 py-1 rounded bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/80 text-[11px] font-bold transition inline-flex items-center gap-1 whitespace-nowrap shrink-0 shadow-sm"
+                                  className="px-2.5 py-1 rounded bg-[#7b0b76]/20 hover:bg-[#7b0b76]/35 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/40 text-[11px] font-bold transition inline-flex items-center gap-1 whitespace-nowrap shrink-0 shadow-sm"
                                   title="Sign out visitor at current time"
                                 >
                                   <LogOut className="w-3 h-3 shrink-0" /> Sign Out
@@ -2299,7 +2297,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               )}
                               <button
                                 onClick={() => handleRemoveVisitor(visitor.id)}
-                                className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center shrink-0 shadow-sm"
+                                className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center shrink-0 shadow-sm"
                                 title="Delete log entry"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -2350,7 +2348,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
               <div>
                 <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
-                  <Droplets className="w-5 h-5 text-cyan-400" />
+                  <Droplets className="w-5 h-5 text-[#28ada4]" />
                   Ballast Water Record Book (IMO BWM Convention)
                 </h2>
                 <p className="text-xs text-[var(--text-muted)] mt-1">
@@ -2377,29 +2375,29 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 </div>
               </div>
 
-              <div className="mozuk-glass-card p-4 rounded-xl border border-cyan-500/30 bg-cyan-500/5">
-                <div className="text-cyan-400 font-bold text-[11px] uppercase flex items-center gap-1">
+              <div className="mozuk-glass-card p-4 rounded-xl border border-[#28ada4]/30 bg-[#28ada4]/10">
+                <div className="text-[#28ada4] font-bold text-[11px] uppercase flex items-center gap-1">
                   <Waves className="w-3.5 h-3.5" /> Total Volume Ballasted
                 </div>
-                <div className="font-extrabold text-cyan-400 text-xl font-mono mt-1">
+                <div className="font-extrabold text-[#28ada4] text-xl font-mono mt-1">
                   {totalBallasted.toLocaleString()} m³
                 </div>
               </div>
 
-              <div className="mozuk-glass-card p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
-                <div className="text-amber-400 font-bold text-[11px] uppercase flex items-center gap-1">
+              <div className="mozuk-glass-card p-4 rounded-xl border border-[#7b0b76]/30 bg-[#7b0b76]/10">
+                <div className="text-[#7b0b76] dark:text-[#c432bd] font-bold text-[11px] uppercase flex items-center gap-1">
                   <RotateCcw className="w-3.5 h-3.5" /> Total Volume Deballasted
                 </div>
-                <div className="font-extrabold text-amber-400 text-xl font-mono mt-1">
+                <div className="font-extrabold text-[#7b0b76] dark:text-[#c432bd] text-xl font-mono mt-1">
                   {totalDeballasted.toLocaleString()} m³
                 </div>
               </div>
 
-              <div className="mozuk-glass-card p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
-                <div className="text-emerald-400 font-bold text-[11px] uppercase flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5" /> BWTS Compliance Status
+              <div className="mozuk-glass-card p-4 rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-surface)]">
+                <div className="text-[var(--text-muted)] font-bold text-[11px] uppercase flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#28ada4]" /> BWTS Compliance Status
                 </div>
-                <div className="font-extrabold text-emerald-400 text-xs mt-1">
+                <div className="font-extrabold text-[#28ada4] text-xs mt-1">
                   Mozuk UV System Operational (IMO D-2)
                 </div>
               </div>
@@ -2415,7 +2413,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     placeholder="Search tanks, GPS, officer or remarks..."
                     value={ballastSearchTerm}
                     onChange={(e) => setBallastSearchTerm(e.target.value)}
-                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-cyan-400 transition"
+                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition"
                   />
                 </div>
 
@@ -2477,22 +2475,22 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {log.operation === 'Ballasting' && (
-                              <span className="px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-bold text-[11px]">
+                              <span className="px-2.5 py-1 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[11px]">
                                 Ballasting
                               </span>
                             )}
                             {log.operation === 'Deballasting' && (
-                              <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold text-[11px]">
+                              <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-bold text-[11px]">
                                 Deballasting
                               </span>
                             )}
                             {log.operation === 'Internal Transfer' && (
-                              <span className="px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 font-bold text-[11px]">
+                              <span className="px-2.5 py-1 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)] font-bold text-[11px]">
                                 Internal Transfer
                               </span>
                             )}
                             {log.operation === 'Ballast Exchange (BWM)' && (
-                              <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold text-[11px]">
+                              <span className="px-2.5 py-1 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[11px]">
                                 Ballast Exchange (BWM)
                               </span>
                             )}
@@ -2502,13 +2500,13 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                             {log.tanks}
                           </td>
 
-                          <td className="py-3.5 px-4 font-mono font-extrabold text-cyan-400 text-sm whitespace-nowrap">
+                          <td className="py-3.5 px-4 font-mono font-extrabold text-[#28ada4] text-sm whitespace-nowrap">
                             {log.volumeM3.toLocaleString()} m³
                           </td>
 
                           <td className="py-3.5 px-4 text-[var(--text-main)] font-mono text-xs whitespace-nowrap">
                             <div className="flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                              <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
                               <span>{log.gpsCoordinates}</span>
                             </div>
                           </td>
@@ -2524,7 +2522,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3.5 px-4 text-right whitespace-nowrap">
                             <button
                               onClick={() => handleRemoveBallastLog(log.id)}
-                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
+                              className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
                               title="Delete record"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -2577,7 +2575,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
               <div>
                 <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
-                  <Recycle className="w-5 h-5 text-emerald-400" />
+                  <Recycle className="w-5 h-5 text-[#7b0b76] dark:text-[#c432bd]" />
                   Sewage & Grey Water Record Book (MARPOL Annex IV)
                 </h2>
                 <p className="text-xs text-[var(--text-muted)] mt-1">
@@ -2604,29 +2602,29 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 </div>
               </div>
 
-              <div className="mozuk-glass-card p-4 rounded-xl border border-blue-500/30 bg-blue-500/5">
-                <div className="text-blue-400 font-bold text-[11px] uppercase flex items-center gap-1">
+              <div className="mozuk-glass-card p-4 rounded-xl border border-[#28ada4]/30 bg-[#28ada4]/10">
+                <div className="text-[#28ada4] font-bold text-[11px] uppercase flex items-center gap-1">
                   <Navigation className="w-3.5 h-3.5" /> Discharged to Sea (Offshore)
                 </div>
-                <div className="font-extrabold text-blue-400 text-xl font-mono mt-1">
+                <div className="font-extrabold text-[#28ada4] text-xl font-mono mt-1">
                   {totalSeaDischarge.toLocaleString()} m³
                 </div>
               </div>
 
-              <div className="mozuk-glass-card p-4 rounded-xl border border-purple-500/30 bg-purple-500/5">
-                <div className="text-purple-400 font-bold text-[11px] uppercase flex items-center gap-1">
+              <div className="mozuk-glass-card p-4 rounded-xl border border-[#7b0b76]/30 bg-[#7b0b76]/10">
+                <div className="text-[#7b0b76] dark:text-[#c432bd] font-bold text-[11px] uppercase flex items-center gap-1">
                   <Anchor className="w-3.5 h-3.5" /> Discharged to Shore Reception
                 </div>
-                <div className="font-extrabold text-purple-400 text-xl font-mono mt-1">
+                <div className="font-extrabold text-[#7b0b76] dark:text-[#c432bd] text-xl font-mono mt-1">
                   {totalShoreDischarge.toLocaleString()} m³
                 </div>
               </div>
 
-              <div className="mozuk-glass-card p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
-                <div className="text-emerald-400 font-bold text-[11px] uppercase flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5" /> MARPOL Annex IV Status
+              <div className="mozuk-glass-card p-4 rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-surface)]">
+                <div className="text-[var(--text-muted)] font-bold text-[11px] uppercase flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#28ada4]" /> MARPOL Annex IV Status
                 </div>
-                <div className="font-extrabold text-emerald-400 text-xs mt-1">
+                <div className="font-extrabold text-[#28ada4] text-xs mt-1">
                   Certified STP & Holding Tank Compliant
                 </div>
               </div>
@@ -2642,7 +2640,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     placeholder="Search tank, GPS, officer or remarks..."
                     value={sewageSearchTerm}
                     onChange={(e) => setSewageSearchTerm(e.target.value)}
-                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-emerald-400 transition"
+                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition"
                   />
                 </div>
 
@@ -2716,11 +2714,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {log.type === 'Sewage (Black Water)' ? (
-                              <span className="px-2.5 py-1 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 font-bold text-[11px]">
+                              <span className="px-2.5 py-1 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-bold text-[11px]">
                                 Black Water (Sewage)
                               </span>
                             ) : (
-                              <span className="px-2.5 py-1 rounded bg-slate-500/10 text-slate-300 border border-slate-500/30 font-bold text-[11px]">
+                              <span className="px-2.5 py-1 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[11px]">
                                 Grey Water
                               </span>
                             )}
@@ -2734,13 +2732,13 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                             {log.tankSource}
                           </td>
 
-                          <td className="py-3.5 px-4 font-mono font-extrabold text-emerald-400 text-sm whitespace-nowrap">
+                          <td className="py-3.5 px-4 font-mono font-extrabold text-[#28ada4] text-sm whitespace-nowrap">
                             {log.volumeM3.toLocaleString()} m³
                           </td>
 
                           <td className="py-3.5 px-4 text-[var(--text-main)] font-mono text-xs whitespace-nowrap">
                             <div className="flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                              <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
                               <span>{log.gpsCoordinates}</span>
                             </div>
                           </td>
@@ -2756,7 +2754,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3.5 px-4 text-right whitespace-nowrap">
                             <button
                               onClick={() => handleRemoveSewageLog(log.id)}
-                              className="p-1.5 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-800/60 transition inline-flex items-center"
+                              className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
                               title="Delete record"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -2899,7 +2897,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       <div className="text-[11px] text-[var(--text-muted)] font-mono">
                         Passport: {selectedCrew.passportNumber || 'N/A'} • Seaman Book: {selectedCrew.seamanBookNo || 'N/A'}
                       </div>
-                      <div className="text-[11px] text-amber-400 font-bold mt-1">
+                      <div className="text-[11px] text-[var(--color-primary)] font-bold mt-1">
                         Current Status: {selectedCrew.assignedShipName ? `Working on ${selectedCrew.assignedShipName}` : 'Unassigned'}
                       </div>
                     </div>
@@ -3620,7 +3618,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <div className="text-[11px] text-[var(--text-muted)] font-mono sm:text-right">
                             <span>{formatDate(entry.startDate)}</span>
                             <span className="mx-1.5">→</span>
-                            <span className={!entry.endDate ? 'text-emerald-500 font-bold' : ''}>
+                            <span className={!entry.endDate ? 'text-[#28ada4] font-bold' : ''}>
                               {entry.endDate ? formatDate(entry.endDate) : 'Present (Current Assignment)'}
                             </span>
                           </div>
@@ -3807,7 +3805,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
                 <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                  <Droplets className="w-4 h-4 text-cyan-400" /> Log Ballast Operation to {ship.name}
+                  <Droplets className="w-4 h-4 text-[#28ada4]" /> Log Ballast Operation to {ship.name}
                 </h3>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
@@ -3974,7 +3972,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
                 <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                  <Recycle className="w-4 h-4 text-emerald-400" /> Log Sewage / Grey Water Operation to {ship.name}
+                  <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" /> Log Sewage / Grey Water Operation to {ship.name}
                 </h3>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
@@ -4157,7 +4155,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
                 <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-cyan-400" /> Log Spare Part Procurement Order
+                  <ShoppingCart className="w-5 h-5 text-[#7b0b76] dark:text-[#c432bd]" /> Log Spare Part Procurement Order
                 </h3>
                 <motion.button
                   whileHover={{ scale: 1.1 }}

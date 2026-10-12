@@ -166,7 +166,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                   {/* Country */}
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
-                      <Globe className="w-3.5 h-3.5 text-cyan-400" /> Country *
+                      <Globe className="w-3.5 h-3.5 text-[#28ada4]" /> Country *
                     </label>
                     <input
                       type="text"
@@ -181,7 +181,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                   {/* Main Phone Number */}
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-cyan-400" /> Company Phone Number *
+                      <Phone className="w-3.5 h-3.5 text-[#28ada4]" /> Company Phone Number *
                     </label>
                     <input
                       type="tel"
@@ -196,7 +196,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                   {/* Subscription Tier */}
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
-                      <Crown className="w-3.5 h-3.5 text-amber-400" /> Subscription Tier *
+                      <Crown className="w-3.5 h-3.5 text-[#7b0b76] dark:text-[#c432bd]" /> Subscription Tier *
                     </label>
                     <select
                       value={subscriptionTier}
@@ -345,7 +345,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                                       whileTap={{ scale: 0.95 }}
                                       type="button"
                                       onClick={() => setEditingId(null)}
-                                      className="px-2.5 py-1 rounded-lg bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 font-bold hover:bg-emerald-900/80 transition inline-flex items-center gap-1 text-[11px]"
+                                      className="px-2.5 py-1 rounded-lg bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold hover:bg-[#28ada4]/25 transition inline-flex items-center gap-1 text-[11px]"
                                       title="Done Editing"
                                     >
                                       <Check className="w-3.5 h-3.5" /> Done
@@ -370,7 +370,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                                   {person.country || '—'}
                                 </td>
 
-                                <td className="py-3 px-3.5 font-mono text-cyan-400 font-semibold whitespace-nowrap">
+                                <td className="py-3 px-3.5 font-mono text-[var(--text-main)] font-semibold whitespace-nowrap">
                                   {person.phoneNumber || '—'}
                                 </td>
 
@@ -389,7 +389,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                                       whileTap={{ scale: 0.9 }}
                                       type="button"
                                       onClick={() => setEditingId(person.id)}
-                                      className="p-1.5 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-950/40 rounded-lg transition"
+                                      className="p-1.5 text-[#28ada4] hover:bg-[#28ada4]/10 rounded-lg transition"
                                       title="Edit Contact Person"
                                     >
                                       <Edit className="w-4 h-4" />

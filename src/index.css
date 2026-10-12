@@ -2,55 +2,61 @@
 
 :root,
 [data-theme="dark"] {
-  /* Ultra-Refined Black & White Dark Canvas */
+  /* Ultra-Refined Black & White Dark Canvas with Teal #28ada4 & Touch of Purple #7b0b76 */
   --color-bg: #05070a;
-  --color-bg-alt: #0b0f17;
-  --color-surface: rgba(11, 15, 23, 0.8);
-  --color-surface-hover: rgba(18, 24, 36, 0.95);
+  --color-bg-alt: #0a0d14;
+  --color-surface: rgba(10, 13, 20, 0.85);
+  --color-surface-hover: rgba(16, 21, 30, 0.95);
   --color-glass-border: rgba(255, 255, 255, 0.09);
   --color-glass-border-hover: rgba(40, 173, 164, 0.45);
 
-  /* Brand Colors: Mozuk Green (#28ada4) & Secondary Blue (#2c6498) */
+  /* Strict 4-Color System: #28ada4, White, Black, and a touch of #7b0b76 */
   --color-primary: #28ada4;
-  --color-primary-dark: #1f8d85;
-  --color-secondary: #2c6498;
-  --color-accent: #28ada4;
+  --color-primary-dark: #1e8f87;
+  --color-secondary: #7b0b76;
+  --color-accent: #7b0b76;
+  --color-purple: #7b0b76;
+  --color-purple-light: #c432bd;
 
-  /* Typography: Crisp Pure White & Muted Slate */
+  /* Typography: Pure White & Crisp Slate */
   --text-main: #ffffff;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
 
-  /* Subtle Shadows & Glows */
-  --shadow-glow: 0 0 25px rgba(40, 173, 164, 0.2);
-  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
-  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  /* Shadows & Glows */
+  --shadow-glow: 0 0 25px rgba(40, 173, 164, 0.22);
+  --shadow-purple-glow: 0 0 25px rgba(123, 11, 118, 0.25);
+  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
   --glass-blur: blur(20px);
 }
 
 [data-theme="light"] {
-  /* Crisp Minimal Black & White Light Canvas */
+  /* Crisp Minimal Black & White Light Canvas with Teal #28ada4 & Touch of Purple #7b0b76 */
   --color-bg: #ffffff;
-  --color-bg-alt: #f4f6f8;
-  --color-surface: rgba(255, 255, 255, 0.9);
-  --color-surface-hover: rgba(244, 246, 248, 0.98);
+  --color-bg-alt: #f8fafc;
+  --color-surface: rgba(255, 255, 255, 0.95);
+  --color-surface-hover: #ffffff;
   --color-glass-border: rgba(0, 0, 0, 0.08);
   --color-glass-border-hover: rgba(40, 173, 164, 0.4);
 
   /* Brand Colors */
   --color-primary: #28ada4;
-  --color-primary-dark: #1f8d85;
-  --color-secondary: #2c6498;
-  --color-accent: #28ada4;
+  --color-primary-dark: #1e8f87;
+  --color-secondary: #7b0b76;
+  --color-accent: #7b0b76;
+  --color-purple: #7b0b76;
+  --color-purple-light: #7b0b76;
 
-  /* Typography: Crisp Pure Black */
+  /* Typography: Pure Crisp Black */
   --text-main: #000000;
   --text-muted: #475569;
   --text-dim: #94a3b8;
 
   /* Shadows */
   --shadow-glow: 0 8px 25px rgba(40, 173, 164, 0.15);
-  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.06);
+  --shadow-purple-glow: 0 8px 25px rgba(123, 11, 118, 0.12);
+  --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
   --shadow-modal: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
 }
 
@@ -74,7 +80,7 @@ h1, h2, h3, h4, .font-heading {
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Background Cyber Radial Ambient Lighting with Mozuk Green & Secondary Blue */
+/* Ambient Cyber Lighting: Teal #28ada4 & subtle touch of Purple #7b0b76 */
 .bg-mozuk-overlay {
   position: fixed;
   top: 0;
@@ -84,14 +90,16 @@ h1, h2, h3, h4, .font-heading {
   z-index: -1;
   pointer-events: none;
   background: 
-    radial-gradient(circle at 50% -10%, rgba(40, 173, 164, 0.09) 0%, transparent 50%),
-    radial-gradient(circle at 90% 90%, rgba(44, 100, 152, 0.05) 0%, transparent 45%);
+    radial-gradient(circle at 50% -10%, rgba(40, 173, 164, 0.10) 0%, transparent 50%),
+    radial-gradient(circle at 95% 90%, rgba(123, 11, 118, 0.07) 0%, transparent 45%),
+    radial-gradient(circle at 5% 50%, rgba(40, 173, 164, 0.04) 0%, transparent 40%);
 }
 
 [data-theme="light"] .bg-mozuk-overlay {
   background: 
     radial-gradient(circle at 50% -10%, rgba(40, 173, 164, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 90% 90%, rgba(44, 100, 152, 0.04) 0%, transparent 45%);
+    radial-gradient(circle at 95% 90%, rgba(123, 11, 118, 0.04) 0%, transparent 45%),
+    radial-gradient(circle at 5% 50%, rgba(40, 173, 164, 0.02) 0%, transparent 40%);
 }
 
 /* Premium Glassmorphic Surface Cards */
@@ -109,9 +117,9 @@ h1, h2, h3, h4, .font-heading {
   box-shadow: var(--shadow-card), var(--shadow-glow);
 }
 
-/* High-Taste Primary Action Button (Mozuk Green #28ada4) */
+/* Primary Action Button (#28ada4) */
 .btn-mozuk-primary {
-  background: linear-gradient(135deg, #28ada4 0%, #1f8d85 100%);
+  background: linear-gradient(135deg, #28ada4 0%, #1e8f87 100%);
   color: #ffffff;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -128,9 +136,28 @@ h1, h2, h3, h4, .font-heading {
   transform: translateY(0.5px);
 }
 
-/* High-Taste Secondary Action Button (Secondary #2c6498 presence) */
+/* Tasteful Purple Action Button (#7b0b76) */
+.btn-mozuk-purple {
+  background: linear-gradient(135deg, #7b0b76 0%, #5d0859 100%);
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 14px rgba(123, 11, 118, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-mozuk-purple:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(123, 11, 118, 0.45);
+}
+
+.btn-mozuk-purple:active {
+  transform: translateY(0.5px);
+}
+
+/* Secondary Action Button (Crisp Glass) */
 .btn-mozuk-secondary {
-  background: rgba(44, 100, 152, 0.08);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--color-glass-border);
   color: var(--text-main);
   backdrop-filter: var(--glass-blur);
@@ -145,15 +172,44 @@ h1, h2, h3, h4, .font-heading {
 }
 
 [data-theme="light"] .btn-mozuk-secondary {
-  background: rgba(44, 100, 152, 0.06);
-  border-color: rgba(44, 100, 152, 0.18);
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
   color: #000000;
 }
 
 [data-theme="light"] .btn-mozuk-secondary:hover {
-  background: rgba(40, 173, 164, 0.1);
+  background: rgba(40, 173, 164, 0.08);
   border-color: #28ada4;
   color: #28ada4;
+}
+
+/* Unified Badge Presets */
+.badge-teal {
+  background-color: rgba(40, 173, 164, 0.12);
+  color: #28ada4;
+  border: 1px solid rgba(40, 173, 164, 0.3);
+}
+
+.badge-purple {
+  background-color: rgba(123, 11, 118, 0.12);
+  color: #7b0b76;
+  border: 1px solid rgba(123, 11, 118, 0.3);
+}
+
+[data-theme="dark"] .badge-purple {
+  color: #c432bd;
+  border-color: rgba(123, 11, 118, 0.45);
+}
+
+.badge-mono {
+  background-color: rgba(0, 0, 0, 0.04);
+  color: var(--text-main);
+  border: 1px solid var(--color-glass-border);
+}
+
+[data-theme="dark"] .badge-mono {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 /* Restrained Input Field Styling */
@@ -173,8 +229,8 @@ input[type="date"]:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(40, 173, 164, 0.2) !important;
+  border-color: #28ada4 !important;
+  box-shadow: 0 0 0 3px rgba(40, 173, 164, 0.22) !important;
 }
 
 [data-theme="light"] input[type="text"]:focus,
@@ -183,7 +239,7 @@ textarea:focus {
 [data-theme="light"] input[type="date"]:focus,
 [data-theme="light"] select:focus,
 [data-theme="light"] textarea:focus {
-  box-shadow: 0 0 0 3px rgba(40, 173, 164, 0.2) !important;
+  box-shadow: 0 0 0 3px rgba(40, 173, 164, 0.18) !important;
 }
 
 /* Custom Sleek Scrollbar */
@@ -202,11 +258,11 @@ textarea:focus {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+  background: #28ada4;
 }
 
 /* Selection Color */
 ::selection {
-  background: rgba(40, 173, 164, 0.3);
+  background: rgba(40, 173, 164, 0.35);
   color: #ffffff;
 }

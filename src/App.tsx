@@ -801,7 +801,7 @@ export function App() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white transition-colors duration-300">
+    <div className="min-h-screen flex flex-col selection:bg-[#28ada4]/35 selection:text-white transition-colors duration-300">
       {/* Background Cyber Gradient Overlay */}
       <div className="bg-mozuk-overlay" />
 
@@ -834,9 +834,9 @@ export function App() {
               title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
             >
               {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-4 h-4 text-[#28ada4]" />
               ) : (
-                <Moon className="w-4 h-4 text-cyan-600" />
+                <Moon className="w-4 h-4 text-[#7b0b76]" />
               )}
             </motion.button>
 
@@ -867,8 +867,8 @@ export function App() {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={handleSelectFleetDirectory}
-              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 font-bold text-[11px] sm:text-xs flex items-center gap-1.5 transition shadow-sm shrink-0"
-              title="Log out of Mozuk Marine Portal"
+              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-[#7b0b76]/10 hover:bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-bold text-[11px] sm:text-xs flex items-center gap-1.5 transition shadow-sm shrink-0"
+              title="Log out of Fleet Portal"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Logout</span>
@@ -952,9 +952,9 @@ export function App() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img
-              src="https://marine.mozuk.net/images/logo.png"
-              alt="Mozuk Marine"
-              className="h-7 w-auto opacity-80"
+              src="/taneet-logo.png"
+              alt="Taneet Logo"
+              className="h-6 w-auto opacity-80"
               onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
             />
             <div>

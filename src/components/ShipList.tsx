@@ -112,10 +112,10 @@ export const ShipList: React.FC<ShipListProps> = ({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-xs font-bold transition shrink-0 mt-0.5 shadow-sm"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#7b0b76]/10 hover:bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 text-xs font-bold transition shrink-0 mt-0.5 shadow-sm"
                       title={`Track ${ship.name} (${ship.imo}) on MarineTraffic`}
                     >
-                      <Navigation className="w-3.5 h-3.5 text-blue-500 fill-blue-500/20" />
+                      <Navigation className="w-3.5 h-3.5 text-[#7b0b76] dark:text-[#c432bd]" />
                       <span>Track</span>
                       <ExternalLink className="w-3 h-3 opacity-70" />
                     </motion.a>
@@ -159,7 +159,7 @@ export const ShipList: React.FC<ShipListProps> = ({
                   {/* Documents Badge */}
                   <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-2.5 text-center transition group-hover:border-[var(--color-glass-border-hover)]">
                     <div className="flex items-center justify-center gap-1 text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-wider mb-0.5">
-                      <FileCheck className="w-3 h-3 text-emerald-400" /> Documents
+                      <FileCheck className="w-3 h-3 text-[#28ada4]" /> Documents
                     </div>
                     <div className="font-heading font-extrabold text-[var(--text-main)] text-sm">
                       {ship.documents.length} <span className="text-[10px] text-[var(--text-muted)] font-normal">Certs</span>
@@ -169,10 +169,10 @@ export const ShipList: React.FC<ShipListProps> = ({
                   {/* Maintenance Badge */}
                   <div className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-2.5 text-center transition group-hover:border-[var(--color-glass-border-hover)]">
                     <div className="flex items-center justify-center gap-1 text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-wider mb-0.5">
-                      <Wrench className="w-3 h-3 text-amber-400" /> Open Repairs
+                      <Wrench className="w-3 h-3 text-[var(--text-muted)]" /> Open Repairs
                     </div>
-                    <div className={`font-heading font-extrabold text-sm ${openRepairsCount > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
-                      {openRepairsCount} {urgentRepairsCount > 0 && <span className="text-[10px] text-rose-400 font-bold">({urgentRepairsCount} urgent)</span>}
+                    <div className={`font-heading font-extrabold text-sm ${openRepairsCount > 0 ? 'text-[#7b0b76] dark:text-[#c432bd]' : 'text-[#28ada4]'}`}>
+                      {openRepairsCount} {urgentRepairsCount > 0 && <span className="text-[10px] text-[#7b0b76] dark:text-[#c432bd] font-bold">({urgentRepairsCount} urgent)</span>}
                     </div>
                   </div>
                 </div>
@@ -198,7 +198,7 @@ export const ShipList: React.FC<ShipListProps> = ({
                     e.stopPropagation();
                     setDeletingShip(ship);
                   }}
-                  className="p-1.5 rounded-lg bg-rose-950/20 hover:bg-rose-900/40 text-rose-400 border border-rose-800/40 transition"
+                  className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#7b0b76]/20 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
                   title="Remove vessel from fleet"
                 >
                   <Trash2 className="w-4 h-4" />

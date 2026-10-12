@@ -93,19 +93,19 @@ export const DeleteShipModal: React.FC<DeleteShipModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            className="relative z-10 bg-[var(--color-bg-alt)] border border-rose-500/40 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col my-auto"
+            className="relative z-10 bg-[var(--color-bg-alt)] border border-[#7b0b76]/40 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col my-auto"
           >
             {/* Header */}
-            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-rose-950/20 sticky top-0 z-20">
+            <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[#7b0b76]/10 sticky top-0 z-20">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500">
+                <div className="p-2 rounded-xl bg-[#7b0b76]/15 border border-[#7b0b76]/30 text-[#7b0b76] dark:text-[#c432bd]">
                   <ShieldAlert className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                     Delete Vessel Profile
                   </h3>
-                  <p className="text-[11px] text-rose-400 font-bold">
+                  <p className="text-[11px] text-[#7b0b76] dark:text-[#c432bd] font-bold">
                     {ship.name} ({ship.imo})
                   </p>
                 </div>
@@ -124,8 +124,8 @@ export const DeleteShipModal: React.FC<DeleteShipModalProps> = ({
 
             {/* Modal Body */}
             <div className="p-6 space-y-4">
-              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs leading-relaxed space-y-2">
-                <div className="flex items-center gap-2 font-bold text-rose-500 text-sm">
+              <div className="p-4 rounded-xl bg-[#7b0b76]/10 border border-[#7b0b76]/25 text-xs leading-relaxed space-y-2">
+                <div className="flex items-center gap-2 font-bold text-[#7b0b76] dark:text-[#c432bd] text-sm">
                   <AlertTriangle className="w-4 h-4 shrink-0" /> Warning: Permanent Deletion
                 </div>
                 <p className="text-[var(--text-main)] font-semibold leading-relaxed">
@@ -183,15 +183,15 @@ export const DeleteShipModal: React.FC<DeleteShipModalProps> = ({
                   onPointerCancel={handleStopHold}
                   className={`relative overflow-hidden px-6 py-2.5 rounded-full font-extrabold text-xs transition-all flex items-center gap-2 select-none cursor-pointer ${
                     isCompleted
-                      ? 'bg-emerald-600 text-white shadow-lg'
+                      ? 'bg-[#28ada4] text-white shadow-lg'
                       : holdProgress > 0
-                      ? 'bg-rose-950 text-white border border-rose-500 shadow-lg scale-[1.02]'
-                      : 'bg-rose-600 hover:bg-rose-700 text-white border border-rose-500 shadow-md'
+                      ? 'bg-[#5e085a] text-white border border-[#7b0b76] shadow-lg scale-[1.02]'
+                      : 'bg-[#7b0b76] hover:bg-[#5e085a] text-white border border-[#7b0b76] shadow-md'
                   }`}
                 >
                   {/* Left-to-Right Slider Fill Bar */}
                   <div
-                    className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-rose-600 via-rose-500 to-red-500 transition-all duration-75 pointer-events-none"
+                    className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#7b0b76] via-[#9d1696] to-[#c432bd] transition-all duration-75 pointer-events-none"
                     style={{ width: `${holdProgress}%` }}
                   />
 
