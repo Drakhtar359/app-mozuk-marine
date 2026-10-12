@@ -153,10 +153,13 @@ export interface CompanyCustomer {
   notes?: string;
 }
 
+export type SubscriptionTier = 'Free' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond';
+
 export interface ShipOwnerDetails {
   companyName: string;
   country: string;
   phoneNumber: string;
+  subscriptionTier?: SubscriptionTier;
   contactPeople: CompanyContactPerson[];
   employees?: CompanyEmployee[];
   customers?: CompanyCustomer[];

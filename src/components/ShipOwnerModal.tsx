@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShipOwnerDetails, CompanyContactPerson } from '../types/vessel';
+import { ShipOwnerDetails, CompanyContactPerson, SubscriptionTier } from '../types/vessel';
 import {
   Building2,
   Globe,
@@ -13,6 +13,7 @@ import {
   Users,
   Edit,
   Check,
+  Crown,
 } from 'lucide-react';
 
 interface ShipOwnerModalProps {
@@ -31,6 +32,9 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
   const [companyName, setCompanyName] = useState(ownerDetails.companyName || '');
   const [country, setCountry] = useState(ownerDetails.country || '');
   const [phoneNumber, setPhoneNumber] = useState(ownerDetails.phoneNumber || '');
+  const [subscriptionTier, setSubscriptionTier] = useState<SubscriptionTier>(
+    ownerDetails.subscriptionTier || 'Platinum'
+  );
   const [contactPeople, setContactPeople] = useState<CompanyContactPerson[]>(
     ownerDetails.contactPeople || []
   );
@@ -42,6 +46,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
     setCompanyName(ownerDetails.companyName || '');
     setCountry(ownerDetails.country || '');
     setPhoneNumber(ownerDetails.phoneNumber || '');
+    setSubscriptionTier(ownerDetails.subscriptionTier || 'Platinum');
     setContactPeople(ownerDetails.contactPeople || []);
     setEditingId(null);
   }, [ownerDetails, isOpen]);
@@ -80,9 +85,11 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
+      ...ownerDetails,
       companyName: companyName.trim() || 'MOZUK MARINE SHIPPING SERVICES S.A.',
       country: country.trim() || 'Mozambique',
       phoneNumber: phoneNumber.trim() || '+258 21 300 450',
+      subscriptionTier: subscriptionTier || 'Platinum',
       contactPeople: contactPeople.filter((cp) => cp.fullName.trim() !== ''),
     });
     onClose();
@@ -172,7 +179,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                   </div>
 
                   {/* Main Phone Number */}
-                  <div className="sm:col-span-2">
+                  <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
                       <Phone className="w-3.5 h-3.5 text-cyan-400" /> Company Phone Number *
                     </label>
@@ -184,6 +191,24 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                       required
                       className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)]"
                     />
+                  </div>
+
+                  {/* Subscription Tier */}
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
+                      <Crown className="w-3.5 h-3.5 text-amber-400" /> Subscription Tier *
+                    </label>
+                    <select
+                      value={subscriptionTier}
+                      onChange={(e) => setSubscriptionTier(e.target.value as SubscriptionTier)}
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold cursor-pointer"
+                    >
+                      <option value="Free">Free</option>
+                      <option value="Silver">Silver</option>
+                      <option value="Gold">Gold</option>
+                      <option value="Platinum">Platinum</option>
+                      <option value="Diamond">Diamond</option>
+                    </select>
                   </div>
                 </div>
               </div>

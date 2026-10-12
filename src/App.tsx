@@ -485,6 +485,7 @@ export function App() {
     companyName: 'MOZUK MARINE SHIPPING SERVICES S.A.',
     country: 'Mozambique',
     phoneNumber: '+258 21 300 450',
+    subscriptionTier: 'Platinum',
     contactPeople: [
       {
         id: 'cp-1',

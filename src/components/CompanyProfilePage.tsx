@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShipOwnerDetails, Ship, CrewMember, CompanyEmployee, CompanyContactPerson, CompanyCustomer } from '../types/vessel';
+import { ShipOwnerDetails, Ship, CrewMember, CompanyEmployee, CompanyContactPerson, CompanyCustomer, SubscriptionTier } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
 import {
@@ -23,6 +23,10 @@ import {
   MapPin,
   Calendar,
   Search,
+  Crown,
+  Sparkles,
+  Shield,
+  ChevronDown,
 } from 'lucide-react';
 
 const DEFAULT_CUSTOMERS: CompanyCustomer[] = [
@@ -435,14 +439,85 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
     setIsEmployeeModalOpen(false);
   };
 
+  const currentTier: SubscriptionTier = ownerDetails.subscriptionTier || 'Platinum';
+
+  const handleUpdateTier = (newTier: SubscriptionTier) => {
+    if (onUpdateOwnerDetails) {
+      onUpdateOwnerDetails({
+        ...ownerDetails,
+        subscriptionTier: newTier,
+      });
+    }
+  };
+
+  const getTierBadgeStyles = (tier: SubscriptionTier) => {
+    switch (tier) {
+      case 'Diamond':
+        return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30 hover:border-cyan-400 shadow-[0_0_14px_rgba(6,182,212,0.18)]';
+      case 'Platinum':
+        return 'bg-purple-500/10 text-purple-400 border-purple-500/30 hover:border-purple-400 shadow-[0_0_14px_rgba(168,85,247,0.18)]';
+      case 'Gold':
+        return 'bg-amber-500/10 text-amber-400 border-amber-500/30 hover:border-amber-400 shadow-[0_0_14px_rgba(245,158,11,0.18)]';
+      case 'Silver':
+        return 'bg-slate-400/10 text-slate-300 border-slate-400/30 hover:border-slate-300 shadow-[0_0_14px_rgba(148,163,184,0.15)]';
+      case 'Free':
+      default:
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:border-emerald-400 shadow-[0_0_14px_rgba(16,185,129,0.15)]';
+    }
+  };
+
+  const getTierIcon = (tier: SubscriptionTier) => {
+    switch (tier) {
+      case 'Diamond':
+        return <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />;
+      case 'Platinum':
+        return <Crown className="w-3.5 h-3.5 text-purple-400 shrink-0" />;
+      case 'Gold':
+        return <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />;
+      case 'Silver':
+        return <ShieldCheck className="w-3.5 h-3.5 text-slate-300 shrink-0" />;
+      case 'Free':
+      default:
+        return <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />;
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Top Header */}
-      <div className="border-b border-[var(--color-glass-border)] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5">
         <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-2xl text-[var(--text-main)] flex items-center gap-2">
           <Building2 className="w-6 h-6 text-[#28ada4]" />
           Company Profile & Manager Details
         </h2>
+
+        {/* Subscription Tier Block */}
+        <div className="flex flex-col sm:items-end shrink-0">
+          <span className="text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
+            Subscription tier
+          </span>
+          <div className="mt-1 relative inline-flex items-center">
+            <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
+              {getTierIcon(currentTier)}
+            </div>
+            <select
+              value={currentTier}
+              onChange={(e) => handleUpdateTier(e.target.value as SubscriptionTier)}
+              className={`appearance-none pl-8 pr-8 py-1.5 rounded-xl font-extrabold text-xs border cursor-pointer focus:outline-none transition ${getTierBadgeStyles(
+                currentTier
+              )}`}
+            >
+              <option value="Diamond" className="bg-[var(--color-bg-alt)] text-[var(--text-main)] font-bold">Diamond</option>
+              <option value="Platinum" className="bg-[var(--color-bg-alt)] text-[var(--text-main)] font-bold">Platinum</option>
+              <option value="Gold" className="bg-[var(--color-bg-alt)] text-[var(--text-main)] font-bold">Gold</option>
+              <option value="Silver" className="bg-[var(--color-bg-alt)] text-[var(--text-main)] font-bold">Silver</option>
+              <option value="Free" className="bg-[var(--color-bg-alt)] text-[var(--text-main)] font-bold">Free</option>
+            </select>
+            <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
+              <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main Company Overview Banner with Edit Company Details Button */}
