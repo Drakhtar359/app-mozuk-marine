@@ -185,13 +185,13 @@ export const DeleteShipModal: React.FC<DeleteShipModalProps> = ({
                     isCompleted
                       ? 'bg-[#28ada4] text-white shadow-lg'
                       : holdProgress > 0
-                      ? 'bg-[#5e085a] text-white border border-[#7b0b76] shadow-lg scale-[1.02]'
-                      : 'bg-[#7b0b76] hover:bg-[#5e085a] text-white border border-[#7b0b76] shadow-md'
+                      ? 'bg-[#5d0859] text-white border border-[#7b0b76] shadow-lg scale-[1.02]'
+                      : 'bg-[#7b0b76] hover:bg-[#5d0859] text-white border border-[#7b0b76] shadow-md'
                   }`}
                 >
                   {/* Left-to-Right Slider Fill Bar */}
                   <div
-                    className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#7b0b76] via-[#9d1696] to-[#c432bd] transition-all duration-75 pointer-events-none"
+                    className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#7b0b76] to-[#c432bd] transition-all duration-75 pointer-events-none"
                     style={{ width: `${holdProgress}%` }}
                   />
 

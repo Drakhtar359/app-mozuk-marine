@@ -225,7 +225,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                     whileTap={{ scale: 0.97 }}
                     type="button"
                     onClick={handleAddContactPerson}
-                    className="px-3.5 py-1.5 rounded-xl bg-[rgba(0,242,254,0.1)] hover:bg-[rgba(0,242,254,0.2)] text-[var(--color-primary)] border border-[var(--color-glass-border)] font-bold text-xs flex items-center gap-1.5 transition"
+                    className="px-3.5 py-1.5 rounded-xl bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 font-bold text-xs flex items-center gap-1.5 transition"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add Contact Person
                   </motion.button>
@@ -234,7 +234,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                 <div className="mozuk-glass-card rounded-2xl overflow-hidden border border-[var(--color-glass-border)]">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs min-w-[850px]">
-                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-bold tracking-wider">
+                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                         <tr>
                           <th className="py-3 px-3.5 min-w-[160px]">Full Name</th>
                           <th className="py-3 px-3.5 min-w-[160px]">Position / Role</th>
@@ -260,7 +260,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                             if (isEditing) {
                               /* EDITING ROW FORM */
                               return (
-                                <tr key={person.id} className="bg-[rgba(0,242,254,0.04)] align-middle">
+                                <tr key={person.id} className="bg-[#28ada4]/5 align-middle">
                                   <td className="py-2.5 px-3">
                                     <input
                                       type="text"
@@ -399,7 +399,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                                       whileTap={{ scale: 0.9 }}
                                       type="button"
                                       onClick={() => handleRemoveContactPerson(person.id)}
-                                      className="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition"
+                                      className="p-1.5 rounded-lg bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
                                       title="Delete Contact Person"
                                     >
                                       <Trash2 className="w-4 h-4" />

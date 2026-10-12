@@ -878,7 +878,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
           }`}
         >
-          <BookOpen className="w-4 h-4 shrink-0 text-[#28ada4]" />
+          <BookOpen className="w-4 h-4 shrink-0" />
           <span className="truncate">
             Ship Logbooks & Registries ({ (ship.visitors?.length || 0) + (ship.ballastWaterLogs?.length || 0) + (ship.sewageWaterLogs?.length || 0) })
           </span>
@@ -974,21 +974,21 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {/* UNIFORM TREE CONNECTORS (Guaranteed exact 2px line thickness across vertical & horizontal lines) */}
               <div className="hidden md:flex flex-col items-center w-full my-0 pointer-events-none">
                 {/* 1. Trunk Line from Master Card down */}
-                <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+                <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(40,173,164,0.4)]"></div>
 
                 {/* 2. Horizontal Crossbar spanning from center of Column 1 to center of Column 3 */}
-                <div className="w-[66.666%] h-[2px] bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+                <div className="w-[66.666%] h-[2px] bg-[var(--color-primary)] shadow-[0_0_8px_rgba(40,173,164,0.4)]"></div>
 
                 {/* 3. Drop Lines row into each of the 3 Department Column Cards */}
                 <div className="w-full grid grid-cols-3 gap-6">
                   <div className="flex justify-center">
-                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(40,173,164,0.4)]"></div>
                   </div>
                   <div className="flex justify-center">
-                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(40,173,164,0.4)]"></div>
                   </div>
                   <div className="flex justify-center">
-                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(0,242,254,0.4)]"></div>
+                    <div className="w-[2px] h-6 bg-[var(--color-primary)] shadow-[0_0_8px_rgba(40,173,164,0.4)]"></div>
                   </div>
                 </div>
               </div>
@@ -1549,7 +1549,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                   <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
                     <table className="w-full text-left text-xs min-w-[900px]">
-                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                         <tr>
                           <th className="py-3.5 px-4">Order Date</th>
                           <th className="py-3.5 px-4">Spare Part Name & Part Number</th>
@@ -1762,7 +1762,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
                   <table className="w-full text-left text-xs min-w-[850px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
                         <th className="py-3 px-4">Certificate Title</th>
                         <th className="py-3 px-4">Doc / Reg Number</th>
@@ -1850,7 +1850,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
                   <table className="w-full text-left text-xs min-w-[850px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
                         <th className="py-3 px-4">Document / Manual Title</th>
                         <th className="py-3 px-4">Drawing / Manual ID</th>
@@ -1926,7 +1926,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
                   <table className="w-full text-left text-xs min-w-[850px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
                         <th className="py-3 px-4">Record Title</th>
                         <th className="py-3 px-4">Reference / Invoice No</th>
@@ -2208,7 +2208,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             {/* Visitor Logbook Table */}
             <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
               <table className="w-full text-left text-xs min-w-[850px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)]">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                   <tr>
                     <th className="py-3 px-3">Date</th>
                     <th className="py-3 px-3">Visitor Full Name</th>
@@ -2446,7 +2446,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             {/* Table */}
             <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
               <table className="w-full text-left text-xs min-w-[950px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                   <tr>
                     <th className="py-3.5 px-4">Date & Time</th>
                     <th className="py-3.5 px-4">Operation Type</th>
@@ -2684,7 +2684,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             {/* Table */}
             <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
               <table className="w-full text-left text-xs min-w-[950px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-muted)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                   <tr>
                     <th className="py-3.5 px-4">Date & Time</th>
                     <th className="py-3.5 px-4">Water Category</th>

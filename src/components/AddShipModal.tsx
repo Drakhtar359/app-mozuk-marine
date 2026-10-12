@@ -87,7 +87,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             {/* Header */}
             <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-[rgba(0,242,254,0.1)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--color-primary)]">
+                <div className="w-9 h-9 rounded-xl bg-[#28ada4]/10 border border-[#28ada4]/20 flex items-center justify-center text-[#28ada4]">
                   <ShipIcon className="w-5 h-5" />
                 </div>
                 <div>
