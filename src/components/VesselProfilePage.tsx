@@ -1177,7 +1177,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         </span>
                       </div>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-muted)] font-bold text-xs border border-[var(--color-glass-border)]">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] font-bold text-xs border border-[var(--color-glass-border)]">
                       {kitchenCrew.length}
                     </span>
                   </div>
@@ -1197,12 +1197,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--text-muted)] font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--text-main)] font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               {member.name.charAt(0)}
                             </div>
                             <div>
                               <h4 className="font-bold text-[var(--text-main)] text-xs transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-muted)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
+                              <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-main)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
                                 {member.role}
                               </span>
                               <div className="text-[11px] text-[var(--text-muted)] mt-1">
