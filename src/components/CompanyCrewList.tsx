@@ -328,7 +328,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <strong className="font-mono text-sm">{assignedCount}</strong>
           </div>
 
-          <div className="flex items-center gap-2 bg-[#7b0b76]/10 border border-[#7b0b76]/30 px-3 py-1.5 rounded-xl text-xs text-[#7b0b76] dark:text-[#c432bd] font-bold">
+          <div className="flex items-center gap-2 bg-[#7b0b76]/10 border border-[#7b0b76]/30 px-3 py-1.5 rounded-xl text-xs text-[#7b0b76] font-bold">
             <span className="w-2 h-2 rounded-full bg-[#7b0b76]"></span>
             <span>Unassigned:</span>
             <strong className="font-mono text-sm">{unassignedCount}</strong>
@@ -513,7 +513,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                             {crew.name.charAt(0)}
                           </div>
                           <div>
-                            <h4 className="font-extrabold text-[var(--text-main)] text-xs whitespace-nowrap group-hover:text-[var(--color-primary)] transition">
+                            <h4 className="font-extrabold text-[var(--text-main)] text-xs whitespace-nowrap transition">
                               {crew.name}
                             </h4>
                             <div className="flex items-center gap-2 mt-0.5 whitespace-nowrap">
@@ -534,12 +534,12 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       {/* Department Badges */}
                       <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                         {crew.department === 'master' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
                             MASTER
                           </span>
                         )}
                         {crew.department === 'deck' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
                             DECK DEPT
                           </span>
                         )}
@@ -549,12 +549,12 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                           </span>
                         )}
                         {crew.department === 'kitchen' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-black/30 text-[var(--text-muted)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
                             GALLEY & MESS
                           </span>
                         )}
                         {!crew.department && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-black/30 text-[var(--text-muted)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
+                          <span className="px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
                             GENERAL CREW
                           </span>
                         )}
@@ -576,8 +576,8 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                             <ExternalLink className="w-2.5 h-2.5 opacity-70 ml-0.5 text-[#28ada4]" />
                           </button>
                         ) : (
-                          <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 text-[10px] font-bold inline-flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-[#7b0b76] dark:text-[#c432bd] shrink-0" />
+                          <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] border border-[#7b0b76]/30 text-[10px] font-bold inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-[#7b0b76] shrink-0" />
                             <span>UNASSIGNED</span>
                           </span>
                         )}
@@ -620,10 +620,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                           {/* Delete Button */}
                           <button
                             onClick={() => onRemoveCrewMember(crew.id)}
-                            className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#7b0b76]/20 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
+                            className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
                             title="Remove crew member from company roster"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                           </button>
                         </div>
                       </td>
@@ -730,7 +730,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">
-                      Full Name <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
+                      Full Name <span className="text-[#7b0b76]">*</span>
                     </label>
                     <input
                       type="text"

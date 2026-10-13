@@ -16,7 +16,7 @@
   --color-secondary: #7b0b76;
   --color-accent: #7b0b76;
   --color-purple: #7b0b76;
-  --color-purple-light: #c432bd;
+  --color-purple-light: #7b0b76;
 
   /* Typography: Pure White & Crisp Slate */
   --text-main: #ffffff;
@@ -197,7 +197,7 @@ h1, h2, h3, h4, .font-heading {
 }
 
 [data-theme="dark"] .badge-purple {
-  color: #c432bd;
+  color: #7b0b76;
   border-color: rgba(123, 11, 118, 0.45);
 }
 

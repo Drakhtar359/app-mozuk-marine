@@ -196,7 +196,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                   {/* Subscription Tier */}
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
-                      <Crown className="w-3.5 h-3.5 text-[#7b0b76] dark:text-[#c432bd]" /> Subscription Tier *
+                      <Crown className="w-3.5 h-3.5 text-[#7b0b76]" /> Subscription Tier *
                     </label>
                     <select
                       value={subscriptionTier}
@@ -399,10 +399,10 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                                       whileTap={{ scale: 0.9 }}
                                       type="button"
                                       onClick={() => handleRemoveContactPerson(person.id)}
-                                      className="p-1.5 rounded-lg bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
+                                      className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
                                       title="Delete Contact Person"
                                     >
-                                      <Trash2 className="w-4 h-4" />
+                                      <Trash2 className="w-4 h-4 text-[#991b1b] dark:text-[#e05252]" />
                                     </motion.button>
                                   </div>
                                 </td>

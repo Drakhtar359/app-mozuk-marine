@@ -773,10 +773,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               }
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-full bg-[#7b0b76]/15 hover:bg-[#7b0b76]/25 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/35 font-bold text-xs flex items-center gap-2 transition shadow-sm"
+              className="px-4 py-2.5 rounded-full bg-[#7b0b76]/15 hover:bg-[#7b0b76]/25 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/35 font-bold text-xs flex items-center gap-2 transition shadow-sm"
               title={`Track ${ship.name} (${ship.imo}) on MarineTraffic`}
             >
-              <Navigation className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" />
+              <Navigation className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" />
               <span>Track on MarineTraffic</span>
               <ExternalLink className="w-3.5 h-3.5 opacity-70" />
             </a>
@@ -892,7 +892,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
             <div>
               <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
-                <Crown className="w-5 h-5 text-[#7b0b76] dark:text-[#c432bd]" />
+                <Crown className="w-5 h-5 text-[#7b0b76] dark:text-[#7b0b76]" />
                 Vessel Command Organization Tree
               </h2>
               <p className="text-xs text-[var(--text-muted)] mt-1">
@@ -921,13 +921,13 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       className="pt-2 text-center relative group cursor-pointer hover:bg-[var(--color-bg-alt)]/60 rounded-xl p-3 transition border border-transparent hover:border-[#7b0b76]/50 shadow-sm"
                       title="Click to view full crew profile"
                     >
-                      <div className="w-14 h-14 rounded-2xl bg-[#7b0b76]/20 border-2 border-[#7b0b76] flex items-center justify-center text-[#7b0b76] dark:text-[#c432bd] font-extrabold text-xl mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform">
+                      <div className="w-14 h-14 rounded-2xl bg-[#7b0b76]/20 border-2 border-[#7b0b76] flex items-center justify-center text-[#7b0b76] dark:text-[#7b0b76] font-extrabold text-xl mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform">
                         {master.name.charAt(0)}
                       </div>
-                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#7b0b76] dark:group-hover:text-[#c432bd] transition">
+                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#7b0b76] dark:group-hover:text-[#7b0b76] transition">
                         {master.name}
                       </h3>
-                      <div className="text-xs text-[#7b0b76] dark:text-[#c432bd] font-bold uppercase tracking-wider mt-0.5">
+                      <div className="text-xs text-[#7b0b76] dark:text-[#7b0b76] font-bold uppercase tracking-wider mt-0.5">
                         {master.role}
                       </div>
                       <div className="text-[11px] text-[var(--text-muted)] mt-1 flex items-center justify-center gap-3">
@@ -939,7 +939,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           Seaman Book: {master.seamanBookNo}
                         </div>
                       )}
-                      <div className="text-[10px] text-[#7b0b76]/80 dark:text-[#c432bd]/80 font-semibold mt-2 opacity-0 group-hover:opacity-100 transition">
+                      <div className="text-[10px] text-[#7b0b76]/80 dark:text-[#7b0b76]/80 font-semibold mt-2 opacity-0 group-hover:opacity-100 transition">
                         🔍 Click to open full profile
                       </div>
 
@@ -948,10 +948,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           e.stopPropagation();
                           handleRemoveCrew(master.id);
                         }}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-[#7b0b76]/20 hover:bg-[#7b0b76]/40 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/40 transition opacity-0 group-hover:opacity-100"
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition opacity-0 group-hover:opacity-100"
                         title="Remove Master"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                       </button>
                     </div>
                   ))
@@ -1056,10 +1056,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                           </button>
                         </div>
                       ))
@@ -1136,10 +1136,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                           </button>
                         </div>
                       ))
@@ -1216,10 +1216,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                           </button>
                         </div>
                       ))
@@ -1336,7 +1336,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                   />
                 )}
-                <ShoppingCart className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" />
+                <ShoppingCart className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" />
                 <span>Procurement</span>
               </button>
             </div>
@@ -1349,10 +1349,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-[#7b0b76]/30 bg-[#7b0b76]/10">
                       <div>
-                        <div className="text-[#7b0b76] dark:text-[#c432bd] text-xs font-bold uppercase">Open Work Orders</div>
-                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[#7b0b76] dark:text-[#c432bd] mt-1">{openRepairsCount}</div>
+                        <div className="text-[#7b0b76] dark:text-[#7b0b76] text-xs font-bold uppercase">Open Work Orders</div>
+                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[#7b0b76] dark:text-[#7b0b76] mt-1">{openRepairsCount}</div>
                       </div>
-                      <div className="p-3 rounded-xl bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/40">
+                      <div className="p-3 rounded-xl bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/40">
                         <AlertTriangle className="w-5 h-5" />
                       </div>
                     </div>
@@ -1386,7 +1386,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <span
                                 className={`px-2.5 py-0.5 rounded font-extrabold text-[10px] uppercase border ${
                                   log.priority === 'urgent' || log.priority === 'high'
-                                    ? 'bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border-[#7b0b76]/40'
+                                    ? 'bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#7b0b76] border-[#7b0b76]/40'
                                     : log.priority === 'medium'
                                     ? 'bg-[#28ada4]/15 text-[#28ada4] border-[#28ada4]/30'
                                     : 'bg-[var(--color-surface)] text-[var(--text-muted)] border-[var(--color-glass-border)]'
@@ -1402,7 +1402,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <span
                                 className={`px-2.5 py-0.5 rounded font-bold text-[10px] uppercase border ${
                                   log.status === 'open'
-                                    ? 'bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border-[#7b0b76]/40'
+                                    ? 'bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#7b0b76] border-[#7b0b76]/40'
                                     : 'bg-[#28ada4]/15 text-[#28ada4] border-[#28ada4]/30'
                                 }`}
                               >
@@ -1424,7 +1424,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                             {log.status === 'open' && (
                               <button
                                 onClick={() => handleUpdateRepairStatus(log.id, 'in_progress')}
-                                className="px-3 py-1.5 rounded-lg bg-[#7b0b76]/20 hover:bg-[#7b0b76]/35 border border-[#7b0b76]/40 text-[#7b0b76] dark:text-[#c432bd] font-bold text-xs transition flex items-center gap-1.5"
+                                className="px-3 py-1.5 rounded-lg bg-[#7b0b76]/20 hover:bg-[#7b0b76]/35 border border-[#7b0b76]/40 text-[#7b0b76] dark:text-[#7b0b76] font-bold text-xs transition flex items-center gap-1.5"
                               >
                                 <Play className="w-3.5 h-3.5" /> Start Repair
                               </button>
@@ -1441,10 +1441,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                             <button
                               onClick={() => handleRemoveRepair(log.id)}
-                              className="p-2 rounded-lg bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
+                              className="p-2 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
                               title="Delete log entry"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4 text-[#991b1b] dark:text-[#e05252]" />
                             </button>
                           </div>
                         </div>
@@ -1512,10 +1512,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                             <button
                               onClick={() => handleRemoveRepair(log.id)}
-                              className="p-2 rounded-lg bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
+                              className="p-2 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
                               title="Delete log entry"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4 text-[#991b1b] dark:text-[#e05252]" />
                             </button>
                           </div>
                         </div>
@@ -1531,7 +1531,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--color-glass-border)] pb-3">
                     <div>
                       <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)] flex items-center gap-2">
-                        <ShoppingCart className="w-5 h-5 text-[#7b0b76] dark:text-[#c432bd]" />
+                        <ShoppingCart className="w-5 h-5 text-[#7b0b76] dark:text-[#7b0b76]" />
                         Spare Parts Procurement & Technical Requisitions ({procurementList.length})
                       </h3>
                       <p className="text-xs text-[var(--text-muted)] mt-0.5">
@@ -1601,7 +1601,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                               <td className="py-3.5 px-4 text-center whitespace-nowrap">
                                 {item.status === 'ordered' && (
-                                  <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/35 font-bold text-[10px]">
+                                  <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/35 font-bold text-[10px]">
                                     ORDERED
                                   </span>
                                 )}
@@ -1636,10 +1636,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                                   <button
                                     onClick={() => handleRemoveProcurementOrder(item.id)}
-                                    className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
+                                    className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
                                     title="Delete order"
                                   >
-                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                                   </button>
                                 </div>
                               </td>
@@ -1730,7 +1730,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                 />
               )}
-              <Folder className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" />
+              <Folder className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" />
               <span>Miscellaneous Records</span>
             </button>
           </div>
@@ -1797,7 +1797,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                                   </span>
                                 )}
                                 {doc.status === 'expiring' && (
-                                  <span className="px-2.5 py-0.5 rounded bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/40 font-bold text-[10px]">
+                                  <span className="px-2.5 py-0.5 rounded bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/40 font-bold text-[10px]">
                                     EXPIRING SOON
                                   </span>
                                 )}
@@ -1810,10 +1810,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
+                                  className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
                                   title="Delete document"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </td>
                             </tr>
@@ -1886,10 +1886,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
+                                  className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
                                   title="Delete document"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </td>
                             </tr>
@@ -1906,13 +1906,13 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30">
+                    <div className="p-1.5 rounded-lg bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30">
                       <Folder className="w-4 h-4" />
                     </div>
                     <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Miscellaneous (Invoices, Cargo Chartering Orders, Port Access & Contracts)
                     </h3>
-                    <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] font-bold text-xs border border-[#7b0b76]/30">
+                    <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] font-bold text-xs border border-[#7b0b76]/30">
                       {ship.documents.filter((d) => getDocCategory(d) === 'misc').length}
                     </span>
                   </div>
@@ -1955,17 +1955,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
                               <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
                               <td className="py-3 px-4 text-right">
-                                <span className="px-2.5 py-0.5 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-bold text-[10px]">
+                                <span className="px-2.5 py-0.5 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[10px]">
                                   FILED RECORD
                                 </span>
                               </td>
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition"
+                                  className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
                                   title="Delete record"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </td>
                             </tr>
@@ -2035,7 +2035,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
                 />
               )}
-              <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" />
+              <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" />
               <span>Sewage & Grey Water Log</span>
             </button>
           </div>
@@ -2289,7 +2289,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               {isOnboard && (
                                 <button
                                   onClick={() => handleSignOutVisitor(visitor.id)}
-                                  className="px-2.5 py-1 rounded bg-[#7b0b76]/20 hover:bg-[#7b0b76]/35 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/40 text-[11px] font-bold transition inline-flex items-center gap-1 whitespace-nowrap shrink-0 shadow-sm"
+                                  className="px-2.5 py-1 rounded bg-[#7b0b76]/20 hover:bg-[#7b0b76]/35 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/40 text-[11px] font-bold transition inline-flex items-center gap-1 whitespace-nowrap shrink-0 shadow-sm"
                                   title="Sign out visitor at current time"
                                 >
                                   <LogOut className="w-3 h-3 shrink-0" /> Sign Out
@@ -2297,10 +2297,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               )}
                               <button
                                 onClick={() => handleRemoveVisitor(visitor.id)}
-                                className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center shrink-0 shadow-sm"
+                                className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center shrink-0 shadow-sm"
                                 title="Delete log entry"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
+                                <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                               </button>
                             </div>
                           </td>
@@ -2385,10 +2385,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </div>
 
               <div className="mozuk-glass-card p-4 rounded-xl border border-[#7b0b76]/30 bg-[#7b0b76]/10">
-                <div className="text-[#7b0b76] dark:text-[#c432bd] font-bold text-[11px] uppercase flex items-center gap-1">
+                <div className="text-[#7b0b76] dark:text-[#7b0b76] font-bold text-[11px] uppercase flex items-center gap-1">
                   <RotateCcw className="w-3.5 h-3.5" /> Total Volume Deballasted
                 </div>
-                <div className="font-extrabold text-[#7b0b76] dark:text-[#c432bd] text-xl font-mono mt-1">
+                <div className="font-extrabold text-[#7b0b76] dark:text-[#7b0b76] text-xl font-mono mt-1">
                   {totalDeballasted.toLocaleString()} m³
                 </div>
               </div>
@@ -2480,7 +2480,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               </span>
                             )}
                             {log.operation === 'Deballasting' && (
-                              <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-bold text-[11px]">
+                              <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[11px]">
                                 Deballasting
                               </span>
                             )}
@@ -2522,10 +2522,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3.5 px-4 text-right whitespace-nowrap">
                             <button
                               onClick={() => handleRemoveBallastLog(log.id)}
-                              className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
+                              className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
                               title="Delete record"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                             </button>
                           </td>
                         </tr>
@@ -2575,7 +2575,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
               <div>
                 <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
-                  <Recycle className="w-5 h-5 text-[#7b0b76] dark:text-[#c432bd]" />
+                  <Recycle className="w-5 h-5 text-[#7b0b76] dark:text-[#7b0b76]" />
                   Sewage & Grey Water Record Book (MARPOL Annex IV)
                 </h2>
                 <p className="text-xs text-[var(--text-muted)] mt-1">
@@ -2612,10 +2612,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </div>
 
               <div className="mozuk-glass-card p-4 rounded-xl border border-[#7b0b76]/30 bg-[#7b0b76]/10">
-                <div className="text-[#7b0b76] dark:text-[#c432bd] font-bold text-[11px] uppercase flex items-center gap-1">
+                <div className="text-[#7b0b76] dark:text-[#7b0b76] font-bold text-[11px] uppercase flex items-center gap-1">
                   <Anchor className="w-3.5 h-3.5" /> Discharged to Shore Reception
                 </div>
-                <div className="font-extrabold text-[#7b0b76] dark:text-[#c432bd] text-xl font-mono mt-1">
+                <div className="font-extrabold text-[#7b0b76] dark:text-[#7b0b76] text-xl font-mono mt-1">
                   {totalShoreDischarge.toLocaleString()} m³
                 </div>
               </div>
@@ -2714,7 +2714,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             {log.type === 'Sewage (Black Water)' ? (
-                              <span className="px-2.5 py-1 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-bold text-[11px]">
+                              <span className="px-2.5 py-1 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[11px]">
                                 Black Water (Sewage)
                               </span>
                             ) : (
@@ -2754,10 +2754,10 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3.5 px-4 text-right whitespace-nowrap">
                             <button
                               onClick={() => handleRemoveSewageLog(log.id)}
-                              className="p-1.5 rounded bg-black/40 hover:bg-[#7b0b76]/40 text-[var(--text-muted)] hover:text-[#7b0b76] dark:hover:text-[#c432bd] border border-[var(--color-glass-border)] hover:border-[#7b0b76]/40 transition inline-flex items-center"
+                              className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
                               title="Delete record"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
                             </button>
                           </td>
                         </tr>
@@ -3972,7 +3972,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
                 <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                  <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd]" /> Log Sewage / Grey Water Operation to {ship.name}
+                  <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" /> Log Sewage / Grey Water Operation to {ship.name}
                 </h3>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
@@ -4155,7 +4155,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
                 <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-[#7b0b76] dark:text-[#c432bd]" /> Log Spare Part Procurement Order
+                  <ShoppingCart className="w-5 h-5 text-[#7b0b76] dark:text-[#7b0b76]" /> Log Spare Part Procurement Order
                 </h3>
                 <motion.button
                   whileHover={{ scale: 1.1 }}

@@ -867,10 +867,10 @@ export function App() {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={handleSelectFleetDirectory}
-              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-[#7b0b76]/10 hover:bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#c432bd] border border-[#7b0b76]/30 font-bold text-[11px] sm:text-xs flex items-center gap-1.5 transition shadow-sm shrink-0"
+              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full bg-[#7b0b76] hover:bg-[#650861] text-white border border-[#7b0b76] font-bold text-[11px] sm:text-xs flex items-center gap-1.5 transition shadow-sm shrink-0"
               title="Log out of Fleet Portal"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-3.5 h-3.5 text-white" />
               <span>Logout</span>
             </motion.button>
           </div>

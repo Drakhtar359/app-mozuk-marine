@@ -111,8 +111,8 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
               {error && (
-                <div className="bg-[#7b0b76]/15 border border-[#7b0b76]/40 text-[#7b0b76] dark:text-[#c432bd] p-3 rounded-xl flex items-center gap-2 font-medium">
-                  <AlertCircle className="w-4 h-4 text-[#7b0b76] dark:text-[#c432bd] shrink-0" />
+                <div className="bg-[#7b0b76]/15 border border-[#7b0b76]/40 text-[#7b0b76] p-3 rounded-xl flex items-center gap-2 font-medium">
+                  <AlertCircle className="w-4 h-4 text-[#7b0b76] shrink-0" />
                   {error}
                 </div>
               )}
@@ -120,7 +120,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               {/* 1. Ship Name (Mandatory) */}
               <div>
                 <label className="block text-[var(--text-main)] font-bold mb-1.5">
-                  Ship Name <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
+                  Ship Name <span className="text-[#7b0b76]">*</span>
                 </label>
                 <input
                   type="text"
@@ -135,7 +135,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
               {/* 2. IMO Number (Mandatory) */}
               <div>
                 <label className="block text-[var(--text-main)] font-bold mb-1.5">
-                  IMO Number <span className="text-[#7b0b76] dark:text-[#c432bd]">*</span>
+                  IMO Number <span className="text-[#7b0b76]">*</span>
                 </label>
                 <input
                   type="text"

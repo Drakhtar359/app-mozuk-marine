@@ -98,14 +98,14 @@ export const DeleteShipModal: React.FC<DeleteShipModalProps> = ({
             {/* Header */}
             <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[#7b0b76]/10 sticky top-0 z-20">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-[#7b0b76]/15 border border-[#7b0b76]/30 text-[#7b0b76] dark:text-[#c432bd]">
+                <div className="p-2 rounded-xl bg-[#7b0b76]/15 border border-[#7b0b76]/30 text-[#7b0b76]">
                   <ShieldAlert className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                     Delete Vessel Profile
                   </h3>
-                  <p className="text-[11px] text-[#7b0b76] dark:text-[#c432bd] font-bold">
+                  <p className="text-[11px] text-[#7b0b76] font-bold">
                     {ship.name} ({ship.imo})
                   </p>
                 </div>
@@ -125,7 +125,7 @@ export const DeleteShipModal: React.FC<DeleteShipModalProps> = ({
             {/* Modal Body */}
             <div className="p-6 space-y-4">
               <div className="p-4 rounded-xl bg-[#7b0b76]/10 border border-[#7b0b76]/25 text-xs leading-relaxed space-y-2">
-                <div className="flex items-center gap-2 font-bold text-[#7b0b76] dark:text-[#c432bd] text-sm">
+                <div className="flex items-center gap-2 font-bold text-[#7b0b76] text-sm">
                   <AlertTriangle className="w-4 h-4 shrink-0" /> Warning: Permanent Deletion
                 </div>
                 <p className="text-[var(--text-main)] font-semibold leading-relaxed">
@@ -191,7 +191,7 @@ export const DeleteShipModal: React.FC<DeleteShipModalProps> = ({
                 >
                   {/* Left-to-Right Slider Fill Bar */}
                   <div
-                    className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#7b0b76] to-[#c432bd] transition-all duration-75 pointer-events-none"
+                    className="absolute left-0 top-0 bottom-0 bg-[#7b0b76] transition-all duration-75 pointer-events-none"
                     style={{ width: `${holdProgress}%` }}
                   />
 
