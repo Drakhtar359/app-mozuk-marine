@@ -198,7 +198,7 @@ export const ShipList: React.FC<ShipListProps> = ({
                     e.stopPropagation();
                     setDeletingShip(ship);
                   }}
-                  className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
+                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                   title="Remove vessel from fleet"
                 >
                   <Trash2 className="w-4 h-4 text-[#991b1b] dark:text-[#e05252]" />

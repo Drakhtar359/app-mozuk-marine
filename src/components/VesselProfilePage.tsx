@@ -948,7 +948,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           e.stopPropagation();
                           handleRemoveCrew(master.id);
                         }}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition opacity-0 group-hover:opacity-100"
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition opacity-0 group-hover:opacity-100"
                         title="Remove Master"
                       >
                         <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -1056,7 +1056,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -1136,7 +1136,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -1216,7 +1216,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               e.stopPropagation();
                               handleRemoveCrew(member.id);
                             }}
-                            className="p-1 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition opacity-0 group-hover:opacity-100"
+                            className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition opacity-0 group-hover:opacity-100"
                             title="Remove crew member"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -1441,7 +1441,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                             <button
                               onClick={() => handleRemoveRepair(log.id)}
-                              className="p-2 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
+                              className="p-2 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                               title="Delete log entry"
                             >
                               <Trash2 className="w-4 h-4 text-[#991b1b] dark:text-[#e05252]" />
@@ -1512,7 +1512,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                             <button
                               onClick={() => handleRemoveRepair(log.id)}
-                              className="p-2 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
+                              className="p-2 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                               title="Delete log entry"
                             >
                               <Trash2 className="w-4 h-4 text-[#991b1b] dark:text-[#e05252]" />
@@ -1636,7 +1636,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                                   <button
                                     onClick={() => handleRemoveProcurementOrder(item.id)}
-                                    className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
+                                    className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
                                     title="Delete order"
                                   >
                                     <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -1810,7 +1810,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
+                                  className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                                   title="Delete document"
                                 >
                                   <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -1886,7 +1886,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
+                                  className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                                   title="Delete document"
                                 >
                                   <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -1962,7 +1962,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               <td className="py-3 px-4 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition"
+                                  className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                                   title="Delete record"
                                 >
                                   <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -2297,7 +2297,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               )}
                               <button
                                 onClick={() => handleRemoveVisitor(visitor.id)}
-                                className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center shrink-0 shadow-sm"
+                                className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center shrink-0 shadow-sm"
                                 title="Delete log entry"
                               >
                                 <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -2522,7 +2522,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3.5 px-4 text-right whitespace-nowrap">
                             <button
                               onClick={() => handleRemoveBallastLog(log.id)}
-                              className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
+                              className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
                               title="Delete record"
                             >
                               <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -2754,7 +2754,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           <td className="py-3.5 px-4 text-right whitespace-nowrap">
                             <button
                               onClick={() => handleRemoveSewageLog(log.id)}
-                              className="p-1.5 rounded bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
+                              className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
                               title="Delete record"
                             >
                               <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />

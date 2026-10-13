@@ -791,7 +791,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                 </button>
                                 <button
                                   onClick={() => handleDeleteCustomer(cust.id)}
-                                  className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
                                   title="Delete customer record"
                                 >
                                   <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -911,7 +911,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                 </button>
                                 <button
                                   onClick={() => handleDeleteEmployee(emp.id)}
-                                  className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
                                   title="Delete employee record"
                                 >
                                   <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
@@ -1039,7 +1039,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                 </button>
                                 <button
                                   onClick={() => handleDeleteContact(person.id)}
-                                  className="p-1.5 rounded-lg bg-black/5 dark:bg-black/40 hover:bg-[#991b1b]/15 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/20 hover:border-[#991b1b]/40 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
                                   title="Delete contact record"
                                 >
                                   <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
