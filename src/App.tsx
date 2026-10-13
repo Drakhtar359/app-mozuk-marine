@@ -8,6 +8,7 @@ import { ShipList } from './components/ShipList';
 import { VesselProfilePage } from './components/VesselProfilePage';
 import { CompanyCrewList } from './components/CompanyCrewList';
 import { CompanyProfilePage } from './components/CompanyProfilePage';
+import { NotFoundPage } from './components/NotFoundPage';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
 import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut } from 'lucide-react';
 
@@ -575,7 +576,8 @@ export function App() {
     return defaultOwnerDetails;
   });
 
-  const [viewMode, setViewMode] = useState<'fleet' | 'profile'>('fleet');
+  const [viewMode, setViewMode] = useState<'fleet' | 'profile' | '404'>('fleet');
+  const [attemptedPath, setAttemptedPath] = useState<string>('');
   const [selectedShipId, setSelectedShipId] = useState<string | null>(null);
   const [selectedCrewForProfile, setSelectedCrewForProfile] = useState<CrewMember | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -669,7 +671,8 @@ export function App() {
         setViewMode('fleet');
       } else {
         setSelectedShipId(null);
-        setViewMode('fleet');
+        setAttemptedPath(window.location.pathname);
+        setViewMode('404');
       }
     };
 
@@ -840,7 +843,7 @@ export function App() {
               )}
             </motion.button>
 
-            {(selectedShip || viewMode === 'profile') && (
+            {(selectedShip || viewMode === 'profile' || viewMode === '404') && (
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
@@ -913,6 +916,22 @@ export function App() {
                 onOpenEditModal={() => setIsOwnerModalOpen(true)}
                 onSelectShip={(ship) => handleSelectShip(ship)}
                 onUpdateOwnerDetails={handleSaveOwnerDetails}
+              />
+            </motion.div>
+          ) : viewMode === '404' ? (
+            <motion.div
+              key="404-page"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            >
+              <NotFoundPage
+                onGoHome={handleSelectFleetDirectory}
+                onGoToCompanyProfile={handleSelectCompanyProfile}
+                ships={ships}
+                onSelectShip={(ship) => handleSelectShip(ship)}
+                attemptedPath={attemptedPath}
               />
             </motion.div>
           ) : (
