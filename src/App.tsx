@@ -926,13 +926,7 @@ export function App() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ type: 'spring', stiffness: 380, damping: 28 }}
             >
-              <NotFoundPage
-                onGoHome={handleSelectFleetDirectory}
-                onGoToCompanyProfile={handleSelectCompanyProfile}
-                ships={ships}
-                onSelectShip={(ship) => handleSelectShip(ship)}
-                attemptedPath={attemptedPath}
-              />
+              <NotFoundPage attemptedPath={attemptedPath} />
             </motion.div>
           ) : (
             <motion.div

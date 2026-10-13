@@ -1,27 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Compass, Anchor, ArrowLeft, Building2, Ship as ShipIcon, Search, AlertCircle } from 'lucide-react';
-import { Ship } from '../types/vessel';
+import { Compass, Anchor, AlertCircle } from 'lucide-react';
 
 interface NotFoundPageProps {
-  onGoHome: () => void;
-  onGoToCompanyProfile: () => void;
-  ships?: Ship[];
-  onSelectShip?: (ship: Ship) => void;
+  onGoHome?: () => void;
+  onGoToCompanyProfile?: () => void;
   attemptedPath?: string;
 }
 
 export const NotFoundPage: React.FC<NotFoundPageProps> = ({
-  onGoHome,
-  onGoToCompanyProfile,
-  ships = [],
-  onSelectShip,
   attemptedPath,
 }) => {
   const currentPath = attemptedPath || (typeof window !== 'undefined' ? window.location.pathname : '/');
 
   return (
-    <div className="py-12 md:py-16 flex flex-col items-center justify-center text-center max-w-3xl mx-auto px-4">
+    <div className="py-12 md:py-16 flex flex-col items-center justify-center text-center max-w-2xl mx-auto px-4">
       {/* 404 Glass Card Container */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -29,15 +22,19 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({
         transition={{ type: 'spring', stiffness: 350, damping: 28 }}
         className="w-full mozuk-glass-card rounded-3xl p-8 md:p-12 relative overflow-hidden border border-[var(--color-glass-border)] shadow-2xl"
       >
-        {/* Subtle decorative background circles */}
+        {/* Subtle decorative background glow circles */}
         <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-[#28ada4]/5 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-[#7b0b76]/5 blur-3xl pointer-events-none" />
 
-        {/* Nautical Radar / Compass Animation */}
-        <div className="relative w-28 h-28 mx-auto mb-6 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border border-[#28ada4]/30 animate-ping pointer-events-none" />
-          <div className="absolute inset-2 rounded-full border border-[#7b0b76]/30 pointer-events-none" />
-          <div className="w-20 h-20 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-center shadow-lg relative z-10">
+        {/* Nautical Radar / Compass Animation with perfectly circular matching container */}
+        <div className="relative w-32 h-32 mx-auto mb-6 flex items-center justify-center">
+          {/* Outer radar ping ring */}
+          <div className="absolute inset-0 rounded-full border border-[#28ada4]/40 animate-ping pointer-events-none" />
+          {/* Concentric radar rings */}
+          <div className="absolute -inset-1 rounded-full border border-[#28ada4]/20 pointer-events-none" />
+          <div className="absolute inset-2 rounded-full border border-[#7b0b76]/35 pointer-events-none" />
+          {/* Center circular icon badge - rounded-full to avoid square corners covering the circle */}
+          <div className="w-20 h-20 rounded-full bg-[var(--color-surface)] border-2 border-[var(--color-glass-border)] flex items-center justify-center shadow-lg relative z-10">
             <Compass className="w-10 h-10 text-[#28ada4]" />
           </div>
         </div>
@@ -63,64 +60,10 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({
 
         {/* Attempted Path Box */}
         {currentPath && currentPath !== '/' && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] font-mono text-xs text-[var(--text-muted)] mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] font-mono text-xs text-[var(--text-muted)]">
             <Anchor className="w-3.5 h-3.5 text-[#7b0b76] shrink-0" />
             <span>Uncharted Route:</span>
             <code className="text-[var(--text-main)] font-bold">{currentPath}</code>
-          </div>
-        )}
-
-        {/* Navigation Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={onGoHome}
-            className="px-6 py-3 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shadow-lg"
-          >
-            <ArrowLeft className="w-4 h-4" /> Return to Fleet Directory
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={onGoToCompanyProfile}
-            className="px-6 py-3 rounded-full btn-mozuk-secondary font-bold text-xs flex items-center gap-2"
-          >
-            <Building2 className="w-4 h-4 text-[#28ada4]" /> Company Profile
-          </motion.button>
-        </div>
-
-        {/* Registered Fleet Quick Shortcuts */}
-        {ships.length > 0 && onSelectShip && (
-          <div className="mt-10 pt-8 border-t border-[var(--color-glass-border)] text-left">
-            <div className="text-center mb-4">
-              <span className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
-                Or navigate directly to an active vessel in the fleet:
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {ships.slice(0, 6).map((ship) => (
-                <button
-                  key={ship.id}
-                  onClick={() => onSelectShip(ship)}
-                  className="bg-[var(--color-bg)] hover:bg-[var(--color-surface)] border border-[var(--color-glass-border)] hover:border-[#28ada4] rounded-xl p-3 text-left transition group cursor-pointer flex items-center justify-between gap-2 shadow-sm"
-                >
-                  <div className="min-w-0">
-                    <div className="font-extrabold text-xs text-[var(--text-main)] truncate group-hover:text-[#28ada4] transition">
-                      {ship.name}
-                    </div>
-                    <div className="text-[10px] text-[var(--text-muted)] font-mono truncate">
-                      IMO: {ship.imo || 'N/A'} • {ship.type || 'Vessel'}
-                    </div>
-                  </div>
-                  <div className="p-1.5 rounded-lg bg-[#7b0b76] text-white shrink-0 group-hover:scale-105 transition-transform">
-                    <ShipIcon className="w-3.5 h-3.5" />
-                  </div>
-                </button>
-              ))}
-            </div>
           </div>
         )}
       </motion.div>
