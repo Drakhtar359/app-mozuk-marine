@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CrewMember, Ship, VesselHistoryEntry, getEffectiveVesselHistory } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
-import { sortByRankHierarchy, getCrewRankWeight } from '../utils/rankSort';
+import { sortByRankHierarchy, getCrewRankWeight, DEPARTMENT_RANKS, DepartmentType } from '../utils/rankSort';
 import { DateInput } from './DateInput';
 import {
   Users,
@@ -100,12 +100,12 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   const [quickLocation, setQuickLocation] = useState('');
 
   // Department Selection Auto Sync Role
-  const handleDepartmentSelect = (dept: 'master' | 'deck' | 'engine' | 'kitchen') => {
+  const handleDepartmentSelect = (dept: DepartmentType) => {
     setDepartment(dept);
-    if (dept === 'master') setRole('Master / Captain');
-    if (dept === 'deck') setRole('Chief Officer');
-    if (dept === 'engine') setRole('Chief Engineer');
-    if (dept === 'kitchen') setRole('Chief Cook');
+    const ranks = DEPARTMENT_RANKS[dept];
+    if (ranks && ranks.length > 0) {
+      setRole(ranks[0]);
+    }
   };
 
   // Reset Add Form
@@ -113,7 +113,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     setName('');
     setEmail('');
     setPhoneNumber('');
-    setRole('Chief Officer');
+    setRole(DEPARTMENT_RANKS.deck[0]);
     setDepartment('deck');
     setNationality('British');
     setDateOfBirth('');
@@ -787,14 +787,18 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Position</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Chief Officer, Bosun, ETO"
+                    <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
                       required
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
-                    />
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
+                    >
+                      {DEPARTMENT_RANKS[department]?.map((rank) => (
+                        <option key={rank} value={rank}>
+                          {rank}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
@@ -1000,12 +1004,30 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1.5">Role / Position on Vessel</label>
-                  <input
-                    type="text"
+                  <select
                     value={quickRole}
                     onChange={(e) => setQuickRole(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                  />
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
+                  >
+                    {assigningCrew?.department && DEPARTMENT_RANKS[assigningCrew.department] ? (
+                      <>
+                        {DEPARTMENT_RANKS[assigningCrew.department].map((rank) => (
+                          <option key={rank} value={rank}>{rank}</option>
+                        ))}
+                        {quickRole && !DEPARTMENT_RANKS[assigningCrew.department].includes(quickRole) && (
+                          <option value={quickRole}>{quickRole} (Current)</option>
+                        )}
+                      </>
+                    ) : (
+                      Object.entries(DEPARTMENT_RANKS).map(([deptKey, ranks]) => (
+                        <optgroup key={deptKey} label={deptKey.toUpperCase()}>
+                          {ranks.map((rank) => (
+                            <option key={rank} value={rank}>{rank}</option>
+                          ))}
+                        </optgroup>
+                      ))
+                    )}
+                  </select>
                 </div>
 
                 <div>

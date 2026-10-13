@@ -52,6 +52,7 @@ import {
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
+import { DEPARTMENT_RANKS, DepartmentType } from '../utils/rankSort';
 
 interface VesselProfilePageProps {
   ship: Ship;
@@ -734,12 +735,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   });
 
   // When Department changes in modal, set default role
-  const handleDepartmentChange = (dept: 'master' | 'deck' | 'engine' | 'kitchen') => {
+  const handleDepartmentChange = (dept: DepartmentType) => {
     setCrewDepartment(dept);
-    if (dept === 'master') setCrewRole('Master / Captain');
-    else if (dept === 'deck') setCrewRole('Chief Officer');
-    else if (dept === 'engine') setCrewRole('Chief Engineer');
-    else setCrewRole('Chief Cook');
+    const ranks = DEPARTMENT_RANKS[dept];
+    if (ranks && ranks.length > 0) {
+      setCrewRole(ranks[0]);
+    }
   };
 
   return (
@@ -2850,9 +2851,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     onChange={(e) => {
                       const id = e.target.value;
                       setSelectedExistingCrewId(id);
-                      const selected = companyCrew.find((c) => c.id === id);
+                      const selected = companyCrew?.find((c) => c.id === id);
                       if (selected) {
                         setCrewRole(selected.role);
+                        if (selected.department) {
+                          setCrewDepartment(selected.department);
+                        }
                       }
                     }}
                     required
@@ -2906,13 +2910,28 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Position on {ship.name}</label>
-                  <input
-                    type="text"
+                  <select
                     value={crewRole}
                     onChange={(e) => setCrewRole(e.target.value)}
                     required
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                  />
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
+                  >
+                    {(() => {
+                      const selectedCrew = companyCrew?.find((c) => c.id === selectedExistingCrewId);
+                      const dept = selectedCrew?.department || crewDepartment;
+                      const ranks = DEPARTMENT_RANKS[dept] || DEPARTMENT_RANKS.deck;
+                      return (
+                        <>
+                          {ranks.map((rank) => (
+                            <option key={rank} value={rank}>{rank}</option>
+                          ))}
+                          {crewRole && !ranks.includes(crewRole) && (
+                            <option value={crewRole}>{crewRole} (Current)</option>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -3008,47 +3027,15 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               </div>
 
               <div>
-                <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Role *</label>
+                <label className="block text-[var(--text-main)] font-bold mb-1">Rank / Position *</label>
                 <select
                   value={crewRole}
                   onChange={(e) => setCrewRole(e.target.value)}
-                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                  className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
                 >
-                  {crewDepartment === 'master' && (
-                    <option value="Master / Captain">Master / Captain</option>
-                  )}
-                  {crewDepartment === 'deck' && (
-                    <>
-                      <option value="Chief Officer">Chief Officer</option>
-                      <option value="Second Officer">Second Officer</option>
-                      <option value="Third Officer">Third Officer</option>
-                      <option value="Bosun">Bosun</option>
-                      <option value="Able Seaman">Able Seaman</option>
-                      <option value="Ordinary Seaman">Ordinary Seaman</option>
-                      <option value="Deck Cadet">Deck Cadet</option>
-                    </>
-                  )}
-                  {crewDepartment === 'engine' && (
-                    <>
-                      <option value="Chief Engineer">Chief Engineer</option>
-                      <option value="Second Engineer">Second Engineer</option>
-                      <option value="Third Engineer">Third Engineer</option>
-                      <option value="Fourth Engineer">Fourth Engineer</option>
-                      <option value="Electro-Technical Officer (ETO)">Electro-Technical Officer (ETO)</option>
-                      <option value="Oiler / Motorman">Oiler / Motorman</option>
-                      <option value="Fitter">Fitter</option>
-                      <option value="Engine Cadet">Engine Cadet</option>
-                    </>
-                  )}
-                  {crewDepartment === 'kitchen' && (
-                    <>
-                      <option value="Chief Cook">Chief Cook</option>
-                      <option value="Second Cook">Second Cook</option>
-                      <option value="Chief Steward">Chief Steward</option>
-                      <option value="Messman">Messman</option>
-                      <option value="Galley Hand">Galley Hand</option>
-                    </>
-                  )}
+                  {DEPARTMENT_RANKS[crewDepartment]?.map((rank) => (
+                    <option key={rank} value={rank}>{rank}</option>
+                  ))}
                 </select>
               </div>
 

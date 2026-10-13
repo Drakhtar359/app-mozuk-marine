@@ -57,3 +57,45 @@ export function sortByRankHierarchy(crewList: CrewMember[]): CrewMember[] {
     return a.name.localeCompare(b.name);
   });
 }
+
+export type DepartmentType = 'master' | 'deck' | 'engine' | 'kitchen';
+
+export const DEPARTMENT_LABELS: Record<DepartmentType, string> = {
+  master: 'Master',
+  deck: 'Deck Department',
+  engine: 'Engine Department',
+  kitchen: 'Kitchen / Mess Dept',
+};
+
+export const DEPARTMENT_RANKS: Record<DepartmentType, string[]> = {
+  master: [
+    'Master / Captain',
+  ],
+  deck: [
+    'Chief Officer',
+    'Second Officer',
+    'Third Officer',
+    'Deck Cadet',
+    'Bosun',
+    'Able Seaman',
+    'Ordinary Seaman',
+  ],
+  engine: [
+    'Chief Engineer',
+    'Second Engineer',
+    'Third Engineer',
+    'Fourth Engineer',
+    'Electro-Technical Officer (ETO)',
+    'Engine Cadet',
+    'Fitter',
+    'Oiler / Motorman',
+    'Wiper',
+  ],
+  kitchen: [
+    'Chief Cook',
+    'Second Cook',
+    'Chief Steward',
+    'Messman',
+    'Galley Hand',
+  ],
+};
