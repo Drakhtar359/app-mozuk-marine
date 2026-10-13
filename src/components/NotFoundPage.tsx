@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Compass, Anchor, AlertCircle } from 'lucide-react';
+import { Compass, AlertCircle } from 'lucide-react';
 
 interface NotFoundPageProps {
   onGoHome?: () => void;
@@ -8,11 +8,7 @@ interface NotFoundPageProps {
   attemptedPath?: string;
 }
 
-export const NotFoundPage: React.FC<NotFoundPageProps> = ({
-  attemptedPath,
-}) => {
-  const currentPath = attemptedPath || (typeof window !== 'undefined' ? window.location.pathname : '/');
-
+export const NotFoundPage: React.FC<NotFoundPageProps> = () => {
   return (
     <div className="py-12 md:py-16 flex flex-col items-center justify-center text-center max-w-2xl mx-auto px-4">
       {/* 404 Glass Card Container */}
@@ -54,18 +50,9 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({
           Vessel Course Not Found
         </h2>
 
-        <p className="text-sm text-[var(--text-muted)] max-w-lg mx-auto leading-relaxed mb-6">
+        <p className="text-sm text-[var(--text-muted)] max-w-lg mx-auto leading-relaxed">
           The waypoint, IMO registry number, or fleet directory page you are attempting to locate is not charting in our marine system or may have changed course.
         </p>
-
-        {/* Attempted Path Box */}
-        {currentPath && currentPath !== '/' && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] font-mono text-xs text-[var(--text-muted)]">
-            <Anchor className="w-3.5 h-3.5 text-[#7b0b76] shrink-0" />
-            <span>Uncharted Route:</span>
-            <code className="text-[var(--text-main)] font-bold">{currentPath}</code>
-          </div>
-        )}
       </motion.div>
     </div>
   );
