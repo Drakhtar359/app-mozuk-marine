@@ -1,18 +1,62 @@
 import { CrewMember, CrewDocument } from '../types/vessel';
+import { formatDate } from './dateFormatter';
 
 /**
  * Generates an authentic mix of certifications and documentation for a crew member.
+ * Guarantees Passport and Seaman's Book are included as standard template documents for every seafarer.
  */
 export function getDefaultCrewDocuments(crew: CrewMember): CrewDocument[] {
-  if (crew.documents && crew.documents.length > 0) {
-    return crew.documents;
-  }
-
   const dept = crew.department || 'deck';
   const roleLower = (crew.role || '').toLowerCase();
   const nat = crew.nationality || 'International';
 
-  const docs: CrewDocument[] = [];
+  // 1. Template Identity & Travel Documents (Always present for every seafarer)
+  const passportNumber =
+    crew.passportNumber && crew.passportNumber.trim() !== ''
+      ? crew.passportNumber
+      : `P${Math.abs(hashString(crew.id + 'pass')) % 8999999 + 1000000}`;
+
+  const seamanBookNo =
+    crew.seamanBookNo && crew.seamanBookNo.trim() !== ''
+      ? crew.seamanBookNo
+      : `SB-${Math.abs(hashString(crew.id + 'sb')) % 899999 + 100000}`;
+
+  const passportDoc: CrewDocument = {
+    id: `doc-${crew.id}-passport`,
+    title: 'International Passport',
+    type: 'documentation',
+    documentNumber: passportNumber,
+    issueDate: '15/09/2020',
+    expiryDate: crew.passportExpiry ? formatDate(crew.passportExpiry) : '14/09/2030',
+    authority: `${nat} Immigration & Passport Directorate`,
+    status: 'valid',
+    fileSize: '2.4 MB',
+  };
+
+  const seamanBookDoc: CrewDocument = {
+    id: `doc-${crew.id}-seaman-book`,
+    title: "Seaman's Discharge Book (CDC)",
+    type: 'documentation',
+    documentNumber: seamanBookNo,
+    issueDate: '01/02/2022',
+    expiryDate: crew.seamanBookExpiry ? formatDate(crew.seamanBookExpiry) : '01/02/2027',
+    authority: `${nat} Maritime Administration`,
+    status: 'valid',
+    fileSize: '3.1 MB',
+  };
+
+  if (crew.documents && crew.documents.length > 0) {
+    const hasPassport = crew.documents.some((d) => d.title.toLowerCase().includes('passport'));
+    const hasSeamanBook = crew.documents.some((d) =>
+      d.title.toLowerCase().includes('seaman') || d.title.toLowerCase().includes('cdc')
+    );
+    const missingTemplates: CrewDocument[] = [];
+    if (!hasPassport) missingTemplates.push(passportDoc);
+    if (!hasSeamanBook) missingTemplates.push(seamanBookDoc);
+    return [...missingTemplates, ...crew.documents];
+  }
+
+  const docs: CrewDocument[] = [passportDoc, seamanBookDoc];
 
   // 1. Department-Specific Certifications
   if (dept === 'master' || roleLower.includes('master') || roleLower.includes('captain')) {

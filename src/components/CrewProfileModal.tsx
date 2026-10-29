@@ -26,11 +26,9 @@ import {
   Briefcase,
   Plus,
   Search,
-  ShieldCheck,
   Download,
   Trash2,
   CheckCircle2,
-  Filter,
 } from 'lucide-react';
 
 interface CrewProfileModalProps {
@@ -44,10 +42,8 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
   crew,
   onClose,
   onUpdateCrew,
-  shipName,
 }) => {
   const [activeTab, setActiveTab] = useState<'personal' | 'history' | 'documents'>('personal');
-  const [docFilter, setDocFilter] = useState<'all' | 'certification' | 'documentation'>('all');
   const [docSearch, setDocSearch] = useState('');
   const [isAddDocOpen, setIsAddDocOpen] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
@@ -62,7 +58,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
 
   if (!crew) return null;
 
-  // Documents list
+  // Documents list (includes Passport & Seaman's book template for every seafarer)
   const documents: CrewDocument[] = getDefaultCrewDocuments(crew);
 
   // History sorting helper
@@ -76,20 +72,17 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
 
   const effectiveHistory = getEffectiveVesselHistory(crew);
 
-  // Filtered documents
+  // Filtered documents by search query across all types (all in one tab)
   const filteredDocuments = documents.filter((doc) => {
-    const matchesType = docFilter === 'all' || doc.type === docFilter;
     const q = docSearch.toLowerCase().trim();
-    const matchesSearch =
-      !q ||
+    if (!q) return true;
+    return (
       doc.title.toLowerCase().includes(q) ||
       doc.documentNumber.toLowerCase().includes(q) ||
-      doc.authority.toLowerCase().includes(q);
-    return matchesType && matchesSearch;
+      doc.authority.toLowerCase().includes(q) ||
+      doc.type.toLowerCase().includes(q)
+    );
   });
-
-  const certCount = documents.filter((d) => d.type === 'certification').length;
-  const docCount = documents.filter((d) => d.type === 'documentation').length;
 
   // Add document handler
   const handleAddDocument = (e: React.FormEvent) => {
@@ -144,7 +137,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
     setDownloadSuccess(`Downloaded: ${doc.title}`);
     setTimeout(() => {
       setDownloadSuccess(null);
-    }, 2800);
+    }, 2500);
   };
 
   return (
@@ -158,16 +151,16 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
         onClick={onClose}
       />
 
-      {/* Modal Dialog */}
+      {/* Modal Dialog: Fixed dimensions to prevent window resizing/jumping when switching tabs */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 15 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-        className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.18 }}
+        className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-3xl w-full max-w-4xl h-[650px] max-h-[90vh] overflow-hidden shadow-2xl flex flex-col"
       >
-        {/* Profile Header */}
-        <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
+        {/* Profile Header (Fixed Top) */}
+        <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
           <div className="flex items-center gap-4 min-w-0">
             <CrewAvatar
               crew={crew}
@@ -201,14 +194,14 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition shrink-0 ml-3"
+            className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition shrink-0 ml-3 cursor-pointer"
             title="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* 3 TABS NAVIGATION BAR */}
+        {/* 3 TABS NAVIGATION BAR (No numbers next to tabs) */}
         <div className="px-6 pt-3 pb-0 border-b border-[var(--color-glass-border)] bg-[var(--color-surface)]/60 shrink-0">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
             {/* Tab 1: Personal Info */}
@@ -235,14 +228,9 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
             >
               <History className="w-4 h-4" />
               <span>Company Vessel History</span>
-              {effectiveHistory.length > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/10 dark:bg-white/10 text-[var(--text-main)] font-mono">
-                  {effectiveHistory.length}
-                </span>
-              )}
             </button>
 
-            {/* Tab 3: Documents & Certifications */}
+            {/* Tab 3: Documents */}
             <button
               onClick={() => setActiveTab('documents')}
               className={`pb-3 px-3 text-xs font-extrabold flex items-center gap-2 border-b-2 transition whitespace-nowrap cursor-pointer ${
@@ -253,9 +241,6 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
             >
               <FileCheck className="w-4 h-4" />
               <span>Documents & Certifications</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#28ada4]/15 text-[#28ada4] font-extrabold border border-[#28ada4]/35">
-                {documents.length}
-              </span>
             </button>
           </div>
         </div>
@@ -268,8 +253,8 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
           </div>
         )}
 
-        {/* TAB CONTENTS (Scrollable Body) */}
-        <div className="p-6 overflow-y-auto flex-1 text-xs">
+        {/* TAB CONTENTS (Scrollable Body with fixed height container) */}
+        <div className="p-6 overflow-y-auto flex-1 min-h-0 text-xs">
           <AnimatePresence mode="wait">
             {/* ======================================================== */}
             {/* TAB 1: PERSONAL INFO */}
@@ -277,10 +262,10 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
             {activeTab === 'personal' && (
               <motion.div
                 key="tab-personal"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.15 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.12 }}
                 className="space-y-4"
               >
                 <div>
@@ -399,10 +384,10 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
             {activeTab === 'history' && (
               <motion.div
                 key="tab-history"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.15 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.12 }}
                 className="space-y-4"
               >
                 <div className="flex items-center justify-between">
@@ -472,84 +457,30 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
             )}
 
             {/* ======================================================== */}
-            {/* TAB 3: DOCUMENTS & CERTIFICATIONS */}
+            {/* TAB 3: DOCUMENTS & CERTIFICATIONS (All in one tab, one line each, no icons) */}
             {/* ======================================================== */}
             {activeTab === 'documents' && (
               <motion.div
                 key="tab-documents"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.15 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.12 }}
                 className="space-y-4"
               >
-                {/* Metrics Header */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Total Files</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-black text-xl text-[var(--text-main)] mt-0.5">
-                      {documents.length}
-                    </div>
-                  </div>
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Certifications</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-black text-xl text-[#28ada4] mt-0.5">
-                      {certCount}
-                    </div>
-                  </div>
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Documentation</div>
-                    <div className="font-['Space_Grotesk',sans-serif] font-black text-xl text-[var(--text-main)] mt-0.5">
-                      {docCount}
-                    </div>
-                  </div>
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase">Compliance</div>
-                    <div className="font-extrabold text-xs text-[#28ada4] flex items-center gap-1 mt-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> 100% Valid
-                    </div>
-                  </div>
-                </div>
-
-                {/* Filter & Action Toolbar */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-                  {/* Filter Pills */}
-                  <div className="flex items-center gap-1.5 bg-[var(--color-surface)] p-1 rounded-xl border border-[var(--color-glass-border)] shrink-0">
-                    <button
-                      onClick={() => setDocFilter('all')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                        docFilter === 'all'
-                          ? 'bg-[#28ada4] text-slate-950 shadow-sm'
-                          : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                      }`}
-                    >
-                      All ({documents.length})
-                    </button>
-                    <button
-                      onClick={() => setDocFilter('certification')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                        docFilter === 'certification'
-                          ? 'bg-[#28ada4] text-slate-950 shadow-sm'
-                          : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                      }`}
-                    >
-                      Certifications ({certCount})
-                    </button>
-                    <button
-                      onClick={() => setDocFilter('documentation')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                        docFilter === 'documentation'
-                          ? 'bg-[#28ada4] text-slate-950 shadow-sm'
-                          : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                      }`}
-                    >
-                      Documentation ({docCount})
-                    </button>
+                {/* Practical Top Action Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] flex items-center gap-2">
+                      <FileCheck className="w-4 h-4 text-[#28ada4]" /> All Seafarer Documents & Certifications
+                    </h4>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
+                      {documents.length} recorded documents on file (Passport, Seaman's Book & STCW Certifications)
+                    </p>
                   </div>
 
-                  {/* Search and Add Button */}
                   <div className="flex items-center gap-2 flex-1 sm:justify-end">
-                    <div className="relative flex-1 sm:max-w-[200px]">
+                    <div className="relative flex-1 sm:max-w-[220px]">
                       <Search className="w-3.5 h-3.5 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         type="text"
@@ -562,7 +493,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
 
                     <button
                       onClick={() => setIsAddDocOpen(!isAddDocOpen)}
-                      className="px-3 py-1.5 rounded-xl btn-mozuk-primary font-bold text-xs flex items-center gap-1.5 shrink-0 shadow-sm"
+                      className="px-3 py-1.5 rounded-xl btn-mozuk-primary font-bold text-xs flex items-center gap-1.5 shrink-0 shadow-sm cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Add Document</span>
@@ -587,7 +518,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <button
                           type="button"
                           onClick={() => setIsAddDocOpen(false)}
-                          className="text-[var(--text-muted)] hover:text-[var(--text-main)]"
+                          className="text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -641,7 +572,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                           </label>
                           <input
                             type="text"
-                            placeholder="e.g. MCA, DNV, Panama Maritime"
+                            placeholder="e.g. MCA, DNV, Maritime Authority"
                             value={newAuthority}
                             onChange={(e) => setNewAuthority(e.target.value)}
                             className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
@@ -677,13 +608,13 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <button
                           type="button"
                           onClick={() => setIsAddDocOpen(false)}
-                          className="px-3.5 py-1.5 rounded-xl btn-mozuk-secondary text-xs font-bold"
+                          className="px-3.5 py-1.5 rounded-xl btn-mozuk-secondary text-xs font-bold cursor-pointer"
                         >
                           Cancel
                         </button>
                         <button
                           type="submit"
-                          className="px-4 py-1.5 rounded-xl btn-mozuk-primary text-xs font-bold shadow-sm"
+                          className="px-4 py-1.5 rounded-xl btn-mozuk-primary text-xs font-bold shadow-sm cursor-pointer"
                         >
                           Save to Profile
                         </button>
@@ -692,42 +623,39 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                   )}
                 </AnimatePresence>
 
-                {/* DOCUMENTS LIST */}
+                {/* PRACTICAL ONE-LINE-PER-DOCUMENT TABLE (No individual icons) */}
                 {filteredDocuments.length === 0 ? (
                   <div className="bg-[var(--color-surface)] rounded-2xl p-8 text-center text-[var(--text-muted)] text-xs border border-[var(--color-glass-border)]">
-                    <FileCheck className="w-8 h-8 text-[var(--text-muted)] mx-auto mb-2 opacity-50" />
-                    No documents or certificates match the current filter criteria.
+                    No documents match your search criteria.
                   </div>
                 ) : (
-                  <div className="space-y-2.5">
-                    {filteredDocuments.map((doc) => (
-                      <div
-                        key={doc.id}
-                        className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] hover:border-[#28ada4]/50 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition group shadow-sm hover:shadow-md"
-                      >
-                        <div className="flex items-start gap-3.5">
-                          {/* Icon badge */}
-                          <div
-                            className={`p-2.5 rounded-xl font-bold shrink-0 mt-0.5 ${
-                              doc.type === 'certification'
-                                ? 'bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/35'
-                                : 'bg-[#7b0b76]/15 text-[#7b0b76] border border-[#7b0b76]/35'
-                            }`}
+                  <div className="overflow-x-auto rounded-2xl border border-[var(--color-glass-border)] bg-[var(--color-surface)] shadow-sm">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-[var(--color-glass-border)] bg-[var(--color-surface)]/90 text-[10px] uppercase font-extrabold text-[var(--text-muted)] tracking-wider">
+                          <th className="py-3 px-3.5">Document Title</th>
+                          <th className="py-3 px-3">Type</th>
+                          <th className="py-3 px-3">Doc Number</th>
+                          <th className="py-3 px-3">Issuing Authority</th>
+                          <th className="py-3 px-3">Expires</th>
+                          <th className="py-3 px-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--color-glass-border)]">
+                        {filteredDocuments.map((doc) => (
+                          <tr
+                            key={doc.id}
+                            className="hover:bg-[var(--color-bg)]/60 transition group"
                           >
-                            {doc.type === 'certification' ? (
-                              <ShieldCheck className="w-4 h-4" />
-                            ) : (
-                              <FileText className="w-4 h-4" />
-                            )}
-                          </div>
+                            {/* Document Title (No document icon) */}
+                            <td className="py-2.5 px-3.5 font-bold text-[var(--text-main)] whitespace-nowrap">
+                              {doc.title}
+                            </td>
 
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h5 className="font-extrabold text-[var(--text-main)] text-xs">
-                                {doc.title}
-                              </h5>
+                            {/* Type Badge */}
+                            <td className="py-2.5 px-3 whitespace-nowrap">
                               <span
-                                className={`px-2 py-0.2 rounded-full font-extrabold text-[9px] uppercase border ${
+                                className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase border ${
                                   doc.type === 'certification'
                                     ? 'bg-[#28ada4]/10 text-[#28ada4] border-[#28ada4]/30'
                                     : 'bg-[#7b0b76]/10 text-[#7b0b76] border-[#7b0b76]/30'
@@ -735,59 +663,51 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                               >
                                 {doc.type}
                               </span>
-                            </div>
+                            </td>
 
-                            <div className="flex items-center gap-3 mt-1 text-[11px] text-[var(--text-muted)] flex-wrap">
-                              <span className="font-mono">
-                                No: <strong className="text-[var(--text-main)]">{doc.documentNumber}</strong>
-                              </span>
-                              <span>•</span>
-                              <span>
-                                Authority: <strong className="text-[var(--text-main)]">{doc.authority}</strong>
-                              </span>
-                              {doc.fileSize && (
-                                <>
-                                  <span>•</span>
-                                  <span className="font-mono text-[10px]">{doc.fileSize}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                            {/* Document Number */}
+                            <td className="py-2.5 px-3 font-mono text-[11px] font-bold text-[var(--text-main)] whitespace-nowrap">
+                              {doc.documentNumber}
+                            </td>
 
-                        {/* Dates & Actions */}
-                        <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[var(--color-glass-border)]">
-                          <div className="text-[11px] text-[var(--text-muted)] font-mono sm:text-right">
-                            <div>
-                              Issued: <span className="text-[var(--text-main)]">{formatDate(doc.issueDate)}</span>
-                            </div>
-                            <div className="text-[10px]">
-                              Expires: <span className="text-[#28ada4] font-bold">{doc.expiryDate ? formatDate(doc.expiryDate) : 'Valid (Indefinite)'}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-1.5">
-                            {/* Download Button */}
-                            <button
-                              onClick={() => handleDownload(doc)}
-                              className="p-1.5 rounded-lg bg-[var(--color-bg)] hover:bg-[#28ada4]/15 border border-[var(--color-glass-border)] hover:border-[#28ada4]/40 text-[var(--text-main)] hover:text-[#28ada4] transition"
-                              title="Download digital certificate"
+                            {/* Issuing Authority */}
+                            <td
+                              className="py-2.5 px-3 text-[11px] text-[var(--text-muted)] whitespace-nowrap truncate max-w-[170px]"
+                              title={doc.authority}
                             >
-                              <Download className="w-3.5 h-3.5" />
-                            </button>
+                              {doc.authority}
+                            </td>
 
-                            {/* Delete Button (Subtle Dark Red) */}
-                            <button
-                              onClick={() => handleDeleteDocument(doc.id)}
-                              className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
-                              title="Delete document"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                            {/* Expiry Date */}
+                            <td className="py-2.5 px-3 whitespace-nowrap">
+                              <span className="font-mono text-[11px] text-[#28ada4] font-bold">
+                                {doc.expiryDate ? formatDate(doc.expiryDate) : 'Valid (Indefinite)'}
+                              </span>
+                            </td>
+
+                            {/* Action Buttons (Download & Subtle Red Delete) */}
+                            <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => handleDownload(doc)}
+                                  className="p-1.5 rounded-lg bg-[var(--color-bg)] hover:bg-[#28ada4]/15 border border-[var(--color-glass-border)] hover:border-[#28ada4]/40 text-[var(--text-main)] hover:text-[#28ada4] transition cursor-pointer"
+                                  title="Download Document"
+                                >
+                                  <Download className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteDocument(doc.id)}
+                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition cursor-pointer"
+                                  title="Delete Document"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </motion.div>
@@ -795,15 +715,15 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
           </AnimatePresence>
         </div>
 
-        {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-[var(--color-glass-border)] bg-[var(--color-surface)]/80 flex items-center justify-between shrink-0">
+        {/* Modal Footer (Fixed Bottom) */}
+        <div className="px-6 py-3.5 border-t border-[var(--color-glass-border)] bg-[var(--color-surface)]/80 flex items-center justify-between shrink-0">
           <div className="text-[11px] text-[var(--text-muted)]">
             Registry ID: <span className="font-mono font-bold text-[var(--text-main)]">{crew.id}</span>
           </div>
 
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-full btn-mozuk-secondary font-bold text-xs"
+            className="px-5 py-2 rounded-full btn-mozuk-secondary font-bold text-xs cursor-pointer"
           >
             Close Profile
           </button>
