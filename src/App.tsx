@@ -9,6 +9,7 @@ import { VesselProfilePage } from './components/VesselProfilePage';
 import { CompanyCrewList } from './components/CompanyCrewList';
 import { CompanyProfilePage } from './components/CompanyProfilePage';
 import { NotFoundPage } from './components/NotFoundPage';
+import { DEFAULT_CREW_AVATARS, getCrewAvatarUrl } from './utils/crewAvatars';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
 import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut } from 'lucide-react';
 
@@ -18,7 +19,7 @@ export function App() {
   });
 
   // Initial Master Company Crew State
-  const [companyCrew, setCompanyCrew] = useState<CrewMember[]>([
+  const initialCrewData: CrewMember[] = [
     // Unassigned / Standby Pool Crew Members
     {
       id: 'c-standby-1',
@@ -120,7 +121,14 @@ export function App() {
     { id: 'c403', name: 'Antonio Cossa', role: 'Chief Officer', department: 'deck', email: 'a.cossa@mozukmarine.com', phoneNumber: '+258 82 987 6543', nationality: 'Mozambican', signOnDate: '01/02/2026', assignedShipId: 'ship-4', assignedShipName: 'MOZUK MARINER', vesselHistory: [{ shipName: 'MOZUK MARINER', role: 'Chief Officer', startDate: '01/02/2026' }] },
     { id: 'c402', name: 'Mateus Nhampossa', role: 'Chief Engineer', department: 'engine', email: 'm.nhampossa@mozukmarine.com', phoneNumber: '+258 84 555 1212', nationality: 'Mozambican', signOnDate: '12/01/2026', assignedShipId: 'ship-4', assignedShipName: 'MOZUK MARINER', vesselHistory: [{ shipName: 'MOZUK MARINER', role: 'Chief Engineer', startDate: '12/01/2026' }] },
     { id: 'c404', name: 'Inacio Tembe', role: 'Chief Cook', department: 'kitchen', email: 'i.tembe@mozukmarine.com', phoneNumber: '+258 87 333 4444', nationality: 'Mozambican', signOnDate: '25/01/2026', assignedShipId: 'ship-4', assignedShipName: 'MOZUK MARINER', vesselHistory: [{ shipName: 'MOZUK MARINER', role: 'Chief Cook', startDate: '25/01/2026' }] },
-  ]);
+  ];
+
+  const [companyCrew, setCompanyCrew] = useState<CrewMember[]>(() =>
+    initialCrewData.map((c) => ({
+      ...c,
+      avatarUrl: c.avatarUrl || DEFAULT_CREW_AVATARS[c.id] || getCrewAvatarUrl(c),
+    }))
+  );
 
   // Initial Ships Specifications & Data
   const [rawShips, setRawShips] = useState<Array<Omit<Ship, 'crew'> & { crew?: CrewMember[] }>>([
@@ -718,7 +726,11 @@ export function App() {
 
   // Handlers for Company Master Crew Roster
   const handleAddCompanyCrew = (newCrew: CrewMember) => {
-    setCompanyCrew((prev) => [newCrew, ...prev]);
+    const crewWithAvatar = {
+      ...newCrew,
+      avatarUrl: newCrew.avatarUrl || getCrewAvatarUrl(newCrew),
+    };
+    setCompanyCrew((prev) => [crewWithAvatar, ...prev]);
   };
 
   const handleUpdateCompanyCrew = (updatedCrew: CrewMember) => {

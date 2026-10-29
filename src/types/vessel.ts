@@ -23,6 +23,7 @@ export interface CrewMember {
   assignedShipName?: string;
   email?: string;
   phoneNumber?: string;
+  avatarUrl?: string;
 }
 
 export interface TechnicalDoc {

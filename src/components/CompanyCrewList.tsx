@@ -4,6 +4,8 @@ import { CrewMember, Ship, VesselHistoryEntry, getEffectiveVesselHistory } from 
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { sortByRankHierarchy, getCrewRankWeight, DEPARTMENT_RANKS, DepartmentType } from '../utils/rankSort';
 import { DateInput } from './DateInput';
+import { CrewAvatar } from './CrewAvatar';
+import { getCrewAvatarUrl } from '../utils/crewAvatars';
 import {
   Users,
   Search,
@@ -133,8 +135,9 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
     const selectedShip = ships.find((s) => s.id === targetShipId);
 
+    const newCrewId = `crew-${Date.now()}`;
     const newCrew: CrewMember = {
-      id: `crew-${Date.now()}`,
+      id: newCrewId,
       name: name.trim(),
       email: email.trim() || undefined,
       phoneNumber: phoneNumber.trim() || undefined,
@@ -148,6 +151,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
       seamanBookExpiry: seamanBookExpiry ? formatDate(seamanBookExpiry) : undefined,
       signOnDate: formatDate(signOnDate || getTodayDDMMYYYY()),
       signOnLocation: signOnLocation.trim() || undefined,
+      avatarUrl: getCrewAvatarUrl({ id: newCrewId, name: name.trim() }),
       assignedShipId: selectedShip ? selectedShip.id : undefined,
       assignedShipName: selectedShip ? selectedShip.name : undefined,
       vesselHistory: selectedShip
@@ -509,9 +513,11 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       {/* Name & Role */}
                       <td className="py-3.5 px-4 align-middle whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-[#28ada4]/15 border border-[#28ada4]/40 text-[#28ada4] font-extrabold text-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-                            {crew.name.charAt(0)}
-                          </div>
+                          <CrewAvatar
+                            crew={crew}
+                            size="md"
+                            className="group-hover:scale-105 transition-transform shadow-sm"
+                          />
                           <div>
                             <h4 className="font-extrabold text-[var(--text-main)] text-xs whitespace-nowrap transition">
                               {crew.name}
@@ -981,9 +987,12 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               </div>
 
               <form onSubmit={handleAssignSubmit} className="p-6 space-y-4 text-xs">
-                <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                  <div className="font-bold text-[var(--text-main)] text-sm">{assigningCrew.name}</div>
-                  <div className="text-[var(--color-primary)] font-semibold">{assigningCrew.role} • {assigningCrew.nationality}</div>
+                <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)] flex items-center gap-3">
+                  <CrewAvatar crew={assigningCrew} size="md" />
+                  <div>
+                    <div className="font-bold text-[var(--text-main)] text-sm">{assigningCrew.name}</div>
+                    <div className="text-[var(--color-primary)] font-semibold">{assigningCrew.role} • {assigningCrew.nationality}</div>
+                  </div>
                 </div>
 
                 <div>
@@ -1107,9 +1116,11 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             {/* Profile Header */}
             <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary)]/20 border-2 border-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary)] font-extrabold text-2xl shadow-md">
-                  {viewingProfileCrew.name.charAt(0)}
-                </div>
+                <CrewAvatar
+                  crew={viewingProfileCrew}
+                  size="lg"
+                  className="shadow-md border-2 border-[var(--color-primary)]/60"
+                />
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">

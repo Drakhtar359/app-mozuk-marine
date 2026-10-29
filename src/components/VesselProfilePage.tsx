@@ -52,6 +52,8 @@ import {
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
+import { CrewAvatar } from './CrewAvatar';
+import { getCrewAvatarUrl } from '../utils/crewAvatars';
 import { DEPARTMENT_RANKS, DepartmentType } from '../utils/rankSort';
 
 interface VesselProfilePageProps {
@@ -340,8 +342,9 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
     const formattedSignOn = formatDate(crewSignOnDate || getTodayDDMMYYYY());
 
+    const newCrewId = `crew-${Date.now()}`;
     const newCrewMember: CrewMember = {
-      id: `crew-${Date.now()}`,
+      id: newCrewId,
       name: crewName.trim(),
       email: crewEmail.trim() || undefined,
       phoneNumber: crewPhoneNumber.trim() || undefined,
@@ -350,6 +353,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       nationality: crewNationality.trim() || 'Mozambican',
       signOnDate: formattedSignOn,
       signOnLocation: crewSignOnLocation.trim() || undefined,
+      avatarUrl: getCrewAvatarUrl({ id: newCrewId, name: crewName.trim() }),
       dateOfBirth: crewDateOfBirth ? formatDate(crewDateOfBirth) : undefined,
       passportNumber: crewPassportNumber.trim() || undefined,
       passportExpiry: crewPassportExpiry ? formatDate(crewPassportExpiry) : undefined,
@@ -922,9 +926,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       className="pt-2 text-center relative group cursor-pointer hover:bg-[var(--color-bg-alt)]/60 rounded-xl p-3 transition border border-transparent hover:border-[#7b0b76]/50 shadow-sm"
                       title="Click to view full crew profile"
                     >
-                      <div className="w-14 h-14 rounded-2xl bg-[#7b0b76]/20 border-2 border-[#7b0b76] flex items-center justify-center text-[#7b0b76] dark:text-[#7b0b76] font-extrabold text-xl mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform">
-                        {master.name.charAt(0)}
-                      </div>
+                      <CrewAvatar
+                        crew={master}
+                        size="lg"
+                        className="mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform border-2 border-[#7b0b76]"
+                      />
                       <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#7b0b76] dark:group-hover:text-[#7b0b76] transition">
                         {master.name}
                       </h3>
@@ -1038,9 +1044,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--text-main)] font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                              {member.name.charAt(0)}
-                            </div>
+                            <CrewAvatar
+                              crew={member}
+                              size="sm"
+                              className="shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
+                            />
                             <div>
                               <h4 className="font-bold text-[var(--text-main)] text-xs transition">{member.name}</h4>
                               <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-main)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
@@ -1118,9 +1126,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--text-main)] font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                              {member.name.charAt(0)}
-                            </div>
+                            <CrewAvatar
+                              crew={member}
+                              size="sm"
+                              className="shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
+                            />
                             <div>
                               <h4 className="font-bold text-[var(--text-main)] text-xs transition">{member.name}</h4>
                               <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-main)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
@@ -1198,9 +1208,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           title="Click to view full crew profile"
                         >
                           <div className="flex items-start gap-2.5">
-                            <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-center text-[var(--text-main)] font-bold text-xs shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                              {member.name.charAt(0)}
-                            </div>
+                            <CrewAvatar
+                              crew={member}
+                              size="sm"
+                              className="shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
+                            />
                             <div>
                               <h4 className="font-bold text-[var(--text-main)] text-xs transition">{member.name}</h4>
                               <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-main)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
@@ -2893,16 +2905,19 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   if (!selectedCrew) return null;
 
                   return (
-                    <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] space-y-1">
-                      <div className="font-extrabold text-[var(--text-main)] text-xs flex items-center justify-between">
-                        <span>{selectedCrew.name}</span>
-                        <span className="text-[var(--color-primary)]">{selectedCrew.nationality}</span>
-                      </div>
-                      <div className="text-[11px] text-[var(--text-muted)] font-mono">
-                        Passport: {selectedCrew.passportNumber || 'N/A'} • Seaman Book: {selectedCrew.seamanBookNo || 'N/A'}
-                      </div>
-                      <div className="text-[11px] text-[var(--color-primary)] font-bold mt-1">
-                        Current Status: {selectedCrew.assignedShipName ? `Working on ${selectedCrew.assignedShipName}` : 'Unassigned'}
+                    <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center gap-3">
+                      <CrewAvatar crew={selectedCrew} size="md" />
+                      <div className="flex-1 space-y-1">
+                        <div className="font-extrabold text-[var(--text-main)] text-xs flex items-center justify-between">
+                          <span>{selectedCrew.name}</span>
+                          <span className="text-[var(--color-primary)]">{selectedCrew.nationality}</span>
+                        </div>
+                        <div className="text-[11px] text-[var(--text-muted)] font-mono">
+                          Passport: {selectedCrew.passportNumber || 'N/A'} • Seaman Book: {selectedCrew.seamanBookNo || 'N/A'}
+                        </div>
+                        <div className="text-[11px] text-[var(--color-primary)] font-bold mt-1">
+                          Current Status: {selectedCrew.assignedShipName ? `Working on ${selectedCrew.assignedShipName}` : 'Unassigned'}
+                        </div>
                       </div>
                     </div>
                   );
@@ -3436,9 +3451,11 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {/* Profile Header */}
               <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-[var(--color-primary)]/20 border-2 border-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary)] font-extrabold text-2xl shadow-md">
-                  {selectedCrewMember.name.charAt(0)}
-                </div>
+                <CrewAvatar
+                  crew={selectedCrewMember}
+                  size="lg"
+                  className="shadow-md border-2 border-[var(--color-primary)]/60"
+                />
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">
