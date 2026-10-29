@@ -983,7 +983,7 @@ export function App() {
               onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
             />
             <div>
-              © 2026 <strong className="text-[var(--text-main)]">MOZUK MARINE</strong> — Premier BWTS Solutions & Maritime Engineering.
+              © 2026 <strong className="text-[var(--text-main)]">Taneet</strong> - by <strong className="text-[var(--text-main)]">Mozuk Marine</strong>. All rights reserved.
             </div>
           </div>
 
