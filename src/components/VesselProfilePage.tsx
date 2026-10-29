@@ -53,6 +53,7 @@ import {
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
 import { CrewAvatar } from './CrewAvatar';
+import { CrewProfileModal } from './CrewProfileModal';
 import { getCrewAvatarUrl } from '../utils/crewAvatars';
 import { DEPARTMENT_RANKS, DepartmentType } from '../utils/rankSort';
 
@@ -3433,221 +3434,19 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       {/* MODAL 4: CREW MEMBER PROFILE */}
       <AnimatePresence>
         {selectedCrewMember && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
-              onClick={() => setSelectedCrewMember(null)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-              className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
-            >
-              {/* Profile Header */}
-              <div className="px-6 py-5 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
-              <div className="flex items-center gap-4">
-                <CrewAvatar
-                  crew={selectedCrewMember}
-                  size="lg"
-                  className="shadow-md border-2 border-[var(--color-primary)]/60"
-                />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl">
-                      {selectedCrewMember.name}
-                    </h3>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold text-[10px] uppercase border border-[var(--color-primary)]/30">
-                      {selectedCrewMember.department || getCrewDepartment(selectedCrewMember)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[var(--color-primary)] font-bold uppercase tracking-wider mt-0.5">
-                    {selectedCrewMember.role}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setSelectedCrewMember(null)}
-                className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)] transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Profile Content Body */}
-            <div className="p-6 space-y-6 overflow-y-auto flex-1 text-xs">
-              {/* 8 Field Identity Cards Grid */}
-              <div>
-                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-2 border-b border-[var(--color-glass-border)] pb-2">
-                  <UserCheck className="w-4 h-4 text-[var(--color-primary)]" /> Personal & Maritime Credentials
-                </h4>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {/* Email */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <Mail className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Email Address
-                    </div>
-                    <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={selectedCrewMember.email}>
-                      {selectedCrewMember.email || 'N/A'}
-                    </div>
-                  </div>
-
-                  {/* Phone Number */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Phone Number
-                    </div>
-                    <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={selectedCrewMember.phoneNumber}>
-                      {selectedCrewMember.phoneNumber || 'N/A'}
-                    </div>
-                  </div>
-
-                  {/* 1. Nationality */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <Globe className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Nationality
-                    </div>
-                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                      {selectedCrewMember.nationality || 'N/A'}
-                    </div>
-                  </div>
-
-                  {/* 2. Date of Birth */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Date of Birth
-                    </div>
-                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                      {formatDate(selectedCrewMember.dateOfBirth)}
-                    </div>
-                  </div>
-
-                  {/* 3. Passport Number */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <FileText className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Passport No.
-                    </div>
-                    <div className="font-mono font-extrabold text-[var(--text-main)] text-xs mt-1">
-                      {selectedCrewMember.passportNumber || 'N/A'}
-                    </div>
-                  </div>
-
-                  {/* 4. Passport Expiry */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Passport Expiry
-                    </div>
-                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                      {formatDate(selectedCrewMember.passportExpiry)}
-                    </div>
-                  </div>
-
-                  {/* 5. Seaman Book Number */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <BookOpen className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Seaman Book No.
-                    </div>
-                    <div className="font-mono font-extrabold text-[var(--text-main)] text-xs mt-1">
-                      {selectedCrewMember.seamanBookNo || 'N/A'}
-                    </div>
-                  </div>
-
-                  {/* 6. Seaman Book Expiry */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Seaman Book Expiry
-                    </div>
-                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                      {formatDate(selectedCrewMember.seamanBookExpiry)}
-                    </div>
-                  </div>
-
-                  {/* 7. Signed On Date */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <Anchor className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Signed On Date
-                    </div>
-                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                      {formatDate(selectedCrewMember.signOnDate)}
-                    </div>
-                  </div>
-
-                  {/* 8. Signed On Location (City) */}
-                  <div className="bg-[var(--color-surface)] p-3 rounded-xl border border-[var(--color-glass-border)]">
-                    <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)]" /> Sign-On City
-                    </div>
-                    <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                      {selectedCrewMember.signOnLocation || 'N/A'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 9. History of Ships Worked On */}
-              <div>
-                <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-2 border-b border-[var(--color-glass-border)] pb-2">
-                  <History className="w-4 h-4 text-[var(--color-primary)]" /> Company Vessel Service History
-                </h4>
-
-                {(() => {
-                  const effectiveSelectedHistory = getEffectiveVesselHistory(selectedCrewMember);
-                  return effectiveSelectedHistory.length === 0 ? (
-                    <div className="bg-[var(--color-surface)] rounded-xl p-4 text-center text-[var(--text-muted)] text-xs border border-[var(--color-glass-border)]">
-                      Current vessel ({ship.name}) is the first recorded assignment in company fleet.
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {sortVesselHistory(effectiveSelectedHistory).map((entry, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-[var(--color-surface)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold">
-                              <Briefcase className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <h5 className="font-bold text-[var(--text-main)] text-xs">{entry.shipName}</h5>
-                              <span className="text-[11px] text-[var(--color-primary)] font-semibold">{entry.role}</span>
-                            </div>
-                          </div>
-
-                          <div className="text-[11px] text-[var(--text-muted)] font-mono sm:text-right">
-                            <span>{formatDate(entry.startDate)}</span>
-                            <span className="mx-1.5">→</span>
-                            <span className={!entry.endDate ? 'text-[#28ada4] font-bold' : ''}>
-                              {entry.endDate ? formatDate(entry.endDate) : 'Present (Current Assignment)'}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="px-6 py-3 border-t border-[var(--color-glass-border)] bg-[var(--color-surface)] flex justify-end shrink-0">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setSelectedCrewMember(null)}
-                className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs"
-              >
-                Close Profile
-              </motion.button>
-            </div>
-          </motion.div>
-        </div>
-      )}
+          <CrewProfileModal
+            crew={selectedCrewMember}
+            shipName={ship.name}
+            onClose={() => setSelectedCrewMember(null)}
+            onUpdateCrew={(updated) => {
+              setSelectedCrewMember(updated);
+              onUpdateShip({
+                ...ship,
+                crew: ship.crew.map((c) => (c.id === updated.id ? updated : c)),
+              });
+            }}
+          />
+        )}
       </AnimatePresence>
 
       {/* MODAL 5: LOG NEW SHIP VISITOR */}

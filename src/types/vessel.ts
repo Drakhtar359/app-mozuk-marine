@@ -24,6 +24,19 @@ export interface CrewMember {
   email?: string;
   phoneNumber?: string;
   avatarUrl?: string;
+  documents?: CrewDocument[];
+}
+
+export interface CrewDocument {
+  id: string;
+  title: string;
+  type: 'certification' | 'documentation';
+  documentNumber: string;
+  issueDate: string;
+  expiryDate?: string;
+  authority: string;
+  status: 'valid' | 'expiring' | 'expired';
+  fileSize?: string;
 }
 
 export interface TechnicalDoc {
