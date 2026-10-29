@@ -249,7 +249,7 @@ export function getDefaultCrewDocuments(crew: CrewMember): CrewDocument[] {
       type: 'documentation',
       documentNumber: `WHO-VAC-${Math.abs(hashString(crew.id + 'vac')) % 8999 + 1000}`,
       issueDate: '10/05/2021',
-      expiryDate: 'Lifetime / Valid',
+      expiryDate: '10/05/2031',
       authority: 'World Health Organization (WHO)',
       status: 'valid',
       fileSize: '950 KB',
