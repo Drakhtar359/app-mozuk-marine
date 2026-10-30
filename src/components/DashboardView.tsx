@@ -126,20 +126,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     };
   });
 
-  // Initialize Leaflet Map with Carto Raster Voyager Key
+  // Initialize Leaflet Map with Carto Raster Voyager Key (Static, unzoomable, fixed bounds)
   useEffect(() => {
     const container = mapContainerRef.current;
     if (!container) return;
     if (mapInstanceRef.current) return;
 
+    // Fixed unmovable, unzoomable map
     const map = L.map(container, {
-      center: [22, 18],
-      zoom: 2,
-      minZoom: 2,
-      maxZoom: 12,
-      zoomControl: true,
+      zoomControl: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      boxZoom: false,
+      dragging: false,
+      keyboard: false,
       attributionControl: false,
-      worldCopyJump: true,
     });
 
     const layer = L.tileLayer(CARTO_RASTER_URL, {
@@ -151,12 +153,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     tileLayerRef.current = layer;
     markersLayerRef.current = markersGroup;
 
-    const timer = setTimeout(() => {
+    const fitShipBounds = () => {
+      if (shipPositions.length > 0) {
+        const bounds = L.latLngBounds(shipPositions.map((p) => [p.lat, p.lng]));
+        map.fitBounds(bounds, {
+          padding: [35, 35],
+          maxZoom: 5,
+          animate: false,
+        });
+      } else {
+        map.setView([20, 15], 2);
+      }
       map.invalidateSize();
-    }, 100);
+    };
+
+    fitShipBounds();
+
+    const timer = setTimeout(() => {
+      fitShipBounds();
+    }, 150);
 
     const resizeObserver = new ResizeObserver(() => {
-      map.invalidateSize();
+      fitShipBounds();
     });
     resizeObserver.observe(container);
 
@@ -168,7 +186,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       tileLayerRef.current = null;
       markersLayerRef.current = null;
     };
-  }, []);
+  }, [shipPositions]);
 
   // Render Taneet Purple (#7b0b76) Dots with Pulsing Outline & Hover Ship Name Tooltip
   useEffect(() => {
