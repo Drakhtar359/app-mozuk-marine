@@ -553,18 +553,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div className="mozuk-glass-card rounded-2xl border border-[var(--color-glass-border)] p-5 shadow-lg space-y-5">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--color-glass-border)] pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#7b0b76]/15 text-[#7b0b76] border border-[#7b0b76]/30">
-              <Wrench className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="font-['Montserrat',sans-serif] font-extrabold text-base uppercase tracking-wider text-[var(--text-main)]">
-                Fleet Maintenance & Number of Repairs
-              </h2>
-              <p className="text-xs text-[var(--text-muted)]">
-                Vessel-by-vessel repair workload distribution, completion status, and technical department breakdown.
-              </p>
-            </div>
+          <div className="flex items-center gap-2">
+            <Wrench className="w-4 h-4 text-[#7b0b76]" />
+            <h2 className="font-['Montserrat',sans-serif] font-extrabold text-xs uppercase tracking-wider text-[var(--text-main)]">
+              Fleet Maintenance & Number of Repairs
+            </h2>
           </div>
 
           {/* Legend */}
