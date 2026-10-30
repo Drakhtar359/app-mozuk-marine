@@ -8,6 +8,7 @@ import { ShipList } from './components/ShipList';
 import { VesselProfilePage } from './components/VesselProfilePage';
 import { CompanyCrewList } from './components/CompanyCrewList';
 import { CompanyProfilePage } from './components/CompanyProfilePage';
+import { DashboardView } from './components/DashboardView';
 import { NotFoundPage } from './components/NotFoundPage';
 import { DEFAULT_CREW_AVATARS, getCrewAvatarUrl } from './utils/crewAvatars';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
@@ -1039,17 +1040,12 @@ export function App() {
                 onUpdateOwnerDetails={handleSaveOwnerDetails}
               />
             ) : activeHomeTab === 'dashboard' ? (
-              <div className="mozuk-glass-card rounded-2xl p-12 border border-[var(--color-glass-border)] text-center space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-[#28ada4]/10 border border-[#28ada4]/25 flex items-center justify-center text-[#28ada4] mx-auto">
-                  <LayoutDashboard className="w-6 h-6" />
-                </div>
-                <h2 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
-                  Dashboard
-                </h2>
-                <p className="text-xs text-[var(--text-muted)] max-w-md mx-auto">
-                  Centralized fleet analytics, compliance alerts, and operational overview will be populated here.
-                </p>
-              </div>
+              <DashboardView
+                ships={ships}
+                companyCrew={companyCrew}
+                theme={theme}
+                onSelectShip={(ship) => handleSelectShip(ship)}
+              />
             ) : activeHomeTab === 'fleet' ? (
               <ShipList
                 ships={ships}
