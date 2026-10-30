@@ -504,7 +504,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                   return (
                     <tr
                       key={crew.id}
-                      className="hover:bg-[var(--color-glass-border)] transition group cursor-pointer"
+                      className="hover:bg-[#7b0b76]/[0.08] dark:hover:bg-[#7b0b76]/15 transition-colors group cursor-pointer"
                       onClick={() => {
                         setViewingProfileCrew(crew);
                         onSelectCrewMember(crew);
@@ -517,7 +517,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                           <CrewAvatar
                             crew={crew}
                             size="sm"
-                            className="group-hover:scale-105 transition-transform shadow-sm"
+                            className="group-hover:scale-105 group-hover:border-[#7b0b76]/50 transition-all shadow-sm"
                           />
                           <div className="leading-tight">
                             <h4 className="font-extrabold text-[var(--text-main)] text-xs whitespace-nowrap transition">
