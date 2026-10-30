@@ -458,7 +458,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-center gap-2">
               <Navigation className="w-4 h-4 text-[#7b0b76]" />
               <h2 className="font-['Montserrat',sans-serif] font-extrabold text-xs uppercase tracking-wider text-[var(--text-main)]">
-                Global Fleet Live AIS Map ({ships.length} Registered Vessels)
+                Global Fleet Live AIS Map
               </h2>
             </div>
 
