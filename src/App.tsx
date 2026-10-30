@@ -973,13 +973,13 @@ export function App() {
           </button>
         </div>
 
-        {/* Bottom of Vertical Navigation Bar: Company Profile */}
-        <div className="mt-auto border-t border-[var(--color-glass-border)]">
+        {/* Bottom of Vertical Navigation Bar: Company Profile (exact h-11 box-border with border-t) */}
+        <div className="mt-auto h-11 shrink-0 border-t border-[var(--color-glass-border)] flex items-stretch">
           <button
             type="button"
             onClick={handleSelectCompanyProfile}
             title="COMPANY PROFILE"
-            className={`w-full h-11 flex items-center ${
+            className={`w-full h-full flex items-center ${
               isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
             } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
               !selectedShip && viewMode === 'profile'
@@ -995,7 +995,7 @@ export function App() {
 
       {/* Right-Hand Content Area (Fluidly scaled across all laptop & monitor sizes) */}
       <div
-        className={`flex-1 flex flex-col min-h-screen pt-[60px] ${
+        className={`flex-1 flex flex-col min-h-screen pt-[60px] pb-11 ${
           isSidebarCollapsed ? 'pl-14' : 'pl-60 xl:pl-64'
         } transition-[padding] duration-200 ease-in-out`}
       >
@@ -1071,8 +1071,12 @@ export function App() {
           </div>
         </main>
 
-        {/* Footer matching Company Profile tab height (h-11) */}
-        <footer className="h-11 shrink-0 flex items-center border-t border-[var(--color-glass-border)] bg-[var(--color-bg-alt)] px-5 xl:px-8 2xl:px-10 text-[11px] text-[var(--text-muted)]">
+        {/* Fixed Bottom Footer (h-11 box-border with border-t, continuously aligned with Company Profile tab) */}
+        <footer
+          className={`fixed bottom-0 right-0 z-20 h-11 ${
+            isSidebarCollapsed ? 'left-14' : 'left-60 xl:left-64'
+          } flex items-center border-t border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] px-5 xl:px-8 2xl:px-10 text-[11px] text-[var(--text-muted)] transition-[left] duration-200 ease-in-out`}
+        >
           <div className="w-full max-w-[1920px] mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 truncate">
               <img
@@ -1084,12 +1088,6 @@ export function App() {
               <div className="truncate">
                 © 2026 <strong className="text-[var(--text-main)]">Taneet</strong> - by <strong className="text-[var(--text-main)]">Mozuk Marine</strong>. All rights reserved.
               </div>
-            </div>
-
-            <div className="flex items-center gap-3 text-[var(--text-muted)] shrink-0">
-              <span>BWTS Installation & Compliance</span>
-              <span>•</span>
-              <span>Fleet Portal</span>
             </div>
           </div>
         </footer>
