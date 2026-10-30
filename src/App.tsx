@@ -11,7 +11,7 @@ import { CompanyProfilePage } from './components/CompanyProfilePage';
 import { NotFoundPage } from './components/NotFoundPage';
 import { DEFAULT_CREW_AVATARS, getCrewAvatarUrl } from './utils/crewAvatars';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -586,6 +586,7 @@ export function App() {
 
   const [viewMode, setViewMode] = useState<'fleet' | 'profile' | '404'>('fleet');
   const [activeHomeTab, setActiveHomeTab] = useState<'dashboard' | 'fleet' | 'crew'>('fleet');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [attemptedPath, setAttemptedPath] = useState<string>('');
   const [selectedShipId, setSelectedShipId] = useState<string | null>(null);
   const [selectedCrewForProfile, setSelectedCrewForProfile] = useState<CrewMember | null>(null);
@@ -926,66 +927,102 @@ export function App() {
         </main>
       ) : (
         <div className="flex-1 flex flex-col lg:flex-row w-full items-stretch">
-          {/* Docked Left Side Navigation Bar (Sticks flush to left side of page, never moves) */}
-          <aside className="w-full lg:w-64 shrink-0 bg-[var(--color-surface)] border-b lg:border-b-0 lg:border-r border-[var(--color-glass-border)] flex flex-col justify-between lg:sticky lg:top-[61px] lg:h-[calc(100vh-61px)] p-3 select-none">
-            <div className="space-y-1">
-              <div className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] border-b border-[var(--color-glass-border)] mb-2">
-                Navigation Menu
+          {/* Docked Left Side Navigation Bar (Sticks flush to left side of page, collapsible, full-row active color) */}
+          <aside
+            className={`w-full ${
+              isSidebarCollapsed ? 'lg:w-14' : 'lg:w-64'
+            } shrink-0 bg-[var(--color-surface)] border-b lg:border-b-0 lg:border-r border-[var(--color-glass-border)] flex flex-col justify-between lg:sticky lg:top-[61px] lg:h-[calc(100vh-61px)] p-0 select-none transition-[width] duration-200 ease-in-out overflow-hidden`}
+          >
+            <div>
+              <div
+                className={`h-11 flex items-center ${
+                  isSidebarCollapsed ? 'justify-center px-0' : 'justify-between px-4'
+                } border-b border-[var(--color-glass-border)]`}
+              >
+                {!isSidebarCollapsed && (
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] truncate">
+                    Navigation Menu
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsSidebarCollapsed((prev) => !prev)}
+                  title={isSidebarCollapsed ? 'Expand Navigation Menu' : 'Collapse Navigation Menu'}
+                  className="p-1.5 text-[var(--text-muted)] hover:text-[#28ada4] transition-colors cursor-pointer shrink-0"
+                >
+                  {isSidebarCollapsed ? (
+                    <PanelLeftOpen className="w-4 h-4" />
+                  ) : (
+                    <PanelLeftClose className="w-4 h-4" />
+                  )}
+                </button>
               </div>
 
               <button
                 type="button"
                 onClick={() => handleSelectNavTab('dashboard')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                title="Dashboard"
+                className={`w-full h-11 flex items-center ${
+                  isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+                } rounded-none font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
                   viewMode === 'fleet' && activeHomeTab === 'dashboard'
-                    ? 'bg-[#28ada4] text-white shadow-sm'
+                    ? 'bg-[#28ada4] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 shrink-0" />
-                <span className="truncate">Dashboard</span>
+                {!isSidebarCollapsed && <span className="truncate">Dashboard</span>}
               </button>
 
               <button
                 type="button"
                 onClick={() => handleSelectNavTab('fleet')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                title="Registered Fleet Directory"
+                className={`w-full h-11 flex items-center ${
+                  isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+                } rounded-none font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
                   viewMode === 'fleet' && activeHomeTab === 'fleet'
-                    ? 'bg-[#28ada4] text-white shadow-sm'
+                    ? 'bg-[#28ada4] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
                 }`}
               >
                 <Anchor className="w-4 h-4 shrink-0" />
-                <span className="truncate">Registered Fleet Directory</span>
+                {!isSidebarCollapsed && <span className="truncate">Registered Fleet Directory</span>}
               </button>
 
               <button
                 type="button"
                 onClick={() => handleSelectNavTab('crew')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                title="Company Master Crew Roster"
+                className={`w-full h-11 flex items-center ${
+                  isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+                } rounded-none font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
                   viewMode === 'fleet' && activeHomeTab === 'crew'
-                    ? 'bg-[#28ada4] text-white shadow-sm'
+                    ? 'bg-[#28ada4] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
                 }`}
               >
                 <Users className="w-4 h-4 shrink-0" />
-                <span className="truncate">Company Master Crew Roster</span>
+                {!isSidebarCollapsed && <span className="truncate">Company Master Crew Roster</span>}
               </button>
             </div>
 
             {/* Bottom of Vertical Navigation Bar: Company Profile */}
-            <div className="pt-3 mt-4 lg:mt-auto border-t border-[var(--color-glass-border)]">
+            <div className="mt-auto border-t border-[var(--color-glass-border)]">
               <button
                 type="button"
                 onClick={handleSelectCompanyProfile}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                title="Company Profile"
+                className={`w-full h-11 flex items-center ${
+                  isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+                } rounded-none font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
                   viewMode === 'profile'
-                    ? 'bg-[#28ada4] text-white shadow-sm'
+                    ? 'bg-[#28ada4] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
                 }`}
               >
                 <Building2 className={`w-4 h-4 shrink-0 ${viewMode === 'profile' ? 'text-white' : 'text-[#28ada4]'}`} />
-                <span className="truncate">Company Profile</span>
+                {!isSidebarCollapsed && <span className="truncate">Company Profile</span>}
               </button>
             </div>
           </aside>
