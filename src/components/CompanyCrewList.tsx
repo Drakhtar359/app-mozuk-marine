@@ -247,8 +247,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     if (assignmentFilter === 'unassigned' && crew.assignedShipId) return false;
 
     if (vesselFilter !== 'all') {
-      if (vesselFilter === 'unassigned' && crew.assignedShipId) return false;
-      if (vesselFilter !== 'unassigned' && crew.assignedShipId !== vesselFilter) return false;
+      if (crew.assignedShipId !== vesselFilter) return false;
     }
 
     if (departmentFilter !== 'all') {
@@ -388,8 +387,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
               onChange={(e) => setVesselFilter(e.target.value)}
               className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
             >
-              <option value="all">All Ships & Unassigned</option>
-              <option value="unassigned">Unassigned Pool</option>
+              <option value="all">All Ships</option>
               {ships.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name} ({s.crew.length} crew)
