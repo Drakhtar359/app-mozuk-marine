@@ -300,9 +300,6 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <Users className="w-5 h-5 text-[var(--color-primary)] shrink-0" />
             Company Master Crew Roster
           </h2>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Centralized directory of all registered officers, engineers, ratings, active vessel assignments & standby pool.
-          </p>
         </div>
 
         {/* Action Button & Counters */}

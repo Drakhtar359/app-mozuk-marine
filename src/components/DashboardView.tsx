@@ -412,9 +412,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <Compass className="w-5 h-5 text-[var(--color-primary)] shrink-0" />
             Dashboard
           </h2>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Real-time global AIS vessel positioning, active fleet alarms, and maintenance analytics.
-          </p>
         </div>
       </div>
 
