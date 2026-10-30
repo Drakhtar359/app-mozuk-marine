@@ -371,7 +371,13 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
           <div>
             <select
               value={assignmentFilter}
-              onChange={(e) => setAssignmentFilter(e.target.value as any)}
+              onChange={(e) => {
+                const nextVal = e.target.value as 'all' | 'assigned' | 'unassigned';
+                setAssignmentFilter(nextVal);
+                if (nextVal === 'unassigned') {
+                  setVesselFilter('all');
+                }
+              }}
               className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
             >
               <option value="all">All Assignment Statuses</option>
@@ -385,14 +391,20 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <select
               value={vesselFilter}
               onChange={(e) => setVesselFilter(e.target.value)}
-              className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
+              disabled={assignmentFilter === 'unassigned'}
+              className={`w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none ${
+                assignmentFilter === 'unassigned' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+              }`}
             >
-              <option value="all">All Ships</option>
-              {ships.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} ({s.crew.length} crew)
-                </option>
-              ))}
+              <option value="all">
+                {assignmentFilter === 'unassigned' ? 'No Ships (Unassigned)' : 'All Ships'}
+              </option>
+              {assignmentFilter !== 'unassigned' &&
+                ships.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.crew.length} crew)
+                  </option>
+                ))}
             </select>
           </div>
 
