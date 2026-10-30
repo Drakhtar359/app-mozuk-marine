@@ -1071,22 +1071,22 @@ export function App() {
           </div>
         </main>
 
-        {/* Footer matching marine.mozuk.net */}
-        <footer className="border-t border-[var(--color-glass-border)] bg-[var(--color-bg-alt)] py-6 px-5 xl:px-8 2xl:px-10 text-xs text-[var(--text-muted)]">
-          <div className="w-full max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+        {/* Footer matching Company Profile tab height (h-11) */}
+        <footer className="h-11 shrink-0 flex items-center border-t border-[var(--color-glass-border)] bg-[var(--color-bg-alt)] px-5 xl:px-8 2xl:px-10 text-[11px] text-[var(--text-muted)]">
+          <div className="w-full max-w-[1920px] mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 truncate">
               <img
                 src="/taneet-logo.png"
                 alt="Taneet Logo"
-                className="h-6 w-auto opacity-80"
+                className="h-4 w-auto opacity-80 shrink-0"
                 onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
               />
-              <div>
+              <div className="truncate">
                 © 2026 <strong className="text-[var(--text-main)]">Taneet</strong> - by <strong className="text-[var(--text-main)]">Mozuk Marine</strong>. All rights reserved.
               </div>
             </div>
 
-            <div className="flex items-center gap-4 text-[var(--text-muted)]">
+            <div className="flex items-center gap-3 text-[var(--text-muted)] shrink-0">
               <span>BWTS Installation & Compliance</span>
               <span>•</span>
               <span>Fleet Portal</span>
