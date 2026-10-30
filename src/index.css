@@ -271,3 +271,76 @@ textarea:focus {
   background: rgba(40, 173, 164, 0.35);
   color: #ffffff;
 }
+
+/* Taneet Purple Map Dot Pulsing Outline & Hover Tooltip */
+@keyframes taneetPulseRing {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.85;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(2.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.6);
+    opacity: 0;
+  }
+}
+
+.taneet-purple-dot-wrapper {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.taneet-purple-dot-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  border: 2px solid #7b0b76;
+  background: rgba(123, 11, 118, 0.25);
+  animation: taneetPulseRing 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  pointer-events: none;
+}
+
+.taneet-purple-dot-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  background-color: #7b0b76;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(123, 11, 118, 0.55);
+  transition: transform 0.15s ease;
+}
+
+.taneet-purple-dot-wrapper:hover .taneet-purple-dot-core {
+  transform: translate(-50%, -50%) scale(1.25);
+}
+
+.leaflet-tooltip.taneet-ship-tooltip {
+  background-color: #7b0b76 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+}
+
+.leaflet-tooltip-top.taneet-ship-tooltip::before {
+  border-top-color: #7b0b76 !important;
+}

@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Ship, CrewMember } from '../types/vessel';
 import {
   Bell,
   Wrench,
-  Ship as ShipIcon,
   Navigation,
   AlertTriangle,
   FileWarning,
@@ -32,8 +31,9 @@ interface ShipPosition {
   locationLabel: string;
   speedKnots: number;
   headingDeg: number;
-  statusLabel: string;
 }
+
+const CARTO_API_KEY = 'cb1_3s3u_1_405b6a6fd32e5256acc5e566';
 
 // Accurate maritime positions for default vessels + fallback maritime coordinates for any newly registered ships
 const DEFAULT_MARITIME_POSITIONS: Array<{
@@ -42,7 +42,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
   locationLabel: string;
   speedKnots: number;
   headingDeg: number;
-  statusLabel: string;
 }> = [
   {
     lat: 51.955,
@@ -50,7 +49,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
     locationLabel: 'Port of Rotterdam Approaches, North Sea',
     speedKnots: 14.2,
     headingDeg: 245,
-    statusLabel: 'Underway Using Engine',
   },
   {
     lat: 53.541,
@@ -58,7 +56,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
     locationLabel: 'Port of Hamburg, Elbe Fairway',
     speedKnots: 11.8,
     headingDeg: 112,
-    statusLabel: 'Inbound Pilot Station',
   },
   {
     lat: 51.954,
@@ -66,7 +63,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
     locationLabel: 'Port of Felixstowe, English Channel',
     speedKnots: 16.4,
     headingDeg: 210,
-    statusLabel: 'Underway Using Engine',
   },
   {
     lat: -25.975,
@@ -74,7 +70,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
     locationLabel: 'Port of Maputo, Mozambique Channel',
     speedKnots: 12.6,
     headingDeg: 38,
-    statusLabel: 'Coastal Transit',
   },
   {
     lat: 1.264,
@@ -82,7 +77,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
     locationLabel: 'Singapore Strait, Eastbound Lane',
     speedKnots: 15.1,
     headingDeg: 75,
-    statusLabel: 'Underway Using Engine',
   },
   {
     lat: 29.966,
@@ -90,7 +84,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
     locationLabel: 'Suez Canal Southern Anchorage',
     speedKnots: 8.5,
     headingDeg: 340,
-    statusLabel: 'Canal Convoy Transit',
   },
   {
     lat: 37.942,
@@ -98,7 +91,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
     locationLabel: 'Port of Piraeus, Aegean Sea',
     speedKnots: 13.0,
     headingDeg: 165,
-    statusLabel: 'Underway Using Engine',
   },
   {
     lat: 25.011,
@@ -106,7 +98,6 @@ const DEFAULT_MARITIME_POSITIONS: Array<{
     locationLabel: 'Jebel Ali Port, Arabian Gulf',
     speedKnots: 10.4,
     headingDeg: 295,
-    statusLabel: 'Approaching Berth',
   },
 ];
 
@@ -120,7 +111,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
-  const [selectedMapShipId, setSelectedMapShipId] = useState<string | null>(null);
 
   // Map every ship in the Registered Fleet Directory to an accurate maritime position
   const shipPositions: ShipPosition[] = ships.map((ship, idx) => {
@@ -132,7 +122,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       locationLabel: preset.locationLabel,
       speedKnots: preset.speedKnots,
       headingDeg: preset.headingDeg,
-      statusLabel: preset.statusLabel,
     };
   });
 
@@ -155,7 +144,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     mapInstanceRef.current = map;
     markersLayerRef.current = markersGroup;
 
-    // Ensure proper sizing after mount
     setTimeout(() => {
       map.invalidateSize();
     }, 150);
@@ -168,7 +156,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     };
   }, []);
 
-  // Update Tile Layer on Theme Change
+  // Update Tile Layer on Theme Change using Carto API Key
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -179,8 +167,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
     const tileUrl =
       theme === 'dark'
-        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+        ? `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`
+        : `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`;
 
     const layer = L.tileLayer(tileUrl, {
       subdomains: 'abcd',
@@ -190,7 +178,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     tileLayerRef.current = layer;
   }, [theme]);
 
-  // Render Taneet Purple (#7b0b76) Markers matching exact number of ships in Registered Fleet Directory
+  // Render Taneet Purple (#7b0b76) Dots with Pulsing Outline & Hover Ship Name Tooltip
   useEffect(() => {
     const map = mapInstanceRef.current;
     const markersGroup = markersLayerRef.current;
@@ -199,92 +187,35 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     markersGroup.clearLayers();
 
     shipPositions.forEach((pos) => {
-      const isSelected = selectedMapShipId === pos.ship.id;
-
-      const purpleMarkerIcon = L.divIcon({
-        className: 'taneet-purple-ship-marker',
+      const purpleDotIcon = L.divIcon({
+        className: 'taneet-purple-dot-icon',
         html: `
-          <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -50%);">
-            <div style="
-              position: relative;
-              width: ${isSelected ? '34px' : '28px'};
-              height: ${isSelected ? '34px' : '28px'};
-              border-radius: 9999px;
-              background: #7b0b76;
-              border: 2.5px solid #ffffff;
-              box-shadow: 0 0 0 5px rgba(123, 11, 118, 0.28), 0 4px 12px rgba(0,0,0,0.45);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              transition: all 0.2s ease;
-            ">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
-                <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/>
-                <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/>
-                <path d="M12 10v4"/>
-                <path d="M12 2v3"/>
-              </svg>
-            </div>
-            <div style="
-              margin-top: 4px;
-              padding: 2px 6px;
-              border-radius: 4px;
-              background: #7b0b76;
-              color: #ffffff;
-              font-family: 'Montserrat', sans-serif;
-              font-size: 9px;
-              font-weight: 800;
-              letter-spacing: 0.04em;
-              white-space: nowrap;
-              box-shadow: 0 2px 6px rgba(0,0,0,0.35);
-              border: 1px solid rgba(255,255,255,0.35);
-            ">
-              ${pos.ship.name}
-            </div>
+          <div class="taneet-purple-dot-wrapper">
+            <div class="taneet-purple-dot-pulse"></div>
+            <div class="taneet-purple-dot-core"></div>
           </div>
         `,
         iconSize: [0, 0],
         iconAnchor: [0, 0],
       });
 
-      const marker = L.marker([pos.lat, pos.lng], { icon: purpleMarkerIcon });
+      const marker = L.marker([pos.lat, pos.lng], { icon: purpleDotIcon });
 
-      const popupContent = `
-        <div style="font-family: 'Montserrat', sans-serif; min-width: 210px; padding: 2px;">
-          <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #7b0b76; letter-spacing: 0.06em;">
-            ${pos.ship.type || 'Vessel'} • ${pos.ship.imo}
-          </div>
-          <div style="font-size: 13px; font-weight: 800; color: #05070a; margin-top: 2px;">
-            ${pos.ship.name}
-          </div>
-          <div style="font-size: 10px; color: #475569; margin-top: 4px; font-weight: 600;">
-            ${pos.locationLabel}
-          </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(0,0,0,0.08); font-size: 10px; font-weight: 700; color: #05070a;">
-            <span>SOG: ${pos.speedKnots} kn</span>
-            <span>HDG: ${pos.headingDeg}°</span>
-            <span style="color: #28ada4;">${pos.ship.crew.length} Crew</span>
-          </div>
-        </div>
-      `;
+      // Show ship name on hover
+      marker.bindTooltip(pos.ship.name, {
+        direction: 'top',
+        offset: [0, -10],
+        className: 'taneet-ship-tooltip',
+        opacity: 1,
+      });
 
-      marker.bindPopup(popupContent, { closeButton: false, offset: [0, -14] });
       marker.on('click', () => {
-        setSelectedMapShipId(pos.ship.id);
+        onSelectShip(pos.ship);
       });
 
       marker.addTo(markersGroup);
     });
-  }, [shipPositions, selectedMapShipId]);
-
-  const handleFocusShipOnMap = (pos: ShipPosition) => {
-    setSelectedMapShipId(pos.ship.id);
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo([pos.lat, pos.lng], 5, { duration: 0.8 });
-    }
-  };
+  }, [shipPositions, onSelectShip]);
 
   // ============================================================================
   // BUILD LATEST ALARMS / NOTIFICATIONS (UP TO 10)
@@ -297,12 +228,54 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     ship?: Ship;
     timestamp: string;
     severity: 'alarm' | 'warning' | 'info';
-    category: string;
   }
 
   const allNotifications: AlarmNotification[] = [];
 
-  // 1. Urgent & High Priority Maintenance Alarms from ships
+  // 1. Certificate Expiry Notice Alarms for Crew (STCW, Medical Fitness, Seaman's Book & Passport)
+  const assignedCrewMembers = companyCrew.filter((c) => c.assignedShipId);
+  const crewAlarmTemplates = [
+    {
+      certName: 'STCW Basic Safety Training (BST) Certificate',
+      notice: 'Certificate Expiry Notice Alarm • Expires in 14 days',
+      date: '28/09/2026',
+      severity: 'alarm' as const,
+    },
+    {
+      certName: 'ILO / STCW Seafarer Medical Fitness Certificate',
+      notice: 'Certificate Expiry Notice Alarm • Expires in 21 days',
+      date: '27/09/2026',
+      severity: 'alarm' as const,
+    },
+    {
+      certName: "Seaman's Discharge Book",
+      notice: 'Certificate Expiry Notice Alarm • Renewal required within 30 days',
+      date: '26/09/2026',
+      severity: 'warning' as const,
+    },
+    {
+      certName: 'STCW Advanced Fire Fighting (AFF) Certificate',
+      notice: 'Certificate Expiry Notice Alarm • Refresher course due',
+      date: '25/09/2026',
+      severity: 'warning' as const,
+    },
+  ];
+
+  assignedCrewMembers.slice(0, 4).forEach((crew, index) => {
+    const tpl = crewAlarmTemplates[index % crewAlarmTemplates.length];
+    const shipObj = ships.find((s) => s.id === crew.assignedShipId) || ships[0];
+    allNotifications.push({
+      id: `alarm-crew-cert-${crew.id}`,
+      title: `Crew Certificate Expiry Notice: ${crew.name} (${crew.role})`,
+      subtitle: `${tpl.certName} — ${tpl.notice}`,
+      shipName: shipObj?.name || crew.assignedShipName || 'UNASSIGNED',
+      ship: shipObj,
+      timestamp: tpl.date,
+      severity: tpl.severity,
+    });
+  });
+
+  // 2. Active Maintenance / Repair Alarms from ships
   ships.forEach((ship) => {
     ship.maintenance
       .filter((m) => m.status !== 'completed')
@@ -315,30 +288,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           ship,
           timestamp: m.loggedDate,
           severity: m.priority === 'urgent' || m.priority === 'high' ? 'alarm' : 'warning',
-          category: `${m.priority.toUpperCase()} REPAIR`,
         });
       });
   });
 
-  // 2. Expiring / Expired Vessel Certificates
+  // 3. Expiring / Expired Vessel Certificates
   ships.forEach((ship) => {
     ship.documents
       .filter((d) => d.status === 'expiring' || d.status === 'expired')
       .forEach((d) => {
         allNotifications.push({
           id: `alarm-doc-${d.id}`,
-          title: `${d.title} (${d.documentNumber})`,
+          title: `Vessel Certificate Expiry: ${d.title} (${d.documentNumber})`,
           subtitle: `Expires ${d.expiryDate} • Authority: ${d.authority}`,
           shipName: ship.name,
           ship,
           timestamp: d.issueDate,
           severity: d.status === 'expired' ? 'alarm' : 'warning',
-          category: 'CERTIFICATE ALERT',
         });
       });
   });
 
-  // 3. Spare Parts Procurement In-Transit / Ordered Notifications
+  // 4. Spare Parts Procurement In-Transit / Ordered Notifications
   ships.forEach((ship) => {
     (ship.procurementOrders || [])
       .filter((p) => p.status !== 'delivered')
@@ -351,12 +322,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           ship,
           timestamp: p.orderDate,
           severity: 'info',
-          category: p.status === 'in_transit' ? 'IN TRANSIT' : 'ORDER PLACED',
         });
       });
   });
 
-  // 4. BWTS & Environmental Logbook Operational Alerts to ensure up to 10 realistic fleet alarms
+  // 5. BWTS Telemetry & Compliance Notifications to fill up to 10 items
   ships.forEach((ship) => {
     (ship.ballastWaterLogs || []).slice(0, 1).forEach((bw) => {
       allNotifications.push({
@@ -367,49 +337,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         ship,
         timestamp: bw.date,
         severity: 'info',
-        category: 'BWTS TELEMETRY',
       });
     });
   });
 
-  // 5. Additional Crew / STCW & ISM Compliance Notifications so list has up to 10 items
-  const supplementaryNotifications: AlarmNotification[] = [
-    {
-      id: 'alarm-stcw-1',
-      title: 'STCW Medical Fitness Certificate Renewal Reminder (30 Days)',
-      subtitle: 'Chief Engineer Dimitrios Pappas • Expiry Alarm Active',
-      shipName: ships[0]?.name || 'MAERSK MC-KINNEY MOLLER',
-      ship: ships[0],
-      timestamp: '26/09/2026',
-      severity: 'warning',
-      category: 'CREW DOC ALARM',
-    },
-    {
-      id: 'alarm-bwts-uv',
-      title: 'Mozuk BWTS UV Lamp Intensity Sensor Calibration Check',
-      subtitle: 'UV Reactor Bank #2 operating at 94% nominal threshold',
-      shipName: ships[1]?.name || 'EVER GIVEN',
-      ship: ships[1],
-      timestamp: '25/09/2026',
-      severity: 'alarm',
-      category: 'BWTS ALARM',
-    },
-    {
-      id: 'alarm-ism-audit',
-      title: 'Upcoming Annual ISM Safety Management Audit Window',
-      subtitle: 'Scheduled port state & class verification at next European call',
-      shipName: ships[2]?.name || 'MSC OSCAR',
-      ship: ships[2],
-      timestamp: '24/09/2026',
-      severity: 'info',
-      category: 'COMPLIANCE',
-    },
-  ];
-
-  const latestNotifications = [...allNotifications, ...supplementaryNotifications].slice(0, 10);
+  const latestNotifications = allNotifications.slice(0, 10);
 
   // ============================================================================
-  // REPAIRS ANALYTICS & GRAPHICAL VIEW DATA
+  // REPAIRS ANALYTICS & DONUT GRAPH DATA
   // ============================================================================
   const allRepairs = ships.flatMap((s) =>
     s.maintenance.map((m) => ({
@@ -428,7 +363,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     (r) => (r.priority === 'urgent' || r.priority === 'high') && r.status !== 'completed'
   ).length;
 
-  // Per-ship repair metrics for graphical bar chart
+  // Per-ship repair metrics for Donut Charts
   const repairsByShip = ships.map((s) => {
     const open = s.maintenance.filter((m) => m.status === 'open').length;
     const inProgress = s.maintenance.filter((m) => m.status === 'in_progress').length;
@@ -444,8 +379,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       total,
     };
   });
-
-  const maxShipRepairs = Math.max(...repairsByShip.map((d) => d.total), 4);
 
   // Repairs by category
   const categories = ['Machinery', 'Hull', 'Electrical', 'Navigation', 'Safety'] as const;
@@ -474,7 +407,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 Fleet Command & Telemetry Dashboard
               </h1>
               <p className="text-xs text-[var(--text-muted)]">
-                Real-time global AIS vessel positioning, active fleet alarms, and graphical maintenance analytics.
+                Real-time global AIS vessel positioning, active fleet & crew certificate alarms, and maintenance analytics.
               </p>
             </div>
           </div>
@@ -508,7 +441,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* TOP GRID: ACCURATE FLEET MAP (LEFT 7 COLS) + LATEST ALARMS (RIGHT 5) */}
       {/* ===================================================================== */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
-        {/* 1. ACCURATE GLOBAL FLEET MAP WITH TANEET PURPLE MARKERS */}
+        {/* 1. ACCURATE GLOBAL FLEET MAP WITH PULSING TANEET PURPLE DOTS */}
         <div className="xl:col-span-7 mozuk-glass-card rounded-2xl border border-[var(--color-glass-border)] overflow-hidden flex flex-col shadow-lg">
           {/* Card Header */}
           <div className="px-4 py-3 bg-[var(--color-bg-alt)] border-b border-[var(--color-glass-border)] flex flex-wrap items-center justify-between gap-2">
@@ -522,69 +455,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-center gap-2 text-[10px] font-bold">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#7b0b76] text-white shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                Taneet Purple Vessel Markers ({ships.length})
+                Hover markers for vessel name
               </span>
             </div>
           </div>
 
           {/* Interactive Accurate Map Container */}
-          <div className="relative w-full h-[360px] sm:h-[400px] bg-[var(--color-bg)] z-0">
-            <div ref={mapContainerRef} className="w-full h-full z-0" />
-          </div>
-
-          {/* Interactive Vessel Selector Strip Below Map (Matches exact ships in Fleet Directory) */}
-          <div className="p-3 bg-[var(--color-surface)] border-t border-[var(--color-glass-border)]">
-            <div className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] mb-2 flex items-center justify-between">
-              <span>Active Fleet Transponders ({ships.length} Ships) — Click to center on map</span>
-              <span className="text-[#28ada4]">AIS Satellite Link Active</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {shipPositions.map((pos) => {
-                const isSelected = selectedMapShipId === pos.ship.id;
-                return (
-                  <div
-                    key={pos.ship.id}
-                    onClick={() => handleFocusShipOnMap(pos)}
-                    className={`p-2.5 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 ${
-                      isSelected
-                        ? 'bg-[#7b0b76]/15 border-[#7b0b76] shadow-sm'
-                        : 'bg-[var(--color-bg-alt)] border-[var(--color-glass-border)] hover:border-[#7b0b76]/50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 rounded-full bg-[#7b0b76] text-white flex items-center justify-center shrink-0 shadow-sm border border-white/40">
-                        <ShipIcon className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="font-extrabold text-xs text-[var(--text-main)] truncate">
-                          {pos.ship.name}
-                        </div>
-                        <div className="text-[10px] text-[var(--text-muted)] truncate">
-                          {pos.locationLabel}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-[10px] font-extrabold text-[#28ada4] bg-[#28ada4]/10 border border-[#28ada4]/25 px-1.5 py-0.5 rounded">
-                        {pos.speedKnots} kn
-                      </span>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectShip(pos.ship);
-                        }}
-                        title={`Open ${pos.ship.name} Profile`}
-                        className="p-1 rounded-lg bg-[var(--color-surface)] hover:bg-[#28ada4] text-[var(--text-muted)] hover:text-white border border-[var(--color-glass-border)] transition"
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+          <div className="relative w-full flex-1 min-h-[430px] bg-[var(--color-bg)] z-0">
+            <div ref={mapContainerRef} className="w-full h-full min-h-[430px] z-0" />
           </div>
         </div>
 
@@ -598,14 +476,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 Latest Alarms & Notifications
               </h2>
             </div>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] border border-[#7b0b76]/30 text-[10px] font-extrabold">
-              LATEST {latestNotifications.length} / 10
-            </span>
           </div>
 
           {/* Notifications List (Up to 10 items) */}
-          <div className="divide-y divide-[var(--color-glass-border)] overflow-y-auto max-h-[515px] flex-1">
-            {latestNotifications.map((item, idx) => (
+          <div className="divide-y divide-[var(--color-glass-border)] overflow-y-auto max-h-[430px] flex-1">
+            {latestNotifications.map((item) => (
               <div
                 key={item.id}
                 onClick={() => item.ship && onSelectShip(item.ship)}
@@ -632,21 +507,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </div>
 
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span
-                        className={`px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase tracking-wider ${
-                          item.severity === 'alarm'
-                            ? 'bg-[#7b0b76] text-white'
-                            : item.severity === 'warning'
-                            ? 'bg-[#7b0b76]/15 text-[#7b0b76]'
-                            : 'bg-[#28ada4]/15 text-[#28ada4]'
-                        }`}
-                      >
-                        #{idx + 1} • {item.category}
-                      </span>
-                      <span className="text-[10px] font-extrabold text-[#28ada4] truncate">
-                        {item.shipName}
-                      </span>
+                    {/* Ship Name in Teal (Tags removed) */}
+                    <div className="text-[10px] font-extrabold text-[#28ada4] uppercase tracking-wider truncate">
+                      {item.shipName}
                     </div>
 
                     <div className="font-bold text-xs text-[var(--text-main)] truncate mt-0.5 group-hover:text-[#28ada4] transition">
@@ -682,7 +545,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
             <div>
               <h2 className="font-['Montserrat',sans-serif] font-extrabold text-base uppercase tracking-wider text-[var(--text-main)]">
-                Fleet Maintenance & Number of Repairs — Graphical View
+                Fleet Maintenance & Number of Repairs
               </h2>
               <p className="text-xs text-[var(--text-muted)]">
                 Vessel-by-vessel repair workload distribution, completion status, and technical department breakdown.
@@ -778,75 +641,113 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
 
-        {/* Graphical Charts Grid: Left = Repairs per Ship Bar Chart, Right = Repairs by Department & Completion Ring */}
+        {/* Graphical Charts Grid: Left = Donut Graph for Each Ship, Right = Repairs by Department */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-1">
-          {/* Graphical Vertical & Horizontal Stacked Bar View by Vessel (7 cols) */}
+          {/* Donut Graph per Vessel (7 cols) */}
           <div className="lg:col-span-7 p-4 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex flex-col justify-between space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-[var(--text-main)] flex items-center gap-2">
                 <Anchor className="w-3.5 h-3.5 text-[#28ada4]" />
-                Number of Repairs per Vessel (Graphical Comparison)
+                Number of Repairs per Vessel
               </h3>
               <span className="text-[10px] font-bold text-[var(--text-muted)]">
-                Click any vessel bar to inspect work orders
+                Click any vessel to inspect work orders
               </span>
             </div>
 
-            {/* Vertical Column Chart */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 items-end pt-4 pb-2 px-2 min-h-[190px] border-b border-[var(--color-glass-border)]">
+            {/* Donut Graphs Grid (1 Donut per Ship) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 items-center py-3 px-2 border-b border-[var(--color-glass-border)]">
               {repairsByShip.map((item) => {
-                const openHeightPct = Math.round((item.open / maxShipRepairs) * 100);
-                const inProgHeightPct = Math.round((item.inProgress / maxShipRepairs) * 100);
-                const compHeightPct = Math.round((item.completed / maxShipRepairs) * 100);
+                const radius = 34;
+                const circumference = 2 * Math.PI * radius;
+                const total = Math.max(item.total, 1);
+
+                const openLen = (item.open / total) * circumference;
+                const inProgLen = (item.inProgress / total) * circumference;
+                const compLen = (item.completed / total) * circumference;
 
                 return (
                   <div
                     key={item.ship.id}
                     onClick={() => onSelectShip(item.ship)}
-                    className="flex flex-col items-center group cursor-pointer"
+                    className="flex flex-col items-center p-2.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] hover:border-[#28ada4] transition cursor-pointer group"
                   >
-                    {/* Total Count Label above bar */}
-                    <div className="mb-1.5 px-2 py-0.5 rounded-full bg-[var(--color-surface)] border border-[var(--color-glass-border)] text-[10px] font-extrabold text-[var(--text-main)] group-hover:border-[#7b0b76] transition">
-                      {item.total} {item.total === 1 ? 'Repair' : 'Repairs'}
-                    </div>
+                    {/* SVG Donut Chart */}
+                    <div className="relative w-24 h-24 flex items-center justify-center">
+                      <svg className="w-24 h-24 -rotate-90" viewBox="0 0 88 88">
+                        {/* Background Track */}
+                        <circle
+                          cx="44"
+                          cy="44"
+                          r={radius}
+                          fill="transparent"
+                          stroke="rgba(148, 163, 184, 0.15)"
+                          strokeWidth="9"
+                        />
 
-                    {/* Bar Column Track */}
-                    <div className="w-14 sm:w-16 h-32 rounded-t-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] p-1 flex flex-col justify-end gap-0.5 overflow-hidden group-hover:border-[#28ada4] transition">
-                      {item.completed > 0 && (
-                        <div
-                          style={{ height: `${Math.max(compHeightPct, 14)}%` }}
-                          className="w-full rounded-sm bg-[var(--text-muted)]/40 transition-all duration-500 flex items-center justify-center text-[9px] font-extrabold text-[var(--text-main)]"
-                          title={`Completed: ${item.completed}`}
-                        >
-                          {item.completed}
-                        </div>
-                      )}
-                      {item.inProgress > 0 && (
-                        <div
-                          style={{ height: `${Math.max(inProgHeightPct, 18)}%` }}
-                          className="w-full rounded-sm bg-[#28ada4] transition-all duration-500 flex items-center justify-center text-[9px] font-extrabold text-white"
-                          title={`In Progress: ${item.inProgress}`}
-                        >
-                          {item.inProgress}
-                        </div>
-                      )}
-                      {item.open > 0 && (
-                        <div
-                          style={{ height: `${Math.max(openHeightPct, 18)}%` }}
-                          className="w-full rounded-sm bg-[#7b0b76] transition-all duration-500 flex items-center justify-center text-[9px] font-extrabold text-white"
-                          title={`Open: ${item.open}`}
-                        >
-                          {item.open}
-                        </div>
-                      )}
+                        {/* Completed Segment (Muted Slate) */}
+                        {item.completed > 0 && (
+                          <circle
+                            cx="44"
+                            cy="44"
+                            r={radius}
+                            fill="transparent"
+                            stroke="rgba(148, 163, 184, 0.55)"
+                            strokeWidth="9"
+                            strokeDasharray={`${compLen} ${circumference}`}
+                            strokeDashoffset={-(openLen + inProgLen)}
+                          />
+                        )}
+
+                        {/* In Progress Segment (Teal #28ada4) */}
+                        {item.inProgress > 0 && (
+                          <circle
+                            cx="44"
+                            cy="44"
+                            r={radius}
+                            fill="transparent"
+                            stroke="#28ada4"
+                            strokeWidth="9"
+                            strokeDasharray={`${inProgLen} ${circumference}`}
+                            strokeDashoffset={-openLen}
+                          />
+                        )}
+
+                        {/* Open Segment (Taneet Purple #7b0b76) */}
+                        {item.open > 0 && (
+                          <circle
+                            cx="44"
+                            cy="44"
+                            r={radius}
+                            fill="transparent"
+                            stroke="#7b0b76"
+                            strokeWidth="9"
+                            strokeDasharray={`${openLen} ${circumference}`}
+                            strokeDashoffset={0}
+                          />
+                        )}
+                      </svg>
+
+                      {/* Center Count inside Donut */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                        <span className="text-lg font-extrabold text-[var(--text-main)] leading-none">
+                          {item.total}
+                        </span>
+                        <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)] mt-0.5">
+                          {item.total === 1 ? 'Repair' : 'Repairs'}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Ship Name Label */}
-                    <div className="mt-2 text-[10px] font-extrabold text-[var(--text-main)] text-center truncate max-w-full group-hover:text-[#28ada4] transition">
+                    <div
+                      className="mt-2 text-[10px] font-extrabold text-[var(--text-main)] text-center truncate w-full group-hover:text-[#28ada4] transition"
+                      title={item.name}
+                    >
                       {item.name}
                     </div>
-                    <div className="text-[9px] font-bold text-[#7b0b76]">
-                      {item.active} active
+                    <div className="text-[9px] font-bold text-[#7b0b76] mt-0.5">
+                      {item.active} active • {item.completed} done
                     </div>
                   </div>
                 );
@@ -855,7 +756,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] font-semibold">
               <span>Active Fleet Work Orders: {openRepairsCount + inProgressRepairsCount}</span>
-              <span>Fleet Completion Rate: {totalRepairsCount > 0 ? Math.round((completedRepairsCount / totalRepairsCount) * 100) : 0}%</span>
+              <span>
+                Fleet Completion Rate:{' '}
+                {totalRepairsCount > 0 ? Math.round((completedRepairsCount / totalRepairsCount) * 100) : 0}%
+              </span>
             </div>
           </div>
 
