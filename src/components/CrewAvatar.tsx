@@ -23,7 +23,7 @@ export const CrewAvatar: React.FC<CrewAvatarProps> = ({
   const avatarUrl = getCrewAvatarUrl(crew);
 
   const sizeClasses = {
-    sm: 'w-9 h-9 rounded-xl',
+    sm: 'w-7 h-7 rounded-lg',
     md: 'w-9 h-9 rounded-xl',
     lg: 'w-14 h-14 rounded-2xl',
     xl: 'w-16 h-16 rounded-2xl',
