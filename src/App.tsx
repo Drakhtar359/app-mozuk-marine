@@ -832,9 +832,9 @@ export function App() {
       {/* Background Cyber Gradient Overlay */}
       <div className="bg-mozuk-overlay" />
 
-      {/* Header matching marine.mozuk.net */}
-      <header className="header-nav sticky top-0 z-30 px-4 lg:px-6 py-3.5 border-b border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] shadow-lg">
-        <div className="w-full flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+      {/* Fixed Top Header (60px height, locked to top of viewport) */}
+      <header className="header-nav fixed top-0 left-0 right-0 h-[60px] z-30 px-4 lg:px-6 flex items-center border-b border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] shadow-lg">
+        <div className="w-full flex items-center justify-between gap-4">
           {/* Taneet Branding */}
           <div className="flex items-center shrink-0">
             <div
@@ -893,210 +893,207 @@ export function App() {
         </div>
       </header>
 
-      {/* Main Content */}
-      {selectedShip ? (
-        <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-6">
-          <motion.div
-            key="vessel-profile"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+      {/* Clipped Left-Side Navigation Bar (Fixed to left viewport edge from top-[60px] to bottom-0, never scrolls) */}
+      <aside
+        className={`fixed top-[60px] left-0 bottom-0 z-20 ${
+          isSidebarCollapsed ? 'w-14' : 'w-60 xl:w-64'
+        } bg-[var(--color-surface)] border-r border-[var(--color-glass-border)] flex flex-col justify-between p-0 select-none transition-[width] duration-200 ease-in-out overflow-hidden`}
+      >
+        <div>
+          <div
+            className={`h-11 flex items-center ${
+              isSidebarCollapsed ? 'justify-center px-0' : 'justify-between px-4'
+            } border-b border-[var(--color-glass-border)]`}
           >
-            <VesselProfilePage
-              ship={selectedShip}
-              companyCrew={companyCrew}
-              onBack={handleSelectFleetDirectory}
-              onUpdateShip={handleUpdateShip}
-              onAssignExistingCrewToShip={handleAssignExistingCrewToShip}
-              onUnassignCrewFromShip={handleUnassignCrewFromShip}
-            />
-          </motion.div>
-        </main>
-      ) : viewMode === '404' ? (
-        <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-6">
-          <motion.div
-            key="404-page"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            {!isSidebarCollapsed && (
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] truncate">
+                Navigation Menu
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => setIsSidebarCollapsed((prev) => !prev)}
+              title={isSidebarCollapsed ? 'Expand Navigation Menu' : 'Collapse Navigation Menu'}
+              className="p-1.5 text-[var(--text-muted)] hover:text-[#28ada4] transition-colors cursor-pointer shrink-0"
+            >
+              {isSidebarCollapsed ? (
+                <PanelLeftOpen className="w-4 h-4" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => handleSelectNavTab('dashboard')}
+            title="DASHBOARD"
+            className={`w-full h-11 flex items-center ${
+              isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+            } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+              !selectedShip && viewMode === 'fleet' && activeHomeTab === 'dashboard'
+                ? 'bg-[#28ada4] text-white'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+            }`}
           >
-            <NotFoundPage attemptedPath={attemptedPath} />
-          </motion.div>
-        </main>
-      ) : (
-        <div className="flex-1 flex flex-col lg:flex-row w-full items-stretch">
-          {/* Docked Left Side Navigation Bar (Sticks flush to left side of page, collapsible, full-row active color) */}
-          <aside
-            className={`w-full ${
-              isSidebarCollapsed ? 'lg:w-14' : 'lg:w-64'
-            } shrink-0 bg-[var(--color-surface)] border-b lg:border-b-0 lg:border-r border-[var(--color-glass-border)] flex flex-col justify-between lg:sticky lg:top-[61px] lg:h-[calc(100vh-61px)] p-0 select-none transition-[width] duration-200 ease-in-out overflow-hidden`}
+            <LayoutDashboard className="w-4 h-4 shrink-0" />
+            {!isSidebarCollapsed && <span className="truncate">DASHBOARD</span>}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSelectNavTab('fleet')}
+            title="REGISTERED FLEET DIRECTORY"
+            className={`w-full h-11 flex items-center ${
+              isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+            } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+              (selectedShip || (viewMode === 'fleet' && activeHomeTab === 'fleet'))
+                ? 'bg-[#28ada4] text-white'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+            }`}
           >
-            <div>
-              <div
-                className={`h-11 flex items-center ${
-                  isSidebarCollapsed ? 'justify-center px-0' : 'justify-between px-4'
-                } border-b border-[var(--color-glass-border)]`}
-              >
-                {!isSidebarCollapsed && (
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] truncate">
-                    Navigation Menu
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setIsSidebarCollapsed((prev) => !prev)}
-                  title={isSidebarCollapsed ? 'Expand Navigation Menu' : 'Collapse Navigation Menu'}
-                  className="p-1.5 text-[var(--text-muted)] hover:text-[#28ada4] transition-colors cursor-pointer shrink-0"
-                >
-                  {isSidebarCollapsed ? (
-                    <PanelLeftOpen className="w-4 h-4" />
-                  ) : (
-                    <PanelLeftClose className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
+            <Anchor className="w-4 h-4 shrink-0" />
+            {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET DIRECTORY</span>}
+          </button>
 
-              <button
-                type="button"
-                onClick={() => handleSelectNavTab('dashboard')}
-                title="DASHBOARD"
-                className={`w-full h-11 flex items-center ${
-                  isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
-                  viewMode === 'fleet' && activeHomeTab === 'dashboard'
-                    ? 'bg-[#28ada4] text-white'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-                }`}
-              >
-                <LayoutDashboard className="w-4 h-4 shrink-0" />
-                {!isSidebarCollapsed && <span className="truncate">DASHBOARD</span>}
-              </button>
+          <button
+            type="button"
+            onClick={() => handleSelectNavTab('crew')}
+            title="COMPANY MASTER CREW ROSTER"
+            className={`w-full h-11 flex items-center ${
+              isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+            } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+              !selectedShip && viewMode === 'fleet' && activeHomeTab === 'crew'
+                ? 'bg-[#28ada4] text-white'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+            }`}
+          >
+            <Users className="w-4 h-4 shrink-0" />
+            {!isSidebarCollapsed && <span className="truncate">COMPANY MASTER CREW ROSTER</span>}
+          </button>
+        </div>
 
-              <button
-                type="button"
-                onClick={() => handleSelectNavTab('fleet')}
-                title="REGISTERED FLEET DIRECTORY"
-                className={`w-full h-11 flex items-center ${
-                  isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
-                  viewMode === 'fleet' && activeHomeTab === 'fleet'
-                    ? 'bg-[#28ada4] text-white'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-                }`}
-              >
-                <Anchor className="w-4 h-4 shrink-0" />
-                {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET DIRECTORY</span>}
-              </button>
+        {/* Bottom of Vertical Navigation Bar: Company Profile */}
+        <div className="mt-auto border-t border-[var(--color-glass-border)]">
+          <button
+            type="button"
+            onClick={handleSelectCompanyProfile}
+            title="COMPANY PROFILE"
+            className={`w-full h-11 flex items-center ${
+              isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+            } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+              !selectedShip && viewMode === 'profile'
+                ? 'bg-[#28ada4] text-white'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+            }`}
+          >
+            <Building2 className={`w-4 h-4 shrink-0 ${!selectedShip && viewMode === 'profile' ? 'text-white' : 'text-[#28ada4]'}`} />
+            {!isSidebarCollapsed && <span className="truncate">COMPANY PROFILE</span>}
+          </button>
+        </div>
+      </aside>
 
-              <button
-                type="button"
-                onClick={() => handleSelectNavTab('crew')}
-                title="COMPANY MASTER CREW ROSTER"
-                className={`w-full h-11 flex items-center ${
-                  isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
-                  viewMode === 'fleet' && activeHomeTab === 'crew'
-                    ? 'bg-[#28ada4] text-white'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-                }`}
+      {/* Right-Hand Content Area (Fluidly scaled across all laptop & monitor sizes) */}
+      <div
+        className={`flex-1 flex flex-col min-h-screen pt-[60px] ${
+          isSidebarCollapsed ? 'pl-14' : 'pl-60 xl:pl-64'
+        } transition-[padding] duration-200 ease-in-out`}
+      >
+        <main className="flex-1 min-w-0 w-full px-5 xl:px-8 2xl:px-10 py-6">
+          <div className="w-full max-w-[1920px] mx-auto">
+            {selectedShip ? (
+              <motion.div
+                key="vessel-profile"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 28 }}
               >
-                <Users className="w-4 h-4 shrink-0" />
-                {!isSidebarCollapsed && <span className="truncate">COMPANY MASTER CREW ROSTER</span>}
-              </button>
-            </div>
-
-            {/* Bottom of Vertical Navigation Bar: Company Profile */}
-            <div className="mt-auto border-t border-[var(--color-glass-border)]">
-              <button
-                type="button"
-                onClick={handleSelectCompanyProfile}
-                title="COMPANY PROFILE"
-                className={`w-full h-11 flex items-center ${
-                  isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
-                  viewMode === 'profile'
-                    ? 'bg-[#28ada4] text-white'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-                }`}
-              >
-                <Building2 className={`w-4 h-4 shrink-0 ${viewMode === 'profile' ? 'text-white' : 'text-[#28ada4]'}`} />
-                {!isSidebarCollapsed && <span className="truncate">COMPANY PROFILE</span>}
-              </button>
-            </div>
-          </aside>
-
-          {/* Main Tab Content Area */}
-          <main className="flex-1 min-w-0 w-full px-4 lg:px-8 py-6">
-            <div className="max-w-7xl mx-auto">
-              {viewMode === 'profile' ? (
-                <CompanyProfilePage
-                  ownerDetails={ownerDetails}
-                  ships={ships}
+                <VesselProfilePage
+                  ship={selectedShip}
                   companyCrew={companyCrew}
                   onBack={handleSelectFleetDirectory}
-                  onOpenEditModal={() => setIsOwnerModalOpen(true)}
-                  onSelectShip={(ship) => handleSelectShip(ship)}
-                  onUpdateOwnerDetails={handleSaveOwnerDetails}
+                  onUpdateShip={handleUpdateShip}
+                  onAssignExistingCrewToShip={handleAssignExistingCrewToShip}
+                  onUnassignCrewFromShip={handleUnassignCrewFromShip}
                 />
-              ) : activeHomeTab === 'dashboard' ? (
-                <div className="mozuk-glass-card rounded-2xl p-12 border border-[var(--color-glass-border)] text-center space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-[#28ada4]/10 border border-[#28ada4]/25 flex items-center justify-center text-[#28ada4] mx-auto">
-                    <LayoutDashboard className="w-6 h-6" />
-                  </div>
-                  <h2 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
-                    Dashboard
-                  </h2>
-                  <p className="text-xs text-[var(--text-muted)] max-w-md mx-auto">
-                    Centralized fleet analytics, compliance alerts, and operational overview will be populated here.
-                  </p>
+              </motion.div>
+            ) : viewMode === '404' ? (
+              <motion.div
+                key="404-page"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              >
+                <NotFoundPage attemptedPath={attemptedPath} />
+              </motion.div>
+            ) : viewMode === 'profile' ? (
+              <CompanyProfilePage
+                ownerDetails={ownerDetails}
+                ships={ships}
+                companyCrew={companyCrew}
+                onBack={handleSelectFleetDirectory}
+                onOpenEditModal={() => setIsOwnerModalOpen(true)}
+                onSelectShip={(ship) => handleSelectShip(ship)}
+                onUpdateOwnerDetails={handleSaveOwnerDetails}
+              />
+            ) : activeHomeTab === 'dashboard' ? (
+              <div className="mozuk-glass-card rounded-2xl p-12 border border-[var(--color-glass-border)] text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-[#28ada4]/10 border border-[#28ada4]/25 flex items-center justify-center text-[#28ada4] mx-auto">
+                  <LayoutDashboard className="w-6 h-6" />
                 </div>
-              ) : activeHomeTab === 'fleet' ? (
-                <ShipList
-                  ships={ships}
-                  onSelectShip={(ship) => handleSelectShip(ship)}
-                  onRemoveShip={handleRemoveShip}
-                  onRegisterVessel={() => setIsAddModalOpen(true)}
-                />
-              ) : (
-                <CompanyCrewList
-                  companyCrew={companyCrew}
-                  ships={ships}
-                  onSelectShip={(ship) => handleSelectShip(ship)}
-                  onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
-                  onAddCrewMember={handleAddCompanyCrew}
-                  onUpdateCrewMember={handleUpdateCompanyCrew}
-                  onRemoveCrewMember={handleRemoveCompanyCrew}
-                />
-              )}
-            </div>
-          </main>
-        </div>
-      )}
+                <h2 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
+                  Dashboard
+                </h2>
+                <p className="text-xs text-[var(--text-muted)] max-w-md mx-auto">
+                  Centralized fleet analytics, compliance alerts, and operational overview will be populated here.
+                </p>
+              </div>
+            ) : activeHomeTab === 'fleet' ? (
+              <ShipList
+                ships={ships}
+                onSelectShip={(ship) => handleSelectShip(ship)}
+                onRemoveShip={handleRemoveShip}
+                onRegisterVessel={() => setIsAddModalOpen(true)}
+              />
+            ) : (
+              <CompanyCrewList
+                companyCrew={companyCrew}
+                ships={ships}
+                onSelectShip={(ship) => handleSelectShip(ship)}
+                onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
+                onAddCrewMember={handleAddCompanyCrew}
+                onUpdateCrewMember={handleUpdateCompanyCrew}
+                onRemoveCrewMember={handleRemoveCompanyCrew}
+              />
+            )}
+          </div>
+        </main>
 
-      {/* Footer matching marine.mozuk.net */}
-      <footer className="border-t border-[var(--color-glass-border)] bg-[var(--color-bg-alt)] py-8 text-xs text-[var(--text-muted)]">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img
-              src="/taneet-logo.png"
-              alt="Taneet Logo"
-              className="h-6 w-auto opacity-80"
-              onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
-            />
-            <div>
-              © 2026 <strong className="text-[var(--text-main)]">Taneet</strong> - by <strong className="text-[var(--text-main)]">Mozuk Marine</strong>. All rights reserved.
+        {/* Footer matching marine.mozuk.net */}
+        <footer className="border-t border-[var(--color-glass-border)] bg-[var(--color-bg-alt)] py-6 px-5 xl:px-8 2xl:px-10 text-xs text-[var(--text-muted)]">
+          <div className="w-full max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <img
+                src="/taneet-logo.png"
+                alt="Taneet Logo"
+                className="h-6 w-auto opacity-80"
+                onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+              />
+              <div>
+                © 2026 <strong className="text-[var(--text-main)]">Taneet</strong> - by <strong className="text-[var(--text-main)]">Mozuk Marine</strong>. All rights reserved.
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 text-[var(--text-muted)]">
+              <span>BWTS Installation & Compliance</span>
+              <span>•</span>
+              <span>Fleet Portal</span>
             </div>
           </div>
-
-          <div className="flex items-center gap-4 text-[var(--text-muted)]">
-            <span>BWTS Installation & Compliance</span>
-            <span>•</span>
-            <span>Fleet Portal</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
 
       {/* Add Ship Modal */}
       <AddShipModal

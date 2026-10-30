@@ -65,7 +65,7 @@ export const ShipList: React.FC<ShipListProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
         {ships.map((ship) => {
           const openRepairsCount = ship.maintenance.filter((m) => m.status !== 'completed').length;
           const urgentRepairsCount = ship.maintenance.filter((m) => m.status !== 'completed' && m.priority === 'urgent').length;
