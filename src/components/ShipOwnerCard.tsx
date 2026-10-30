@@ -17,7 +17,7 @@ export const ShipOwnerCard: React.FC<ShipOwnerCardProps> = ({ ownerDetails, onEd
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
+              <h3 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
                 {ownerDetails.companyName}
               </h3>
               <span className="px-2.5 py-0.5 rounded-full bg-[#28ada4]/10 text-[#28ada4] border border-[#28ada4]/30 text-[11px] font-bold inline-flex items-center gap-1 shrink-0">

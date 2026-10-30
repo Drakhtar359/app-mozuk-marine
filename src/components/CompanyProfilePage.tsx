@@ -486,7 +486,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
     <div className="space-y-8">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5">
-        <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-2xl text-[var(--text-main)] flex items-center gap-2">
+        <h2 className="font-['Montserrat',sans-serif] font-extrabold text-2xl text-[var(--text-main)] flex items-center gap-2">
           <Building2 className="w-6 h-6 text-[#28ada4]" />
           Company Profile & Manager Details
         </h2>
@@ -529,7 +529,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             </div>
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-['Space_Grotesk',sans-serif] font-black text-2xl sm:text-3xl text-[var(--text-main)] tracking-tight">
+                <h1 className="font-['Montserrat',sans-serif] font-black text-2xl sm:text-3xl text-[var(--text-main)] tracking-tight">
                   {ownerDetails.companyName}
                 </h1>
               </div>
@@ -576,7 +576,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             </div>
             <div>
               <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-wider">Managed Fleet</div>
-              <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-2xl">{totalFleetCount} Vessels</div>
+              <div className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-2xl">{totalFleetCount} Vessels</div>
             </div>
           </div>
 
@@ -586,7 +586,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             </div>
             <div>
               <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-wider">Total Crew Personnel</div>
-              <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-2xl leading-none">{totalCrewCount}</div>
+              <div className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-2xl leading-none">{totalCrewCount}</div>
               <div className="text-xs text-[#28ada4] font-bold mt-1">
                 ({totalOnboardCrewCount} onboard)
               </div>
@@ -599,7 +599,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             </div>
             <div>
               <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-wider">Technical Certificates</div>
-              <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-2xl">{totalDocsCount} Valid</div>
+              <div className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-2xl">{totalDocsCount} Valid</div>
             </div>
           </div>
 
@@ -609,7 +609,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             </div>
             <div>
               <div className="text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-wider">Open Work Orders</div>
-              <div className="font-['Space_Grotesk',sans-serif] font-extrabold text-[#7b0b76] text-2xl">{totalOpenRepairsCount} Pending</div>
+              <div className="font-['Montserrat',sans-serif] font-extrabold text-[#7b0b76] text-2xl">{totalOpenRepairsCount} Pending</div>
             </div>
           </div>
         </div>
@@ -684,7 +684,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+                  <h3 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
                     <Globe className="w-5 h-5 text-[#28ada4]" />
                     Customers Directory ({filteredCustomers.length})
                   </h3>
@@ -813,7 +813,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+                  <h3 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
                     <Briefcase className="w-5 h-5 text-[#28ada4]" />
                     Employees ({employeesList.length})
                   </h3>
@@ -933,7 +933,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
+                  <h3 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
                     <UserCheck className="w-5 h-5 text-[#28ada4]" />
                     Contacts & Company Directory ({filteredContactPeople.length})
                   </h3>
@@ -1083,7 +1083,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                     <Globe className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                    <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       {editingCustomerId ? 'Edit Customer Details' : 'Register New Customer Company'}
                     </h3>
                     <p className="text-xs text-[var(--text-muted)]">
@@ -1265,7 +1265,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                     <Briefcase className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                    <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       {editingEmployeeId ? 'Edit Employee Details' : 'Register New Company Employee'}
                     </h3>
                     <p className="text-xs text-[var(--text-muted)]">
@@ -1443,7 +1443,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                    <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       {editingContactId ? 'Edit Company Contact Person' : 'Register New Contact Person'}
                     </h3>
                     <p className="text-xs text-[var(--text-muted)]">

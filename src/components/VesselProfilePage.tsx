@@ -767,7 +767,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
 
             {/* 2. Ship Name */}
-            <h1 className="text-3xl font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] leading-tight">
+            <h1 className="text-3xl font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] leading-tight">
               {ship.name}
             </h1>
 
@@ -843,7 +843,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('crew')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Montserrat',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'crew'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
@@ -857,7 +857,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('maintenance')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Montserrat',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'maintenance'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
@@ -871,7 +871,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('documents')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Montserrat',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'documents'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
@@ -885,7 +885,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
           onClick={() => setActiveTab('logbooks')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs transition w-full ${
+          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Montserrat',sans-serif] font-bold text-xs transition w-full ${
             activeTab === 'logbooks'
               ? 'btn-mozuk-primary shadow-lg'
               : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
@@ -904,7 +904,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
             <div>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+              <h2 className="font-['Montserrat',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
                 <Crown className="w-5 h-5 text-[#7b0b76] dark:text-[#7b0b76]" />
                 Vessel Command Organization Tree
               </h2>
@@ -939,7 +939,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         size="lg"
                         className="mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform border-2 border-[#7b0b76]"
                       />
-                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#7b0b76] dark:group-hover:text-[#7b0b76] transition">
+                      <h3 className="font-['Montserrat',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#7b0b76] dark:group-hover:text-[#7b0b76] transition">
                         {master.name}
                       </h3>
                       <div className="text-xs text-[#7b0b76] dark:text-[#7b0b76] font-bold uppercase tracking-wider mt-0.5">
@@ -1024,7 +1024,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         <Compass className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                        <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                           Deck Department
                         </h3>
                         <span className="text-[11px] text-[var(--text-muted)] font-medium">
@@ -1106,7 +1106,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         <Wrench className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                        <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                           Engine Department
                         </h3>
                         <span className="text-[11px] text-[var(--text-muted)] font-medium">
@@ -1188,7 +1188,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         <Utensils className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                        <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                           Kitchen / Mess Dept
                         </h3>
                         <span className="text-[11px] text-[var(--text-muted)] font-medium">
@@ -1279,7 +1279,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             {/* Section Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
               <div>
-                <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <h2 className="font-['Montserrat',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
                   <Wrench className="w-5 h-5 text-[var(--color-primary)]" />
                   Vessel Maintenance & Technical Requisitions
                 </h2>
@@ -1371,7 +1371,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-[#7b0b76]/30 bg-[#7b0b76]/10">
                       <div>
                         <div className="text-[#7b0b76] dark:text-[#7b0b76] text-xs font-bold uppercase">Open Work Orders</div>
-                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[#7b0b76] dark:text-[#7b0b76] mt-1">{openRepairsCount}</div>
+                        <div className="text-2xl font-['Montserrat',sans-serif] font-extrabold text-[#7b0b76] dark:text-[#7b0b76] mt-1">{openRepairsCount}</div>
                       </div>
                       <div className="p-3 rounded-xl bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/40">
                         <AlertTriangle className="w-5 h-5" />
@@ -1381,7 +1381,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     <div className="mozuk-glass-card rounded-xl p-4 flex items-center justify-between border border-[#28ada4]/30 bg-[#28ada4]/10">
                       <div>
                         <div className="text-[#28ada4] text-xs font-bold uppercase">In Progress Overhauls</div>
-                        <div className="text-2xl font-['Space_Grotesk',sans-serif] font-extrabold text-[#28ada4] mt-1">{inProgressCount}</div>
+                        <div className="text-2xl font-['Montserrat',sans-serif] font-extrabold text-[#28ada4] mt-1">{inProgressCount}</div>
                       </div>
                       <div className="p-3 rounded-xl bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/40">
                         <Clock className="w-5 h-5" />
@@ -1392,7 +1392,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   {activeRepairs.length === 0 ? (
                     <div className="mozuk-glass-card rounded-2xl p-10 text-center text-[var(--text-muted)]">
                       <CheckCircle2 className="w-10 h-10 text-[#28ada4] mx-auto mb-2" />
-                      <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-base">No Active Maintenance Orders</h4>
+                      <h4 className="font-['Montserrat',sans-serif] font-bold text-[var(--text-main)] text-base">No Active Maintenance Orders</h4>
                       <p className="text-xs mt-1">All logged repairs are completed or verified.</p>
                     </div>
                   ) : (
@@ -1431,7 +1431,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               </span>
                             </div>
 
-                            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">{log.title}</h3>
+                            <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">{log.title}</h3>
                             <p className="text-xs text-[var(--text-muted)] leading-relaxed">{log.description}</p>
 
                             <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)] pt-1">
@@ -1481,7 +1481,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-3">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5 text-[#28ada4]" />
-                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                      <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                         Completed Repair History ({completedRepairs.length})
                       </h3>
                     </div>
@@ -1493,7 +1493,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   {completedRepairs.length === 0 ? (
                     <div className="mozuk-glass-card rounded-2xl p-10 text-center text-[var(--text-muted)]">
                       <History className="w-10 h-10 text-[var(--text-muted)] mx-auto mb-2 opacity-50" />
-                      <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-[var(--text-main)] text-base">No Completed Repair Logs</h4>
+                      <h4 className="font-['Montserrat',sans-serif] font-bold text-[var(--text-main)] text-base">No Completed Repair Logs</h4>
                       <p className="text-xs mt-1">Repairs completed in Active Maintenance will automatically archive here.</p>
                     </div>
                   ) : (
@@ -1513,7 +1513,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                               </span>
                             </div>
 
-                            <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)] line-through opacity-85">{log.title}</h3>
+                            <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)] line-through opacity-85">{log.title}</h3>
                             <p className="text-xs text-[var(--text-muted)] leading-relaxed">{log.description}</p>
 
                             <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)] pt-1">
@@ -1551,7 +1551,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 <div className="space-y-5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--color-glass-border)] pb-3">
                     <div>
-                      <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)] flex items-center gap-2">
+                      <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)] flex items-center gap-2">
                         <ShoppingCart className="w-5 h-5 text-[#7b0b76] dark:text-[#7b0b76]" />
                         Spare Parts Procurement & Technical Requisitions ({procurementList.length})
                       </h3>
@@ -1683,7 +1683,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           {/* Main Tab Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
             <div>
-              <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+              <h2 className="font-['Montserrat',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
                 <FileCheck className="w-5 h-5 text-[var(--color-primary)]" />
                 Vessel Documentation Repository
               </h2>
@@ -1766,7 +1766,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     <div className="p-1.5 rounded-lg bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30">
                       <ShieldCheck className="w-4 h-4" />
                     </div>
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                    <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Certifications (Class, Flag, Statutory & ISM)
                     </h3>
                     <span className="px-2 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] font-bold text-xs border border-[#28ada4]/30">
@@ -1854,7 +1854,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     <div className="p-1.5 rounded-lg bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)]">
                       <FileText className="w-4 h-4" />
                     </div>
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                    <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Technical Documentation (Manuals, Schematics & Drawings)
                     </h3>
                     <span className="px-2 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] font-bold text-xs border border-[var(--color-glass-border)]">
@@ -1930,7 +1930,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     <div className="p-1.5 rounded-lg bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30">
                       <Folder className="w-4 h-4" />
                     </div>
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                    <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Miscellaneous (Invoices, Cargo Chartering Orders, Port Access & Contracts)
                     </h3>
                     <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] font-bold text-xs border border-[#7b0b76]/30">
@@ -2125,7 +2125,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             {/* Section Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
               <div>
-                <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <h2 className="font-['Montserrat',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
                   <ClipboardList className="w-5 h-5 text-[var(--color-primary)]" />
                   Vessel Visitor Logbook & Physical Registry
                 </h2>
@@ -2364,7 +2364,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             {/* Section Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
               <div>
-                <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <h2 className="font-['Montserrat',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
                   <Droplets className="w-5 h-5 text-[#28ada4]" />
                   Ballast Water Record Book (IMO BWM Convention)
                 </h2>
@@ -2591,7 +2591,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             {/* Section Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
               <div>
-                <h2 className="font-['Space_Grotesk',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
+                <h2 className="font-['Montserrat',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
                   <Recycle className="w-5 h-5 text-[#7b0b76] dark:text-[#7b0b76]" />
                   Sewage & Grey Water Record Book (MARPOL Annex IV)
                 </h2>
@@ -2812,7 +2812,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {/* Modal Header */}
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
                 <div>
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                  <h3 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
                     <UserPlus className="w-4 h-4 text-[var(--color-primary)]" /> Add Crew Member to {ship.name}
                   </h3>
                   <p className="text-xs text-[var(--text-muted)]">Assign existing company personnel or register a new crew member</p>
@@ -3259,7 +3259,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl"
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                <h3 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
                   <FileCheck className="w-4 h-4 text-[var(--color-primary)]" /> Add Technical Document
                 </h3>
                 <motion.button
@@ -3387,7 +3387,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                <h3 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
                   <Wrench className="w-4 h-4 text-[var(--color-primary)]" /> Log Repair / Maintenance Task
                 </h3>
                 <motion.button
@@ -3539,7 +3539,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                <h3 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
                   <ClipboardList className="w-4 h-4 text-[var(--color-primary)]" /> Log New Visitor to {ship.name}
                 </h3>
                 <motion.button
@@ -3678,7 +3678,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                <h3 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
                   <Droplets className="w-4 h-4 text-[#28ada4]" /> Log Ballast Operation to {ship.name}
                 </h3>
                 <motion.button
@@ -3845,7 +3845,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                <h3 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
                   <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" /> Log Sewage / Grey Water Operation to {ship.name}
                 </h3>
                 <motion.button
@@ -4028,7 +4028,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
             >
               <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)]">
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
+                <h3 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
                   <ShoppingCart className="w-5 h-5 text-[#7b0b76] dark:text-[#7b0b76]" /> Log Spare Part Procurement Order
                 </h3>
                 <motion.button

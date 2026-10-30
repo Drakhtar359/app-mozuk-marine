@@ -91,7 +91,7 @@ export const AddShipModal: React.FC<AddShipModalProps> = ({ isOpen, onClose, onA
                   <ShipIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-base">
+                  <h2 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-base">
                     Register New Vessel to Mozuk Fleet
                   </h2>
                   <p className="text-xs text-[var(--text-muted)]">Enter vessel specs to create a dedicated profile page</p>

@@ -300,7 +300,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
             <div className="p-2 rounded-xl bg-[#28ada4]/10 text-[#28ada4] border border-[#28ada4]/20">
               <Users className="w-5 h-5" />
             </div>
-            <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-2xl text-[var(--text-main)]">
+            <h2 className="font-['Montserrat',sans-serif] font-extrabold text-2xl text-[var(--text-main)]">
               Company Master Crew Roster
             </h2>
           </div>
@@ -705,7 +705,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                    <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Register New Crew Member to Company Roster
                     </h3>
                     <p className="text-xs text-[var(--text-muted)]">
@@ -989,7 +989,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                     <Anchor className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                    <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                       Vessel Assignment Control
                     </h3>
                     <p className="text-xs text-[var(--text-muted)]">Assign {assigningCrew.name} to a fleet vessel</p>

@@ -961,49 +961,49 @@ export function App() {
               <button
                 type="button"
                 onClick={() => handleSelectNavTab('dashboard')}
-                title="Dashboard"
+                title="DASHBOARD"
                 className={`w-full h-11 flex items-center ${
                   isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                } rounded-none font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
                   viewMode === 'fleet' && activeHomeTab === 'dashboard'
                     ? 'bg-[#28ada4] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 shrink-0" />
-                {!isSidebarCollapsed && <span className="truncate">Dashboard</span>}
+                {!isSidebarCollapsed && <span className="truncate">DASHBOARD</span>}
               </button>
 
               <button
                 type="button"
                 onClick={() => handleSelectNavTab('fleet')}
-                title="Registered Fleet Directory"
+                title="REGISTERED FLEET DIRECTORY"
                 className={`w-full h-11 flex items-center ${
                   isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                } rounded-none font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
                   viewMode === 'fleet' && activeHomeTab === 'fleet'
                     ? 'bg-[#28ada4] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
                 }`}
               >
                 <Anchor className="w-4 h-4 shrink-0" />
-                {!isSidebarCollapsed && <span className="truncate">Registered Fleet Directory</span>}
+                {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET DIRECTORY</span>}
               </button>
 
               <button
                 type="button"
                 onClick={() => handleSelectNavTab('crew')}
-                title="Company Master Crew Roster"
+                title="COMPANY MASTER CREW ROSTER"
                 className={`w-full h-11 flex items-center ${
                   isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                } rounded-none font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
                   viewMode === 'fleet' && activeHomeTab === 'crew'
                     ? 'bg-[#28ada4] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
                 }`}
               >
                 <Users className="w-4 h-4 shrink-0" />
-                {!isSidebarCollapsed && <span className="truncate">Company Master Crew Roster</span>}
+                {!isSidebarCollapsed && <span className="truncate">COMPANY MASTER CREW ROSTER</span>}
               </button>
             </div>
 
@@ -1012,17 +1012,17 @@ export function App() {
               <button
                 type="button"
                 onClick={handleSelectCompanyProfile}
-                title="Company Profile"
+                title="COMPANY PROFILE"
                 className={`w-full h-11 flex items-center ${
                   isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                } rounded-none font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
                   viewMode === 'profile'
                     ? 'bg-[#28ada4] text-white'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
                 }`}
               >
                 <Building2 className={`w-4 h-4 shrink-0 ${viewMode === 'profile' ? 'text-white' : 'text-[#28ada4]'}`} />
-                {!isSidebarCollapsed && <span className="truncate">Company Profile</span>}
+                {!isSidebarCollapsed && <span className="truncate">COMPANY PROFILE</span>}
               </button>
             </div>
           </aside>
@@ -1045,7 +1045,7 @@ export function App() {
                   <div className="w-12 h-12 rounded-2xl bg-[#28ada4]/10 border border-[#28ada4]/25 flex items-center justify-center text-[#28ada4] mx-auto">
                     <LayoutDashboard className="w-6 h-6" />
                   </div>
-                  <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
+                  <h2 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
                     Dashboard
                   </h2>
                   <p className="text-xs text-[var(--text-muted)] max-w-md mx-auto">

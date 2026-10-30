@@ -42,7 +42,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = () => {
         </div>
 
         {/* 404 Big Heading */}
-        <h1 className="font-['Space_Grotesk',sans-serif] font-black text-6xl md:text-8xl tracking-tight text-[var(--text-main)] mb-3">
+        <h1 className="font-['Montserrat',sans-serif] font-black text-6xl md:text-8xl tracking-tight text-[var(--text-main)] mb-3">
           4<span className="text-[#28ada4]">0</span>4
         </h1>
 

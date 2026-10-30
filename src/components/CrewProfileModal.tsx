@@ -187,7 +187,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
             />
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-[var(--text-main)] text-xl truncate">
+                <h3 className="font-['Montserrat',sans-serif] font-extrabold text-[var(--text-main)] text-xl truncate">
                   {crew.name}
                 </h3>
                 <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] font-extrabold text-[10px] uppercase border border-[var(--color-glass-border)] shrink-0">
@@ -287,7 +287,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                 className="space-y-4"
               >
                 <div>
-                  <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-2">
+                  <h4 className="font-['Montserrat',sans-serif] font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-2">
                     <UserCheck className="w-4 h-4 text-[#28ada4]" /> Identity & Maritime Credentials
                   </h4>
 
@@ -409,7 +409,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                 className="space-y-4"
               >
                 <div className="flex items-center justify-between">
-                  <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] flex items-center gap-2">
+                  <h4 className="font-['Montserrat',sans-serif] font-bold text-sm text-[var(--text-main)] flex items-center gap-2">
                     <History className="w-4 h-4 text-[#28ada4]" /> Company Vessel Service Timeline
                   </h4>
                   <span className="text-[11px] text-[var(--text-muted)] font-mono">
@@ -488,7 +488,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
               >
                 {/* Practical Top Action Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <h4 className="font-['Space_Grotesk',sans-serif] font-bold text-sm text-[var(--text-main)] flex items-center gap-2">
+                  <h4 className="font-['Montserrat',sans-serif] font-bold text-sm text-[var(--text-main)] flex items-center gap-2">
                     <FileCheck className="w-4 h-4 text-[#28ada4]" /> All Seafarer Documents & Certifications
                   </h4>
 

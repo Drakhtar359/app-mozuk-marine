@@ -102,7 +102,7 @@ export const DeleteShipModal: React.FC<DeleteShipModalProps> = ({
                   <ShieldAlert className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-['Space_Grotesk',sans-serif] font-extrabold text-base text-[var(--text-main)]">
+                  <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
                     Delete Vessel Profile
                   </h3>
                   <p className="text-[11px] text-[#7b0b76] font-bold">
