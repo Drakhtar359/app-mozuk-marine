@@ -294,17 +294,13 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   return (
     <div className="space-y-6">
       {/* SECTION HEADER & KPIS */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-[var(--color-glass-border)] pb-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="p-2 rounded-xl bg-[#28ada4]/10 text-[#28ada4] border border-[#28ada4]/20">
-              <Users className="w-5 h-5" />
-            </div>
-            <h2 className="font-['Montserrat',sans-serif] font-extrabold text-2xl text-[var(--text-main)]">
-              Company Master Crew Roster
-            </h2>
-          </div>
-          <p className="text-xs text-[var(--text-muted)]">
+          <h2 className="font-heading font-bold text-[var(--text-main)] text-xl flex items-center gap-2">
+            <Users className="w-5 h-5 text-[var(--color-primary)] shrink-0" />
+            Company Master Crew Roster
+          </h2>
+          <p className="text-xs text-[var(--text-muted)] mt-1">
             Centralized directory of all registered officers, engineers, ratings, active vessel assignments & standby pool.
           </p>
         </div>

@@ -406,44 +406,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   return (
     <div className="space-y-6">
       {/* DASHBOARD HEADER & TOP FLEET TELEMETRY BAR */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-[var(--color-glass-border)] pb-4">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#28ada4]/10 text-[#28ada4] border border-[#28ada4]/25">
-              <Compass className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="font-['Montserrat',sans-serif] font-extrabold text-xl sm:text-2xl text-[var(--text-main)] uppercase tracking-tight">
-                Fleet Command & Telemetry Dashboard
-              </h1>
-              <p className="text-xs text-[var(--text-muted)]">
-                Real-time global AIS vessel positioning, active fleet & crew certificate alarms, and maintenance analytics.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Summary Pills */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="px-3.5 py-2 rounded-xl bg-[#7b0b76]/10 border border-[#7b0b76]/30 flex items-center gap-2 text-xs">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#7b0b76] ring-4 ring-[#7b0b76]/20" />
-            <span className="text-[var(--text-muted)] font-bold uppercase text-[10px]">Tracked Vessels:</span>
-            <strong className="text-[#7b0b76] font-extrabold text-sm">{ships.length}</strong>
-          </div>
-
-          <div className="px-3.5 py-2 rounded-xl bg-[#28ada4]/10 border border-[#28ada4]/30 flex items-center gap-2 text-xs">
-            <Bell className="w-3.5 h-3.5 text-[#28ada4]" />
-            <span className="text-[var(--text-muted)] font-bold uppercase text-[10px]">Active Notifications:</span>
-            <strong className="text-[#28ada4] font-extrabold text-sm">{latestNotifications.length}</strong>
-          </div>
-
-          <div className="px-3.5 py-2 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] flex items-center gap-2 text-xs">
-            <Wrench className="w-3.5 h-3.5 text-[#7b0b76]" />
-            <span className="text-[var(--text-muted)] font-bold uppercase text-[10px]">Active Repairs:</span>
-            <strong className="text-[var(--text-main)] font-extrabold text-sm">
-              {openRepairsCount + inProgressRepairsCount}
-            </strong>
-          </div>
+          <h2 className="font-heading font-bold text-[var(--text-main)] text-xl flex items-center gap-2">
+            <Compass className="w-5 h-5 text-[var(--color-primary)] shrink-0" />
+            Dashboard
+          </h2>
+          <p className="text-xs text-[var(--text-muted)] mt-1">
+            Real-time global AIS vessel positioning, active fleet alarms, and maintenance analytics.
+          </p>
         </div>
       </div>
 

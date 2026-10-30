@@ -485,11 +485,16 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
   return (
     <div className="space-y-8">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5">
-        <h2 className="font-['Montserrat',sans-serif] font-extrabold text-2xl text-[var(--text-main)] flex items-center gap-2">
-          <Building2 className="w-6 h-6 text-[#28ada4]" />
-          Company Profile & Manager Details
-        </h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-[var(--color-glass-border)] pb-4">
+        <div>
+          <h2 className="font-heading font-bold text-[var(--text-main)] text-xl flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-[var(--color-primary)] shrink-0" />
+            Company Profile & Manager Details
+          </h2>
+          <p className="text-xs text-[var(--text-muted)] mt-1">
+            Registered vessel owner, manager contacts, shore-based personnel, and commercial partners.
+          </p>
+        </div>
 
         {/* Subscription Tier Block */}
         <div className="flex flex-col sm:items-end shrink-0">
