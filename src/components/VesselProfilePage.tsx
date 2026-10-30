@@ -1568,17 +1568,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     </button>
                   </div>
 
-                  <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-                    <table className="w-full text-left text-xs min-w-[900px]">
-                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                  <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+                    <table className="w-full table-fixed text-left text-xs">
+                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                         <tr>
-                          <th className="py-3.5 px-4">Order Date</th>
-                          <th className="py-3.5 px-4">Spare Part Name & Part Number</th>
-                          <th className="py-3.5 px-4">Provider / OEM Supplier</th>
-                          <th className="py-3.5 px-4">Delivery Port</th>
-                          <th className="py-3.5 px-4 text-center">Qty</th>
-                          <th className="py-3.5 px-4 text-center">Order Status</th>
-                          <th className="py-3.5 px-4 text-right">Actions</th>
+                          <th className="py-2.5 px-3 w-[12%]">Order Date</th>
+                          <th className="py-2.5 px-3 w-[25%]">Spare Part & PN</th>
+                          <th className="py-2.5 px-2.5 w-[18%]">OEM Supplier</th>
+                          <th className="py-2.5 px-2.5 w-[15%]">Delivery Port</th>
+                          <th className="py-2.5 px-2 w-[7%] text-center">Qty</th>
+                          <th className="py-2.5 px-2 w-[12%] text-center">Status</th>
+                          <th className="py-2.5 px-3 w-[11%] text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -1591,56 +1591,56 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         ) : (
                           procurementList.map((item) => (
                             <tr key={item.id} className="hover:bg-[var(--color-glass-border)] transition">
-                              <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-main)] whitespace-nowrap">
+                              <td className="py-2.5 px-3 font-mono font-bold text-[var(--text-main)] truncate">
                                 {formatDate(item.orderDate)}
                               </td>
 
-                              <td className="py-3.5 px-4">
-                                <div className="font-bold text-[var(--text-main)] text-xs">{item.partName}</div>
-                                <div className="font-mono text-[11px] text-[var(--color-primary)] font-semibold mt-0.5">
+                              <td className="py-2.5 px-3 overflow-hidden">
+                                <div className="font-bold text-[var(--text-main)] text-xs truncate">{item.partName}</div>
+                                <div className="font-mono text-[10px] text-[var(--color-primary)] font-semibold mt-0.5 truncate">
                                   PN: {item.partNumber}
                                 </div>
                               </td>
 
-                              <td className="py-3.5 px-4 font-semibold text-[var(--text-main)]">
-                                <div className="flex items-center gap-1.5">
+                              <td className="py-2.5 px-2.5 font-semibold text-[var(--text-main)] overflow-hidden">
+                                <div className="flex items-center gap-1.5 min-w-0">
                                   <Building2 className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
-                                  <span>{item.provider}</span>
+                                  <span className="truncate">{item.provider}</span>
                                 </div>
                               </td>
 
-                              <td className="py-3.5 px-4 font-semibold text-[var(--text-muted)]">
-                                <div className="flex items-center gap-1.5">
+                              <td className="py-2.5 px-2.5 font-semibold text-[var(--text-muted)] overflow-hidden">
+                                <div className="flex items-center gap-1.5 min-w-0">
                                   <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
-                                  <span>{item.deliveryPort}</span>
+                                  <span className="truncate">{item.deliveryPort}</span>
                                 </div>
                               </td>
 
-                              <td className="py-3.5 px-4 text-center font-mono font-bold text-xs text-[var(--text-main)]">
+                              <td className="py-2.5 px-2 text-center font-mono font-bold text-xs text-[var(--text-main)]">
                                 {item.quantity}
                               </td>
 
-                              <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                              <td className="py-2.5 px-2 text-center overflow-hidden">
                                 {item.status === 'ordered' && (
-                                  <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/35 font-bold text-[10px]">
+                                  <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/35 font-bold text-[10px] inline-block truncate max-w-full">
                                     ORDERED
                                   </span>
                                 )}
                                 {item.status === 'in_transit' && (
-                                  <span className="px-2.5 py-1 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/35 font-bold text-[10px] inline-flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#28ada4] animate-pulse"></span>
-                                    IN TRANSIT
+                                  <span className="px-2 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/35 font-bold text-[10px] inline-flex items-center gap-1 max-w-full">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#28ada4] animate-pulse shrink-0"></span>
+                                    <span className="truncate">IN TRANSIT</span>
                                   </span>
                                 )}
                                 {item.status === 'delivered' && (
-                                  <span className="px-2.5 py-1 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)] font-bold text-[10px]">
+                                  <span className="px-2 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)] font-bold text-[10px] inline-block truncate max-w-full">
                                     DELIVERED
                                   </span>
                                 )}
                               </td>
 
-                              <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                                <div className="flex items-center justify-end gap-1.5">
+                              <td className="py-2.5 px-3 text-right">
+                                <div className="flex items-center justify-end gap-1">
                                   {item.status !== 'delivered' && (
                                     <button
                                       onClick={() =>
@@ -1649,18 +1649,18 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                                           item.status === 'ordered' ? 'in_transit' : 'delivered'
                                         )
                                       }
-                                      className="px-2.5 py-1 rounded btn-mozuk-primary text-[11px] font-bold transition shadow-sm"
+                                      className="px-2 py-1 rounded btn-mozuk-primary text-[10px] font-bold transition shadow-sm shrink-0"
                                     >
-                                      {item.status === 'ordered' ? 'Ship Item' : 'Mark Delivered'}
+                                      {item.status === 'ordered' ? 'Ship' : 'Deliver'}
                                     </button>
                                   )}
 
                                   <button
                                     onClick={() => handleRemoveProcurementOrder(item.id)}
-                                    className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
+                                    className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center shrink-0"
                                     title="Delete order"
                                   >
-                                    <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                                    <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                                   </button>
                                 </div>
                               </td>
@@ -1781,17 +1781,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   </button>
                 </div>
 
-                <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-                  <table className="w-full text-left text-xs min-w-[850px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+                  <table className="w-full table-fixed text-left text-xs">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
-                        <th className="py-3 px-4">Certificate Title</th>
-                        <th className="py-3 px-4">Doc / Reg Number</th>
-                        <th className="py-3 px-4">Issuing Authority</th>
-                        <th className="py-3 px-4">Issue Date</th>
-                        <th className="py-3 px-4">Expiry Date</th>
-                        <th className="py-3 px-4 text-right">Status</th>
-                        <th className="py-3 px-4 text-right">Action</th>
+                        <th className="py-2.5 px-3 w-[25%]">Certificate Title</th>
+                        <th className="py-2.5 px-2.5 w-[15%]">Doc / Reg No</th>
+                        <th className="py-2.5 px-2.5 w-[18%]">Issuing Authority</th>
+                        <th className="py-2.5 px-2 w-[11%]">Issue Date</th>
+                        <th className="py-2.5 px-2 w-[11%]">Expiry Date</th>
+                        <th className="py-2.5 px-2 w-[12%] text-right">Status</th>
+                        <th className="py-2.5 px-3 w-[8%] text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -1806,35 +1806,35 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           .filter((d) => getDocCategory(d) === 'certifications')
                           .map((doc) => (
                             <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
-                              <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
-                              <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
-                              <td className="py-3 px-4 text-right">
+                              <td className="py-2.5 px-3 font-bold text-[var(--text-main)] truncate" title={doc.title}>{doc.title}</td>
+                              <td className="py-2.5 px-2.5 font-mono text-[var(--text-muted)] truncate">{doc.documentNumber}</td>
+                              <td className="py-2.5 px-2.5 text-[var(--text-muted)] truncate" title={doc.authority}>{doc.authority}</td>
+                              <td className="py-2.5 px-2 text-[var(--text-muted)] truncate">{formatDate(doc.issueDate)}</td>
+                              <td className="py-2.5 px-2 text-[var(--text-muted)] truncate">{formatDate(doc.expiryDate)}</td>
+                              <td className="py-2.5 px-2 text-right overflow-hidden">
                                 {doc.status === 'valid' && (
-                                  <span className="px-2.5 py-0.5 rounded bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px]">
+                                  <span className="px-2 py-0.5 rounded bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px]">
                                     VALID
                                   </span>
                                 )}
                                 {doc.status === 'expiring' && (
-                                  <span className="px-2.5 py-0.5 rounded bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/40 font-bold text-[10px]">
-                                    EXPIRING SOON
+                                  <span className="px-2 py-0.5 rounded bg-[#7b0b76]/20 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/40 font-bold text-[10px]">
+                                    EXPIRING
                                   </span>
                                 )}
                                 {doc.status === 'expired' && (
-                                  <span className="px-2.5 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[10px]">
+                                  <span className="px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[10px]">
                                     EXPIRED
                                   </span>
                                 )}
                               </td>
-                              <td className="py-3 px-4 text-right">
+                              <td className="py-2.5 px-3 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
+                                  className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                                   title="Delete document"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                                  <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </td>
                             </tr>
@@ -1869,17 +1869,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   </button>
                 </div>
 
-                <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-                  <table className="w-full text-left text-xs min-w-[850px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+                  <table className="w-full table-fixed text-left text-xs">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
-                        <th className="py-3 px-4">Document / Manual Title</th>
-                        <th className="py-3 px-4">Drawing / Manual ID</th>
-                        <th className="py-3 px-4">OEM / Authority</th>
-                        <th className="py-3 px-4">Registered Date</th>
-                        <th className="py-3 px-4">Revision Expiry</th>
-                        <th className="py-3 px-4 text-right">Status</th>
-                        <th className="py-3 px-4 text-right">Action</th>
+                        <th className="py-2.5 px-3 w-[25%]">Document / Manual Title</th>
+                        <th className="py-2.5 px-2.5 w-[15%]">Drawing / ID</th>
+                        <th className="py-2.5 px-2.5 w-[18%]">OEM / Authority</th>
+                        <th className="py-2.5 px-2 w-[11%]">Registered</th>
+                        <th className="py-2.5 px-2 w-[11%]">Rev. Expiry</th>
+                        <th className="py-2.5 px-2 w-[12%] text-right">Status</th>
+                        <th className="py-2.5 px-3 w-[8%] text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -1894,23 +1894,23 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           .filter((d) => getDocCategory(d) === 'technical_documentation')
                           .map((doc) => (
                             <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
-                              <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
-                              <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
-                              <td className="py-3 px-4 text-right">
-                                <span className="px-2.5 py-0.5 rounded bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px]">
-                                  ACTIVE MANUAL
+                              <td className="py-2.5 px-3 font-bold text-[var(--text-main)] truncate" title={doc.title}>{doc.title}</td>
+                              <td className="py-2.5 px-2.5 font-mono text-[var(--text-muted)] truncate">{doc.documentNumber}</td>
+                              <td className="py-2.5 px-2.5 text-[var(--text-muted)] truncate" title={doc.authority}>{doc.authority}</td>
+                              <td className="py-2.5 px-2 text-[var(--text-muted)] truncate">{formatDate(doc.issueDate)}</td>
+                              <td className="py-2.5 px-2 text-[var(--text-muted)] truncate">{formatDate(doc.expiryDate)}</td>
+                              <td className="py-2.5 px-2 text-right">
+                                <span className="px-2 py-0.5 rounded bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px]">
+                                  ACTIVE
                                 </span>
                               </td>
-                              <td className="py-3 px-4 text-right">
+                              <td className="py-2.5 px-3 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
+                                  className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                                   title="Delete document"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                                  <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </td>
                             </tr>
@@ -1945,17 +1945,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                   </button>
                 </div>
 
-                <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-                  <table className="w-full text-left text-xs min-w-[850px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+                  <table className="w-full table-fixed text-left text-xs">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
-                        <th className="py-3 px-4">Record Title</th>
-                        <th className="py-3 px-4">Reference / Invoice No</th>
-                        <th className="py-3 px-4">Issuing Party / Agency</th>
-                        <th className="py-3 px-4">Filing Date</th>
-                        <th className="py-3 px-4">Valid / Due Until</th>
-                        <th className="py-3 px-4 text-right">Status</th>
-                        <th className="py-3 px-4 text-right">Action</th>
+                        <th className="py-2.5 px-3 w-[25%]">Record Title</th>
+                        <th className="py-2.5 px-2.5 w-[15%]">Ref / Invoice No</th>
+                        <th className="py-2.5 px-2.5 w-[18%]">Issuing Party</th>
+                        <th className="py-2.5 px-2 w-[11%]">Filing Date</th>
+                        <th className="py-2.5 px-2 w-[11%]">Valid Until</th>
+                        <th className="py-2.5 px-2 w-[12%] text-right">Status</th>
+                        <th className="py-2.5 px-3 w-[8%] text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -1970,23 +1970,23 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                           .filter((d) => getDocCategory(d) === 'misc')
                           .map((doc) => (
                             <tr key={doc.id} className="hover:bg-[var(--color-glass-border)] transition">
-                              <td className="py-3 px-4 font-bold text-[var(--text-main)]">{doc.title}</td>
-                              <td className="py-3 px-4 font-mono text-[var(--text-muted)]">{doc.documentNumber}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{doc.authority}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.issueDate)}</td>
-                              <td className="py-3 px-4 text-[var(--text-muted)]">{formatDate(doc.expiryDate)}</td>
-                              <td className="py-3 px-4 text-right">
-                                <span className="px-2.5 py-0.5 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[10px]">
-                                  FILED RECORD
+                              <td className="py-2.5 px-3 font-bold text-[var(--text-main)] truncate" title={doc.title}>{doc.title}</td>
+                              <td className="py-2.5 px-2.5 font-mono text-[var(--text-muted)] truncate">{doc.documentNumber}</td>
+                              <td className="py-2.5 px-2.5 text-[var(--text-muted)] truncate" title={doc.authority}>{doc.authority}</td>
+                              <td className="py-2.5 px-2 text-[var(--text-muted)] truncate">{formatDate(doc.issueDate)}</td>
+                              <td className="py-2.5 px-2 text-[var(--text-muted)] truncate">{formatDate(doc.expiryDate)}</td>
+                              <td className="py-2.5 px-2 text-right">
+                                <span className="px-2 py-0.5 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[10px]">
+                                  FILED
                                 </span>
                               </td>
-                              <td className="py-3 px-4 text-right">
+                              <td className="py-2.5 px-3 text-right">
                                 <button
                                   onClick={() => handleRemoveDocument(doc.id)}
-                                  className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
+                                  className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
                                   title="Delete record"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                                  <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </td>
                             </tr>
@@ -2227,19 +2227,19 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
 
             {/* Visitor Logbook Table */}
-            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-              <table className="w-full text-left text-xs min-w-[850px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+              <table className="w-full table-fixed text-left text-xs">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                   <tr>
-                    <th className="py-3 px-3">Date</th>
-                    <th className="py-3 px-3">Visitor Full Name</th>
-                    <th className="py-3 px-3">Company / Organization</th>
-                    <th className="py-3 px-3">Reason of Visit</th>
-                    <th className="py-3 px-3">Location / Berth</th>
-                    <th className="py-3 px-3">Time In</th>
-                    <th className="py-3 px-3">Time Out</th>
-                    <th className="py-3 px-3 text-center">Status</th>
-                    <th className="py-3 px-3 text-right sticky right-0 bg-[var(--color-bg-alt)] z-10">Actions</th>
+                    <th className="py-2.5 px-2.5 w-[10%]">Date</th>
+                    <th className="py-2.5 px-2.5 w-[15%]">Visitor Name</th>
+                    <th className="py-2.5 px-2.5 w-[15%]">Company</th>
+                    <th className="py-2.5 px-2.5 w-[16%]">Reason</th>
+                    <th className="py-2.5 px-2 w-[12%]">Berth</th>
+                    <th className="py-2.5 px-1.5 w-[7%]">In</th>
+                    <th className="py-2.5 px-1.5 w-[7%]">Out</th>
+                    <th className="py-2.5 px-2 w-[9%] text-center">Status</th>
+                    <th className="py-2.5 px-2.5 w-[9%] text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -2256,72 +2256,68 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                       const isOnboard = !visitor.timeOut || visitor.timeOut.trim() === '';
                       return (
                         <tr key={visitor.id} className="hover:bg-[var(--color-glass-border)] transition group">
-                          <td className="py-3 px-3 font-extrabold text-[var(--text-main)] font-mono whitespace-nowrap align-middle">
+                          <td className="py-2.5 px-2.5 font-extrabold text-[var(--text-main)] font-mono truncate align-middle">
                             {formatDate(visitor.date)}
                           </td>
 
-                          {/* 2. Full Name without logo initials */}
-                          <td className="py-3 px-3 font-bold text-[var(--text-main)] text-xs whitespace-nowrap align-middle">
+                          <td className="py-2.5 px-2.5 font-bold text-[var(--text-main)] text-xs truncate align-middle" title={visitor.fullName}>
                             {visitor.fullName}
                           </td>
 
-                          {/* 1. Company Name with shrink-0 icon to prevent squashing */}
-                          <td className="py-3 px-3 text-[var(--text-muted)] font-medium align-middle">
-                            <div className="flex items-center gap-1.5 whitespace-nowrap max-w-[160px] truncate" title={visitor.company}>
-                              <Building2 className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
+                          <td className="py-2.5 px-2.5 text-[var(--text-muted)] font-medium align-middle overflow-hidden">
+                            <div className="flex items-center gap-1 min-w-0" title={visitor.company}>
+                              <Building2 className="w-3 h-3 text-[var(--color-primary)] shrink-0" />
                               <span className="text-xs text-[var(--text-main)] truncate">{visitor.company}</span>
                             </div>
                           </td>
 
-                          <td className="py-3 px-3 text-[var(--text-main)] max-w-[180px] truncate align-middle" title={visitor.reason}>
+                          <td className="py-2.5 px-2.5 text-[var(--text-main)] truncate align-middle" title={visitor.reason}>
                             {visitor.reason}
                           </td>
                           
-                          <td className="py-3 px-3 text-[var(--text-muted)] align-middle whitespace-nowrap">
-                            <div className="flex items-center gap-1 whitespace-nowrap">
-                              <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
-                              <span>{visitor.location}</span>
+                          <td className="py-2.5 px-2 text-[var(--text-muted)] align-middle overflow-hidden">
+                            <div className="flex items-center gap-1 min-w-0" title={visitor.location}>
+                              <MapPin className="w-3 h-3 text-[var(--color-primary)] shrink-0" />
+                              <span className="truncate">{visitor.location}</span>
                             </div>
                           </td>
-                          <td className="py-3 px-3 font-mono font-bold text-[#28ada4] whitespace-nowrap align-middle">
+                          <td className="py-2.5 px-1.5 font-mono font-bold text-[#28ada4] truncate align-middle">
                             {visitor.timeIn}
                           </td>
-                          <td className="py-3 px-3 font-mono font-bold text-[var(--text-muted)] whitespace-nowrap align-middle">
+                          <td className="py-2.5 px-1.5 font-mono font-bold text-[var(--text-muted)] truncate align-middle">
                             {visitor.timeOut || '—'}
                           </td>
 
-                          {/* 4. Single-line status badge */}
-                          <td className="py-3 px-3 text-center align-middle whitespace-nowrap">
+                          <td className="py-2.5 px-2 text-center align-middle overflow-hidden">
                             {isOnboard ? (
-                              <span className="px-2.5 py-1 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/35 font-extrabold text-[10px] inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                              <span className="px-1.5 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/35 font-extrabold text-[9px] inline-flex items-center gap-1 max-w-full">
                                 <span className="w-1.5 h-1.5 rounded-full bg-[#28ada4] animate-pulse shrink-0"></span>
-                                ON BOARD
+                                <span className="truncate">ON BOARD</span>
                               </span>
                             ) : (
-                              <span className="px-2.5 py-1 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[10px] inline-flex items-center whitespace-nowrap shrink-0">
+                              <span className="px-1.5 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[9px] inline-block truncate max-w-full">
                                 DEPARTED
                               </span>
                             )}
                           </td>
 
-                          {/* 4. Sticky single-line action buttons */}
-                          <td className="py-3 px-3 text-right align-middle whitespace-nowrap sticky right-0 bg-[var(--color-surface)] group-hover:bg-[var(--color-glass-border)] transition z-10">
-                            <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
+                          <td className="py-2.5 px-2.5 text-right align-middle">
+                            <div className="flex items-center justify-end gap-1">
                               {isOnboard && (
                                 <button
                                   onClick={() => handleSignOutVisitor(visitor.id)}
-                                  className="px-2.5 py-1 rounded bg-[#7b0b76]/20 hover:bg-[#7b0b76]/35 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/40 text-[11px] font-bold transition inline-flex items-center gap-1 whitespace-nowrap shrink-0 shadow-sm"
+                                  className="p-1 rounded bg-[#7b0b76]/20 hover:bg-[#7b0b76]/35 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/40 text-[10px] font-bold transition inline-flex items-center shrink-0"
                                   title="Sign out visitor at current time"
                                 >
-                                  <LogOut className="w-3 h-3 shrink-0" /> Sign Out
+                                  <LogOut className="w-3 h-3 shrink-0" />
                                 </button>
                               )}
                               <button
                                 onClick={() => handleRemoveVisitor(visitor.id)}
-                                className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center shrink-0 shadow-sm"
+                                className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center shrink-0"
                                 title="Delete log entry"
                               >
-                                <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                                <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                               </button>
                             </div>
                           </td>
@@ -2465,18 +2461,18 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
 
             {/* Table */}
-            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-              <table className="w-full text-left text-xs min-w-[950px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+              <table className="w-full table-fixed text-left text-xs">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                   <tr>
-                    <th className="py-3.5 px-4">Date & Time</th>
-                    <th className="py-3.5 px-4">Operation Type</th>
-                    <th className="py-3.5 px-4">Tank(s) / Compartment</th>
-                    <th className="py-3.5 px-4">Volume (m³)</th>
-                    <th className="py-3.5 px-4">GPS Coordinates / Location</th>
-                    <th className="py-3.5 px-4">Treatment Method</th>
-                    <th className="py-3.5 px-4">Officer in Charge</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
+                    <th className="py-2.5 px-3 w-[14%]">Date & Time</th>
+                    <th className="py-2.5 px-2 w-[15%]">Operation</th>
+                    <th className="py-2.5 px-2.5 w-[14%]">Tank(s)</th>
+                    <th className="py-2.5 px-2 w-[10%]">Volume</th>
+                    <th className="py-2.5 px-2.5 w-[16%]">GPS / Location</th>
+                    <th className="py-2.5 px-2 w-[12%]">Treatment</th>
+                    <th className="py-2.5 px-2 w-[12%]">Officer</th>
+                    <th className="py-2.5 px-3 w-[7%] text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -2490,63 +2486,63 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     filteredLogs.map((log) => {
                       return (
                         <tr key={log.id} className="hover:bg-[var(--color-glass-border)] transition">
-                          <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-main)] whitespace-nowrap">
+                          <td className="py-2.5 px-3 font-mono font-bold text-[var(--text-main)] truncate">
                             {formatDate(log.date)} {log.time ? `@ ${log.time}` : ''}
                           </td>
 
-                          <td className="py-3.5 px-4 whitespace-nowrap">
+                          <td className="py-2.5 px-2 overflow-hidden">
                             {log.operation === 'Ballasting' && (
-                              <span className="px-2.5 py-1 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[11px]">
+                              <span className="px-2 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px] inline-block truncate max-w-full">
                                 Ballasting
                               </span>
                             )}
                             {log.operation === 'Deballasting' && (
-                              <span className="px-2.5 py-1 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[11px]">
+                              <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[10px] inline-block truncate max-w-full">
                                 Deballasting
                               </span>
                             )}
                             {log.operation === 'Internal Transfer' && (
-                              <span className="px-2.5 py-1 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)] font-bold text-[11px]">
+                              <span className="px-2 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)] font-bold text-[10px] inline-block truncate max-w-full">
                                 Internal Transfer
                               </span>
                             )}
                             {log.operation === 'Ballast Exchange (BWM)' && (
-                              <span className="px-2.5 py-1 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[11px]">
-                                Ballast Exchange (BWM)
+                              <span className="px-2 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px] inline-block truncate max-w-full">
+                                BWM Exchange
                               </span>
                             )}
                           </td>
 
-                          <td className="py-3.5 px-4 font-extrabold text-[var(--text-main)]">
+                          <td className="py-2.5 px-2.5 font-extrabold text-[var(--text-main)] truncate" title={log.tanks}>
                             {log.tanks}
                           </td>
 
-                          <td className="py-3.5 px-4 font-mono font-extrabold text-[#28ada4] text-sm whitespace-nowrap">
+                          <td className="py-2.5 px-2 font-mono font-extrabold text-[#28ada4] text-xs truncate">
                             {log.volumeM3.toLocaleString()} m³
                           </td>
 
-                          <td className="py-3.5 px-4 text-[var(--text-main)] font-mono text-xs whitespace-nowrap">
-                            <div className="flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
-                              <span>{log.gpsCoordinates}</span>
+                          <td className="py-2.5 px-2.5 text-[var(--text-main)] font-mono text-[11px] overflow-hidden">
+                            <div className="flex items-center gap-1 min-w-0" title={log.gpsCoordinates}>
+                              <MapPin className="w-3 h-3 text-[var(--color-primary)] shrink-0" />
+                              <span className="truncate">{log.gpsCoordinates}</span>
                             </div>
                           </td>
 
-                          <td className="py-3.5 px-4 text-[var(--text-muted)] font-semibold">
+                          <td className="py-2.5 px-2 text-[var(--text-muted)] font-semibold truncate">
                             {log.treatmentMethod || 'Mozuk BWTS UV'}
                           </td>
 
-                          <td className="py-3.5 px-4 text-[var(--text-main)] font-bold">
+                          <td className="py-2.5 px-2 text-[var(--text-main)] font-bold truncate">
                             {log.officerInCharge}
                           </td>
 
-                          <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                          <td className="py-2.5 px-3 text-right">
                             <button
                               onClick={() => handleRemoveBallastLog(log.id)}
-                              className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
+                              className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
                               title="Delete record"
                             >
-                              <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                              <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                             </button>
                           </td>
                         </tr>
@@ -2703,19 +2699,19 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
 
             {/* Table */}
-            <div className="mozuk-glass-card rounded-2xl overflow-x-auto shadow-lg">
-              <table className="w-full text-left text-xs min-w-[950px]">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
+              <table className="w-full table-fixed text-left text-xs">
+                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                   <tr>
-                    <th className="py-3.5 px-4">Date & Time</th>
-                    <th className="py-3.5 px-4">Water Category</th>
-                    <th className="py-3.5 px-4">Operation</th>
-                    <th className="py-3.5 px-4">Tank / Source</th>
-                    <th className="py-3.5 px-4">Volume (m³)</th>
-                    <th className="py-3.5 px-4">GPS Coordinates / Location</th>
-                    <th className="py-3.5 px-4">Ship Speed</th>
-                    <th className="py-3.5 px-4">Officer in Charge</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
+                    <th className="py-2.5 px-3 w-[13%]">Date & Time</th>
+                    <th className="py-2.5 px-2 w-[13%]">Water Type</th>
+                    <th className="py-2.5 px-2 w-[15%]">Operation</th>
+                    <th className="py-2.5 px-2 w-[12%]">Tank / Source</th>
+                    <th className="py-2.5 px-2 w-[9%]">Volume</th>
+                    <th className="py-2.5 px-2 w-[14%]">GPS / Location</th>
+                    <th className="py-2.5 px-1.5 w-[7%]">Speed</th>
+                    <th className="py-2.5 px-2 w-[10%]">Officer</th>
+                    <th className="py-2.5 px-3 w-[7%] text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -2729,56 +2725,56 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                     filteredLogs.map((log) => {
                       return (
                         <tr key={log.id} className="hover:bg-[var(--color-glass-border)] transition">
-                          <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-main)] whitespace-nowrap">
+                          <td className="py-2.5 px-3 font-mono font-bold text-[var(--text-main)] truncate">
                             {formatDate(log.date)} {log.time ? `@ ${log.time}` : ''}
                           </td>
 
-                          <td className="py-3.5 px-4 whitespace-nowrap">
+                          <td className="py-2.5 px-2 overflow-hidden">
                             {log.type === 'Sewage (Black Water)' ? (
-                              <span className="px-2.5 py-1 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[11px]">
-                                Black Water (Sewage)
+                              <span className="px-2 py-0.5 rounded bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[10px] inline-block truncate max-w-full">
+                                Black Water
                               </span>
                             ) : (
-                              <span className="px-2.5 py-1 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[11px]">
+                              <span className="px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-muted)] border border-[var(--color-glass-border)] font-bold text-[10px] inline-block truncate max-w-full">
                                 Grey Water
                               </span>
                             )}
                           </td>
 
-                          <td className="py-3.5 px-4 font-semibold text-[var(--text-main)]">
+                          <td className="py-2.5 px-2 font-semibold text-[var(--text-main)] truncate" title={log.operation}>
                             {log.operation}
                           </td>
 
-                          <td className="py-3.5 px-4 font-extrabold text-[var(--text-main)]">
+                          <td className="py-2.5 px-2 font-extrabold text-[var(--text-main)] truncate" title={log.tankSource}>
                             {log.tankSource}
                           </td>
 
-                          <td className="py-3.5 px-4 font-mono font-extrabold text-[#28ada4] text-sm whitespace-nowrap">
+                          <td className="py-2.5 px-2 font-mono font-extrabold text-[#28ada4] text-xs truncate">
                             {log.volumeM3.toLocaleString()} m³
                           </td>
 
-                          <td className="py-3.5 px-4 text-[var(--text-main)] font-mono text-xs whitespace-nowrap">
-                            <div className="flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
-                              <span>{log.gpsCoordinates}</span>
+                          <td className="py-2.5 px-2 text-[var(--text-main)] font-mono text-[11px] overflow-hidden">
+                            <div className="flex items-center gap-1 min-w-0" title={log.gpsCoordinates}>
+                              <MapPin className="w-3 h-3 text-[var(--color-primary)] shrink-0" />
+                              <span className="truncate">{log.gpsCoordinates}</span>
                             </div>
                           </td>
 
-                          <td className="py-3.5 px-4 font-mono text-xs font-bold text-[var(--text-muted)] whitespace-nowrap">
+                          <td className="py-2.5 px-1.5 font-mono text-[11px] font-bold text-[var(--text-muted)] truncate">
                             {log.shipSpeedKnots !== undefined ? `${log.shipSpeedKnots} kn` : '—'}
                           </td>
 
-                          <td className="py-3.5 px-4 text-[var(--text-main)] font-bold">
+                          <td className="py-2.5 px-2 text-[var(--text-main)] font-bold truncate">
                             {log.officerInCharge}
                           </td>
 
-                          <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                          <td className="py-2.5 px-3 text-right">
                             <button
                               onClick={() => handleRemoveSewageLog(log.id)}
-                              className="p-1.5 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
+                              className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
                               title="Delete record"
                             >
-                              <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                              <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                             </button>
                           </td>
                         </tr>

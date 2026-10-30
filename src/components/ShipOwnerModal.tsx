@@ -232,17 +232,17 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                 </div>
 
                 <div className="mozuk-glass-card rounded-2xl overflow-hidden border border-[var(--color-glass-border)]">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs min-w-[850px]">
-                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                  <div className="w-full overflow-hidden">
+                    <table className="w-full table-fixed text-left text-xs">
+                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                         <tr>
-                          <th className="py-3 px-3.5 min-w-[160px]">Full Name</th>
-                          <th className="py-3 px-3.5 min-w-[160px]">Position / Role</th>
-                          <th className="py-3 px-3.5 min-w-[110px]">Country</th>
-                          <th className="py-3 px-3.5 min-w-[130px]">Phone Number</th>
-                          <th className="py-3 px-3.5 min-w-[170px]">Email Address</th>
-                          <th className="py-3 px-3.5 min-w-[170px]">Description</th>
-                          <th className="py-3 px-3.5 text-right w-24">Actions</th>
+                          <th className="py-2.5 px-3 w-[17%]">Full Name</th>
+                          <th className="py-2.5 px-2.5 w-[17%]">Position / Role</th>
+                          <th className="py-2.5 px-2 w-[11%]">Country</th>
+                          <th className="py-2.5 px-2 w-[14%]">Phone Number</th>
+                          <th className="py-2.5 px-2.5 w-[17%]">Email Address</th>
+                          <th className="py-2.5 px-2.5 w-[14%]">Description</th>
+                          <th className="py-2.5 px-3 text-right w-[10%]">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--color-glass-border)]">

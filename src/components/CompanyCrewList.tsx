@@ -473,17 +473,17 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
       {/* MASTER CREW ROSTER TABLE */}
       <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs min-w-[900px]">
+        <div className="w-full overflow-hidden">
+          <table className="w-full table-fixed text-left text-xs">
             <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
               <tr>
-                <th className="py-2 px-3">Crew Member Name & Role</th>
-                <th className="py-2 px-3">Department</th>
-                <th className="py-2 px-3">Current Ship Assignment</th>
-                <th className="py-2 px-3">Nationality</th>
-                <th className="py-2 px-3">Passport & Seaman Book</th>
-                <th className="py-2 px-3 text-center">Vessels Served</th>
-                <th className="py-2 px-3 text-right">Actions</th>
+                <th className="py-2 px-2.5 w-[26%]">Crew Member & Role</th>
+                <th className="py-2 px-2 w-[13%]">Department</th>
+                <th className="py-2 px-2 w-[17%]">Ship Assignment</th>
+                <th className="py-2 px-2 w-[11%]">Nationality</th>
+                <th className="py-2 px-2 w-[14%]">Passport / SB</th>
+                <th className="py-2 px-1.5 w-[9%] text-center">Vessels</th>
+                <th className="py-2 px-2.5 w-[10%] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -512,104 +512,96 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       title="Click to view full crew profile"
                     >
                       {/* Name & Role */}
-                      <td className="py-1.5 px-3 align-middle whitespace-nowrap">
-                        <div className="flex items-center gap-2.5">
+                      <td className="py-1.5 px-2.5 align-middle overflow-hidden">
+                        <div className="flex items-center gap-2 min-w-0">
                           <CrewAvatar
                             crew={crew}
                             size="sm"
-                            className="group-hover:scale-105 group-hover:border-[#7b0b76]/50 transition-all shadow-sm"
+                            className="group-hover:scale-105 group-hover:border-[#7b0b76]/50 transition-all shadow-sm shrink-0"
                           />
-                          <div className="leading-tight">
-                            <h4 className="font-extrabold text-[var(--text-main)] text-xs whitespace-nowrap transition">
+                          <div className="leading-tight min-w-0 flex-1">
+                            <h4 className="font-extrabold text-[var(--text-main)] text-xs truncate transition">
                               {crew.name}
                             </h4>
-                            <div className="flex items-center gap-2 whitespace-nowrap">
-                              <span className="font-bold text-[10px] text-[#28ada4] whitespace-nowrap">
-                                {crew.role}
-                              </span>
-                              {crew.email && (
-                                <span className="text-[10px] text-[var(--text-muted)] flex items-center gap-1 font-mono whitespace-nowrap">
-                                  <Mail className="w-2.5 h-2.5 text-[#28ada4] shrink-0" />
-                                  {crew.email}
-                                </span>
-                              )}
+                            <div className="font-bold text-[10px] text-[#28ada4] truncate">
+                              {crew.role}
                             </div>
                           </div>
                         </div>
                       </td>
 
                       {/* Department Badges */}
-                      <td className="py-1.5 px-3 align-middle whitespace-nowrap">
+                      <td className="py-1.5 px-2 align-middle overflow-hidden">
                         {crew.department === 'master' && (
-                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
+                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px] inline-block truncate max-w-full">
                             MASTER
                           </span>
                         )}
                         {crew.department === 'deck' && (
-                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
+                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px] inline-block truncate max-w-full">
                             DECK DEPT
                           </span>
                         )}
                         {crew.department === 'engine' && (
-                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
+                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px] inline-block truncate max-w-full">
                             ENGINE DEPT
                           </span>
                         )}
                         {crew.department === 'kitchen' && (
-                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
+                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px] inline-block truncate max-w-full">
                             GALLEY & MESS
                           </span>
                         )}
                         {!crew.department && (
-                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px]">
+                          <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[var(--text-main)] border border-[var(--color-glass-border)] font-extrabold text-[10px] inline-block truncate max-w-full">
                             GENERAL CREW
                           </span>
                         )}
                       </td>
 
                       {/* Current Ship Assignment */}
-                      <td className="py-1.5 px-3 align-middle whitespace-nowrap">
+                      <td className="py-1.5 px-2 align-middle overflow-hidden">
                         {assignedShip ? (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               onSelectShip(assignedShip);
                             }}
-                            className="px-2 py-0.5 rounded-full bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[var(--text-main)] border border-[#28ada4]/30 text-[10px] font-extrabold inline-flex items-center gap-1 transition shadow-sm group/btn"
+                            className="px-2 py-0.5 rounded-full bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[var(--text-main)] border border-[#28ada4]/30 text-[10px] font-extrabold inline-flex items-center gap-1 transition shadow-sm group/btn max-w-full"
                             title={`Click to open ${assignedShip.name} vessel profile`}
                           >
                             <ShipIcon className="w-2.5 h-2.5 text-[#28ada4] shrink-0 group-hover/btn:scale-110 transition-transform" />
-                            <span>{assignedShip.name}</span>
-                            <ExternalLink className="w-2.5 h-2.5 opacity-70 ml-0.5 text-[#28ada4]" />
+                            <span className="truncate">{assignedShip.name}</span>
+                            <ExternalLink className="w-2.5 h-2.5 opacity-70 shrink-0 text-[#28ada4]" />
                           </button>
                         ) : (
-                          <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] border border-[#7b0b76]/30 text-[10px] font-bold inline-flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] border border-[#7b0b76]/30 text-[10px] font-bold inline-flex items-center gap-1 max-w-full">
                             <Clock className="w-2.5 h-2.5 text-[#7b0b76] shrink-0" />
-                            <span>UNASSIGNED</span>
+                            <span className="truncate">UNASSIGNED</span>
                           </span>
                         )}
                       </td>
 
                       {/* Nationality */}
-                      <td className="py-1.5 px-3 align-middle text-[var(--text-main)] font-extrabold text-[11px] whitespace-nowrap">
+                      <td className="py-1.5 px-2 align-middle text-[var(--text-main)] font-extrabold text-[11px] truncate">
                         {crew.nationality}
                       </td>
 
                       {/* Passport & Seaman Book */}
-                      <td className="py-1.5 px-3 align-middle whitespace-nowrap font-mono text-[10px] text-[var(--text-muted)] leading-tight font-bold">
-                        <div>Pass: <span className="text-[var(--text-main)]">{crew.passportNumber || '—'}</span></div>
-                        <div>SB: <span className="text-[var(--text-main)]">{crew.seamanBookNo || '—'}</span></div>
+                      <td className="py-1.5 px-2 align-middle overflow-hidden font-mono text-[10px] text-[var(--text-muted)] leading-tight font-bold">
+                        <div className="truncate">Pass: <span className="text-[var(--text-main)]">{crew.passportNumber || '—'}</span></div>
+                        <div className="truncate">SB: <span className="text-[var(--text-main)]">{crew.seamanBookNo || '—'}</span></div>
                       </td>
 
                       {/* Vessels Served */}
-                      <td className="py-1.5 px-3 align-middle text-center whitespace-nowrap">
-                        <span className="px-2 py-0.5 rounded-md bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-extrabold text-[10px] text-[#28ada4]">
+                      <td className="py-1.5 px-1.5 align-middle text-center overflow-hidden">
+                        <span className="px-1.5 py-0.5 rounded-md bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] font-extrabold text-[10px] text-[#28ada4] inline-block truncate max-w-full">
                           {historyCount} {historyCount === 1 ? 'vessel' : 'vessels'}
                         </span>
                       </td>
 
                       {/* Actions */}
-                      <td className="py-1.5 px-3 align-middle text-right whitespace-nowrap">
+                      <td className="py-1.5 px-2.5 align-middle text-right">
                         <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                           {/* View Profile Button */}
                           <button
@@ -617,17 +609,17 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                               setViewingProfileCrew(crew);
                               onSelectCrewMember(crew);
                             }}
-                            className="py-1 px-2 rounded-md bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 transition inline-flex items-center gap-1 text-[10px] font-extrabold"
+                            className="py-1 px-1.5 rounded-md bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 transition inline-flex items-center gap-1 text-[10px] font-extrabold shrink-0"
                             title="View full crew profile"
                           >
-                            <FileText className="w-3 h-3 text-[#28ada4]" />
-                            <span>Profile</span>
+                            <FileText className="w-3 h-3 text-[#28ada4] shrink-0" />
+                            <span className="hidden xl:inline">Profile</span>
                           </button>
 
                           {/* Delete Button */}
                           <button
                             onClick={() => onRemoveCrewMember(crew.id)}
-                            className="p-1 rounded-md bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
+                            className="p-1 rounded-md bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center shrink-0"
                             title="Remove crew member from company roster"
                           >
                             <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />

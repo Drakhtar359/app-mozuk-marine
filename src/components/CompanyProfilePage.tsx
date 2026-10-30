@@ -717,16 +717,16 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
               </div>
 
               <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[950px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <div className="w-full overflow-hidden">
+                  <table className="w-full table-fixed text-left text-xs">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
-                        <th className="py-3.5 px-4">Customer Company & Contact</th>
-                        <th className="py-3.5 px-4">Contract / Service Type</th>
-                        <th className="py-3.5 px-4">Email Address</th>
-                        <th className="py-3.5 px-4">Phone Number</th>
-                        <th className="py-3.5 px-4">Country & City</th>
-                        <th className="py-3.5 px-4 text-right">Actions</th>
+                        <th className="py-2.5 px-3 w-[24%]">Customer & Contact</th>
+                        <th className="py-2.5 px-2.5 w-[18%]">Service Type</th>
+                        <th className="py-2.5 px-2.5 w-[21%]">Email Address</th>
+                        <th className="py-2.5 px-2.5 w-[14%]">Phone</th>
+                        <th className="py-2.5 px-2.5 w-[13%]">Location</th>
+                        <th className="py-2.5 px-3 w-[10%] text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -743,26 +743,26 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                         filteredCustomers.map((cust) => (
                           <tr key={cust.id} className="hover:bg-[var(--color-glass-border)] transition">
                             {/* Name & Contact Person */}
-                            <td className="py-3.5 px-4 align-middle">
-                              <div className="font-extrabold text-[var(--text-main)] text-xs">
+                            <td className="py-2.5 px-3 align-middle overflow-hidden">
+                              <div className="font-extrabold text-[var(--text-main)] text-xs truncate">
                                 {cust.name}
                               </div>
-                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5 truncate">
                                 Rep: {cust.contactPerson}
                               </div>
                             </td>
 
                             {/* Contract Type */}
-                            <td className="py-3.5 px-4 align-middle font-semibold text-[var(--text-main)] whitespace-nowrap">
+                            <td className="py-2.5 px-2.5 align-middle font-semibold text-[var(--text-main)] truncate">
                               {cust.contractType || 'General Client'}
                             </td>
 
                             {/* Email */}
-                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                            <td className="py-2.5 px-2.5 align-middle font-mono text-xs text-[#28ada4] font-semibold overflow-hidden">
                               {cust.email ? (
-                                <a href={`mailto:${cust.email}`} className="hover:underline flex items-center gap-1">
-                                  <Mail className="w-3 h-3 text-[#28ada4]" />
-                                  {cust.email}
+                                <a href={`mailto:${cust.email}`} className="hover:underline flex items-center gap-1 truncate">
+                                  <Mail className="w-3 h-3 text-[#28ada4] shrink-0" />
+                                  <span className="truncate">{cust.email}</span>
                                 </a>
                               ) : (
                                 '—'
@@ -770,31 +770,31 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                             </td>
 
                             {/* Phone */}
-                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                            <td className="py-2.5 px-2.5 align-middle font-mono text-xs text-[var(--text-main)] font-bold truncate">
                               {cust.phoneNumber || '—'}
                             </td>
 
                             {/* Country & City */}
-                            <td className="py-3.5 px-4 align-middle whitespace-nowrap">
-                              <div className="font-bold text-[var(--text-main)]">{cust.country}</div>
-                              <div className="text-[11px] text-[var(--text-muted)]">{cust.city}</div>
+                            <td className="py-2.5 px-2.5 align-middle overflow-hidden">
+                              <div className="font-bold text-[var(--text-main)] truncate">{cust.country}</div>
+                              <div className="text-[11px] text-[var(--text-muted)] truncate">{cust.city}</div>
                             </td>
 
                             {/* Actions */}
-                            <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
-                              <div className="flex items-center justify-end gap-1.5">
+                            <td className="py-2.5 px-3 align-middle text-right">
+                              <div className="flex items-center justify-end gap-1">
                                 <button
                                   onClick={() => handleOpenEditCustomerModal(cust)}
-                                  className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                                  className="p-1.5 px-2 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-[11px] font-bold transition inline-flex items-center gap-1 shrink-0"
                                 >
-                                  <Edit className="w-3.5 h-3.5" /> Edit
+                                  <Edit className="w-3 h-3" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteCustomer(cust.id)}
-                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center shrink-0"
                                   title="Delete customer record"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                                  <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </div>
                             </td>
@@ -833,17 +833,17 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
               </div>
 
               <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[950px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <div className="w-full overflow-hidden">
+                  <table className="w-full table-fixed text-left text-xs">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
-                        <th className="py-3.5 px-4">Employee Name & Position</th>
-                        <th className="py-3.5 px-4">Date of Birth</th>
-                        <th className="py-3.5 px-4">Date of Joining</th>
-                        <th className="py-3.5 px-4">Email Address</th>
-                        <th className="py-3.5 px-4">Phone Number</th>
-                        <th className="py-3.5 px-4">Country & City</th>
-                        <th className="py-3.5 px-4 text-right">Actions</th>
+                        <th className="py-2.5 px-3 w-[25%]">Employee & Position</th>
+                        <th className="py-2.5 px-2 w-[11%]">DOB</th>
+                        <th className="py-2.5 px-2 w-[11%]">Joined</th>
+                        <th className="py-2.5 px-2 w-[20%]">Email Address</th>
+                        <th className="py-2.5 px-2 w-[13%]">Phone</th>
+                        <th className="py-2.5 px-2 w-[11%]">Location</th>
+                        <th className="py-2.5 px-3 w-[9%] text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -858,31 +858,31 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                         employeesList.map((emp) => (
                           <tr key={emp.id} className="hover:bg-[var(--color-glass-border)] transition">
                             {/* Name & Position */}
-                            <td className="py-3.5 px-4 align-middle">
-                              <div className="font-extrabold text-[var(--text-main)] text-xs">
+                            <td className="py-2.5 px-3 align-middle overflow-hidden">
+                              <div className="font-extrabold text-[var(--text-main)] text-xs truncate">
                                 {emp.name}
                               </div>
-                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5 truncate" title={emp.position}>
                                 {emp.position}
                               </div>
                             </td>
 
                             {/* Date of Birth */}
-                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
+                            <td className="py-2.5 px-2 align-middle font-mono text-[11px] text-[var(--text-main)] font-semibold truncate">
                               {emp.dateOfBirth || '—'}
                             </td>
 
                             {/* Date of Joining */}
-                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-semibold whitespace-nowrap">
+                            <td className="py-2.5 px-2 align-middle font-mono text-[11px] text-[var(--text-main)] font-semibold truncate">
                               {emp.dateOfJoining || '—'}
                             </td>
 
                             {/* Email */}
-                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                            <td className="py-2.5 px-2 align-middle font-mono text-[11px] text-[#28ada4] font-semibold overflow-hidden">
                               {emp.email ? (
-                                <a href={`mailto:${emp.email}`} className="hover:underline flex items-center gap-1">
-                                  <Mail className="w-3 h-3 text-[#28ada4]" />
-                                  {emp.email}
+                                <a href={`mailto:${emp.email}`} className="hover:underline flex items-center gap-1 truncate">
+                                  <Mail className="w-3 h-3 text-[#28ada4] shrink-0" />
+                                  <span className="truncate">{emp.email}</span>
                                 </a>
                               ) : (
                                 '—'
@@ -890,31 +890,31 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                             </td>
 
                             {/* Phone */}
-                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                            <td className="py-2.5 px-2 align-middle font-mono text-[11px] text-[var(--text-main)] font-bold truncate">
                               {emp.phoneNumber || '—'}
                             </td>
 
                             {/* Country & City */}
-                            <td className="py-3.5 px-4 align-middle whitespace-nowrap">
-                              <div className="font-bold text-[var(--text-main)]">{emp.country}</div>
-                              <div className="text-[11px] text-[var(--text-muted)]">{emp.city}</div>
+                            <td className="py-2.5 px-2 align-middle overflow-hidden">
+                              <div className="font-bold text-[var(--text-main)] truncate">{emp.country}</div>
+                              <div className="text-[11px] text-[var(--text-muted)] truncate">{emp.city}</div>
                             </td>
 
                             {/* Actions */}
-                            <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
-                              <div className="flex items-center justify-end gap-1.5">
+                            <td className="py-2.5 px-3 align-middle text-right">
+                              <div className="flex items-center justify-end gap-1">
                                 <button
                                   onClick={() => handleOpenEditEmployeeModal(emp)}
-                                  className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                                  className="p-1.5 px-2 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-[11px] font-bold transition inline-flex items-center gap-1 shrink-0"
                                 >
-                                  <Edit className="w-3.5 h-3.5" /> Edit
+                                  <Edit className="w-3 h-3" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteEmployee(emp.id)}
-                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center shrink-0"
                                   title="Delete employee record"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                                  <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </div>
                             </td>
@@ -966,16 +966,16 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
               </div>
 
               <div className="mozuk-glass-card rounded-2xl shadow-lg overflow-hidden border border-[var(--color-glass-border)]">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[950px]">
-                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[11px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
+                <div className="w-full overflow-hidden">
+                  <table className="w-full table-fixed text-left text-xs">
+                    <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
                       <tr>
-                        <th className="py-3.5 px-4">Contact Person & Position</th>
-                        <th className="py-3.5 px-4">Country</th>
-                        <th className="py-3.5 px-4">Email Address</th>
-                        <th className="py-3.5 px-4">Phone Number</th>
-                        <th className="py-3.5 px-4">Responsibilities / Notes</th>
-                        <th className="py-3.5 px-4 text-right">Actions</th>
+                        <th className="py-2.5 px-3 w-[23%]">Contact & Position</th>
+                        <th className="py-2.5 px-2.5 w-[12%]">Country</th>
+                        <th className="py-2.5 px-2.5 w-[20%]">Email Address</th>
+                        <th className="py-2.5 px-2.5 w-[14%]">Phone</th>
+                        <th className="py-2.5 px-2.5 w-[21%]">Responsibilities</th>
+                        <th className="py-2.5 px-3 w-[10%] text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-glass-border)]">
@@ -992,26 +992,26 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                         filteredContactPeople.map((person) => (
                           <tr key={person.id} className="hover:bg-[var(--color-glass-border)] transition">
                             {/* Name & Position */}
-                            <td className="py-3.5 px-4 align-middle">
-                              <div className="font-extrabold text-[var(--text-main)] text-xs">
+                            <td className="py-2.5 px-3 align-middle overflow-hidden">
+                              <div className="font-extrabold text-[var(--text-main)] text-xs truncate">
                                 {person.fullName}
                               </div>
-                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5">
+                              <div className="text-[11px] text-[#28ada4] font-semibold mt-0.5 truncate" title={person.position}>
                                 {person.position}
                               </div>
                             </td>
 
                             {/* Country */}
-                            <td className="py-3.5 px-4 align-middle font-bold text-[var(--text-main)] whitespace-nowrap">
+                            <td className="py-2.5 px-2.5 align-middle font-bold text-[var(--text-main)] truncate">
                               {person.country}
                             </td>
 
                             {/* Email */}
-                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[#28ada4] font-semibold whitespace-nowrap">
+                            <td className="py-2.5 px-2.5 align-middle font-mono text-[11px] text-[#28ada4] font-semibold overflow-hidden">
                               {person.email ? (
-                                <a href={`mailto:${person.email}`} className="hover:underline flex items-center gap-1">
-                                  <Mail className="w-3 h-3 text-[#28ada4]" />
-                                  {person.email}
+                                <a href={`mailto:${person.email}`} className="hover:underline flex items-center gap-1 truncate">
+                                  <Mail className="w-3 h-3 text-[#28ada4] shrink-0" />
+                                  <span className="truncate">{person.email}</span>
                                 </a>
                               ) : (
                                 '—'
@@ -1019,30 +1019,30 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                             </td>
 
                             {/* Phone */}
-                            <td className="py-3.5 px-4 align-middle font-mono text-xs text-[var(--text-main)] font-bold whitespace-nowrap">
+                            <td className="py-2.5 px-2.5 align-middle font-mono text-[11px] text-[var(--text-main)] font-bold truncate">
                               {person.phoneNumber || '—'}
                             </td>
 
                             {/* Description */}
-                            <td className="py-3.5 px-4 align-middle text-[var(--text-muted)] max-w-xs truncate">
+                            <td className="py-2.5 px-2.5 align-middle text-[var(--text-muted)] truncate" title={person.description}>
                               {person.description || '—'}
                             </td>
 
                             {/* Actions */}
-                            <td className="py-3.5 px-4 align-middle text-right whitespace-nowrap">
-                              <div className="flex items-center justify-end gap-1.5">
+                            <td className="py-2.5 px-3 align-middle text-right">
+                              <div className="flex items-center justify-end gap-1">
                                 <button
                                   onClick={() => handleOpenEditContactModal(person)}
-                                  className="p-1.5 px-2.5 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-xs font-bold transition inline-flex items-center gap-1"
+                                  className="p-1.5 px-2 rounded-lg bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 text-[11px] font-bold transition inline-flex items-center gap-1 shrink-0"
                                 >
-                                  <Edit className="w-3.5 h-3.5" /> Edit
+                                  <Edit className="w-3 h-3" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteContact(person.id)}
-                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
+                                  className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center shrink-0"
                                   title="Delete contact record"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
+                                  <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
                                 </button>
                               </div>
                             </td>
