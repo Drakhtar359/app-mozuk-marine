@@ -292,7 +292,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   };
 
   return (
-    <div className="space-y-6 my-10">
+    <div className="space-y-6">
       {/* SECTION HEADER & KPIS */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-5">
         <div>

@@ -44,7 +44,7 @@ export const ShipList: React.FC<ShipListProps> = ({
   }
 
   return (
-    <div className="space-y-4 my-6">
+    <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <h2 className="font-heading font-bold text-[var(--text-main)] text-xl flex items-center gap-2">
           <Anchor className="w-5 h-5 text-[var(--color-primary)] shrink-0" />

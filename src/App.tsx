@@ -11,7 +11,7 @@ import { CompanyProfilePage } from './components/CompanyProfilePage';
 import { NotFoundPage } from './components/NotFoundPage';
 import { DEFAULT_CREW_AVATARS, getCrewAvatarUrl } from './utils/crewAvatars';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -585,6 +585,7 @@ export function App() {
   });
 
   const [viewMode, setViewMode] = useState<'fleet' | 'profile' | '404'>('fleet');
+  const [activeHomeTab, setActiveHomeTab] = useState<'dashboard' | 'fleet' | 'crew'>('fleet');
   const [attemptedPath, setAttemptedPath] = useState<string>('');
   const [selectedShipId, setSelectedShipId] = useState<string | null>(null);
   const [selectedCrewForProfile, setSelectedCrewForProfile] = useState<CrewMember | null>(null);
@@ -822,7 +823,7 @@ export function App() {
 
       {/* Header matching marine.mozuk.net */}
       <header className="header-nav sticky top-0 z-30 px-4 lg:px-8 py-3.5 border-b border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] shadow-lg">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+        <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
           {/* Taneet Branding */}
           <div className="flex items-center shrink-0">
             <div
@@ -893,7 +894,7 @@ export function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6">
+      <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-6">
         <AnimatePresence mode="wait">
           {selectedShip ? (
             <motion.div
@@ -947,26 +948,113 @@ export function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-              className="space-y-10"
+              className="flex flex-col lg:flex-row gap-6 items-start"
             >
-              {/* 1. Fleet Directory */}
-              <ShipList
-                ships={ships}
-                onSelectShip={(ship) => handleSelectShip(ship)}
-                onRemoveShip={handleRemoveShip}
-                onRegisterVessel={() => setIsAddModalOpen(true)}
-              />
+              {/* Left Side Navigation Tabs */}
+              <aside className="w-full lg:w-64 shrink-0 lg:sticky lg:top-24 mozuk-glass-card rounded-2xl p-2.5 border border-[var(--color-glass-border)] shadow-lg space-y-1.5">
+                <div className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] border-b border-[var(--color-glass-border)] mb-1">
+                  Navigation Menu
+                </div>
 
-              {/* 2. Company Master Crew Roster */}
-              <CompanyCrewList
-                companyCrew={companyCrew}
-                ships={ships}
-                onSelectShip={(ship) => handleSelectShip(ship)}
-                onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
-                onAddCrewMember={handleAddCompanyCrew}
-                onUpdateCrewMember={handleUpdateCompanyCrew}
-                onRemoveCrewMember={handleRemoveCompanyCrew}
-              />
+                <button
+                  onClick={() => setActiveHomeTab('dashboard')}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition cursor-pointer ${
+                    activeHomeTab === 'dashboard'
+                      ? 'btn-mozuk-primary shadow-md'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                  }`}
+                >
+                  <LayoutDashboard className="w-4 h-4 shrink-0" />
+                  <span className="truncate">Dashboard</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveHomeTab('fleet')}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition cursor-pointer ${
+                    activeHomeTab === 'fleet'
+                      ? 'btn-mozuk-primary shadow-md'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                  }`}
+                >
+                  <Anchor className="w-4 h-4 shrink-0" />
+                  <span className="truncate">Registered Fleet Directory</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveHomeTab('crew')}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition cursor-pointer ${
+                    activeHomeTab === 'crew'
+                      ? 'btn-mozuk-primary shadow-md'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                  }`}
+                >
+                  <Users className="w-4 h-4 shrink-0" />
+                  <span className="truncate">Company Master Crew Roster</span>
+                </button>
+              </aside>
+
+              {/* Main Tab Content Area */}
+              <div className="flex-1 min-w-0 w-full">
+                <AnimatePresence mode="wait">
+                  {activeHomeTab === 'dashboard' && (
+                    <motion.div
+                      key="home-tab-dashboard"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.15 }}
+                      className="mozuk-glass-card rounded-2xl p-12 border border-[var(--color-glass-border)] text-center space-y-3"
+                    >
+                      <div className="w-12 h-12 rounded-2xl bg-[#28ada4]/10 border border-[#28ada4]/25 flex items-center justify-center text-[#28ada4] mx-auto">
+                        <LayoutDashboard className="w-6 h-6" />
+                      </div>
+                      <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
+                        Dashboard
+                      </h2>
+                      <p className="text-xs text-[var(--text-muted)] max-w-md mx-auto">
+                        Centralized fleet analytics, compliance alerts, and operational overview will be populated here.
+                      </p>
+                    </motion.div>
+                  )}
+
+                  {activeHomeTab === 'fleet' && (
+                    <motion.div
+                      key="home-tab-fleet"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <ShipList
+                        ships={ships}
+                        onSelectShip={(ship) => handleSelectShip(ship)}
+                        onRemoveShip={handleRemoveShip}
+                        onRegisterVessel={() => setIsAddModalOpen(true)}
+                      />
+                    </motion.div>
+                  )}
+
+                  {activeHomeTab === 'crew' && (
+                    <motion.div
+                      key="home-tab-crew"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <CompanyCrewList
+                        companyCrew={companyCrew}
+                        ships={ships}
+                        onSelectShip={(ship) => handleSelectShip(ship)}
+                        onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
+                        onAddCrewMember={handleAddCompanyCrew}
+                        onUpdateCrewMember={handleUpdateCompanyCrew}
+                        onRemoveCrewMember={handleRemoveCompanyCrew}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
