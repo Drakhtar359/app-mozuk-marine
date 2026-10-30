@@ -647,6 +647,16 @@ export function App() {
     }
     setSelectedShipId(null);
     setViewMode('fleet');
+    setActiveHomeTab('fleet');
+  };
+
+  const handleSelectNavTab = (tab: 'dashboard' | 'fleet' | 'crew') => {
+    if (window.location.pathname !== '/') {
+      window.history.pushState({ view: 'fleet' }, '', '/');
+    }
+    setSelectedShipId(null);
+    setViewMode('fleet');
+    setActiveHomeTab(tab);
   };
 
   useEffect(() => {
@@ -822,8 +832,8 @@ export function App() {
       <div className="bg-mozuk-overlay" />
 
       {/* Header matching marine.mozuk.net */}
-      <header className="header-nav sticky top-0 z-30 px-4 lg:px-8 py-3.5 border-b border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] shadow-lg">
-        <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+      <header className="header-nav sticky top-0 z-30 px-4 lg:px-6 py-3.5 border-b border-[var(--color-glass-border)] backdrop-blur-md bg-[var(--color-surface)] shadow-lg">
+        <div className="w-full flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
           {/* Taneet Branding */}
           <div className="flex items-center shrink-0">
             <div
@@ -856,7 +866,7 @@ export function App() {
               )}
             </motion.button>
 
-            {(selectedShip || viewMode === 'profile' || viewMode === '404') && (
+            {(selectedShip || viewMode === '404') && (
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
@@ -864,17 +874,6 @@ export function App() {
                 className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-full btn-mozuk-secondary font-bold text-[11px] sm:text-xs shrink-0"
               >
                 ← Back to Fleet Directory
-              </motion.button>
-            )}
-
-            {viewMode === 'fleet' && !selectedShip && (
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={handleSelectCompanyProfile}
-                className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full btn-mozuk-secondary font-bold text-[11px] sm:text-xs flex items-center gap-1.5 sm:gap-2 shrink-0"
-              >
-                <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#28ada4]" /> Company Profile
               </motion.button>
             )}
 
@@ -894,171 +893,150 @@ export function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-6">
-        <AnimatePresence mode="wait">
-          {selectedShip ? (
-            <motion.div
-              key="vessel-profile"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            >
-              <VesselProfilePage
-                ship={selectedShip}
-                companyCrew={companyCrew}
-                onBack={handleSelectFleetDirectory}
-                onUpdateShip={handleUpdateShip}
-                onAssignExistingCrewToShip={handleAssignExistingCrewToShip}
-                onUnassignCrewFromShip={handleUnassignCrewFromShip}
-              />
-            </motion.div>
-          ) : viewMode === 'profile' ? (
-            <motion.div
-              key="company-profile"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            >
-              <CompanyProfilePage
-                ownerDetails={ownerDetails}
-                ships={ships}
-                companyCrew={companyCrew}
-                onBack={handleSelectFleetDirectory}
-                onOpenEditModal={() => setIsOwnerModalOpen(true)}
-                onSelectShip={(ship) => handleSelectShip(ship)}
-                onUpdateOwnerDetails={handleSaveOwnerDetails}
-              />
-            </motion.div>
-          ) : viewMode === '404' ? (
-            <motion.div
-              key="404-page"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            >
-              <NotFoundPage attemptedPath={attemptedPath} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="fleet-overview"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-              className="flex flex-col lg:flex-row gap-6 items-start"
-            >
-              {/* Left Side Navigation Tabs */}
-              <aside className="w-full lg:w-64 shrink-0 lg:sticky lg:top-24 mozuk-glass-card rounded-2xl p-2.5 border border-[var(--color-glass-border)] shadow-lg space-y-1.5">
-                <div className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] border-b border-[var(--color-glass-border)] mb-1">
-                  Navigation Menu
-                </div>
-
-                <button
-                  onClick={() => setActiveHomeTab('dashboard')}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition cursor-pointer ${
-                    activeHomeTab === 'dashboard'
-                      ? 'btn-mozuk-primary shadow-md'
-                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-                  }`}
-                >
-                  <LayoutDashboard className="w-4 h-4 shrink-0" />
-                  <span className="truncate">Dashboard</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveHomeTab('fleet')}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition cursor-pointer ${
-                    activeHomeTab === 'fleet'
-                      ? 'btn-mozuk-primary shadow-md'
-                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-                  }`}
-                >
-                  <Anchor className="w-4 h-4 shrink-0" />
-                  <span className="truncate">Registered Fleet Directory</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveHomeTab('crew')}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition cursor-pointer ${
-                    activeHomeTab === 'crew'
-                      ? 'btn-mozuk-primary shadow-md'
-                      : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-                  }`}
-                >
-                  <Users className="w-4 h-4 shrink-0" />
-                  <span className="truncate">Company Master Crew Roster</span>
-                </button>
-              </aside>
-
-              {/* Main Tab Content Area */}
-              <div className="flex-1 min-w-0 w-full">
-                <AnimatePresence mode="wait">
-                  {activeHomeTab === 'dashboard' && (
-                    <motion.div
-                      key="home-tab-dashboard"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.15 }}
-                      className="mozuk-glass-card rounded-2xl p-12 border border-[var(--color-glass-border)] text-center space-y-3"
-                    >
-                      <div className="w-12 h-12 rounded-2xl bg-[#28ada4]/10 border border-[#28ada4]/25 flex items-center justify-center text-[#28ada4] mx-auto">
-                        <LayoutDashboard className="w-6 h-6" />
-                      </div>
-                      <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
-                        Dashboard
-                      </h2>
-                      <p className="text-xs text-[var(--text-muted)] max-w-md mx-auto">
-                        Centralized fleet analytics, compliance alerts, and operational overview will be populated here.
-                      </p>
-                    </motion.div>
-                  )}
-
-                  {activeHomeTab === 'fleet' && (
-                    <motion.div
-                      key="home-tab-fleet"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      <ShipList
-                        ships={ships}
-                        onSelectShip={(ship) => handleSelectShip(ship)}
-                        onRemoveShip={handleRemoveShip}
-                        onRegisterVessel={() => setIsAddModalOpen(true)}
-                      />
-                    </motion.div>
-                  )}
-
-                  {activeHomeTab === 'crew' && (
-                    <motion.div
-                      key="home-tab-crew"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      <CompanyCrewList
-                        companyCrew={companyCrew}
-                        ships={ships}
-                        onSelectShip={(ship) => handleSelectShip(ship)}
-                        onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
-                        onAddCrewMember={handleAddCompanyCrew}
-                        onUpdateCrewMember={handleUpdateCompanyCrew}
-                        onRemoveCrewMember={handleRemoveCompanyCrew}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+      {selectedShip ? (
+        <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-6">
+          <motion.div
+            key="vessel-profile"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+          >
+            <VesselProfilePage
+              ship={selectedShip}
+              companyCrew={companyCrew}
+              onBack={handleSelectFleetDirectory}
+              onUpdateShip={handleUpdateShip}
+              onAssignExistingCrewToShip={handleAssignExistingCrewToShip}
+              onUnassignCrewFromShip={handleUnassignCrewFromShip}
+            />
+          </motion.div>
+        </main>
+      ) : viewMode === '404' ? (
+        <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-6">
+          <motion.div
+            key="404-page"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+          >
+            <NotFoundPage attemptedPath={attemptedPath} />
+          </motion.div>
+        </main>
+      ) : (
+        <div className="flex-1 flex flex-col lg:flex-row w-full items-stretch">
+          {/* Docked Left Side Navigation Bar (Sticks flush to left side of page, never moves) */}
+          <aside className="w-full lg:w-64 shrink-0 bg-[var(--color-surface)] border-b lg:border-b-0 lg:border-r border-[var(--color-glass-border)] flex flex-col justify-between lg:sticky lg:top-[61px] lg:h-[calc(100vh-61px)] p-3 select-none">
+            <div className="space-y-1">
+              <div className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] border-b border-[var(--color-glass-border)] mb-2">
+                Navigation Menu
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
+
+              <button
+                type="button"
+                onClick={() => handleSelectNavTab('dashboard')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                  viewMode === 'fleet' && activeHomeTab === 'dashboard'
+                    ? 'bg-[#28ada4] text-white shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                }`}
+              >
+                <LayoutDashboard className="w-4 h-4 shrink-0" />
+                <span className="truncate">Dashboard</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSelectNavTab('fleet')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                  viewMode === 'fleet' && activeHomeTab === 'fleet'
+                    ? 'bg-[#28ada4] text-white shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                }`}
+              >
+                <Anchor className="w-4 h-4 shrink-0" />
+                <span className="truncate">Registered Fleet Directory</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSelectNavTab('crew')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                  viewMode === 'fleet' && activeHomeTab === 'crew'
+                    ? 'bg-[#28ada4] text-white shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                }`}
+              >
+                <Users className="w-4 h-4 shrink-0" />
+                <span className="truncate">Company Master Crew Roster</span>
+              </button>
+            </div>
+
+            {/* Bottom of Vertical Navigation Bar: Company Profile */}
+            <div className="pt-3 mt-4 lg:mt-auto border-t border-[var(--color-glass-border)]">
+              <button
+                type="button"
+                onClick={handleSelectCompanyProfile}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-['Space_Grotesk',sans-serif] font-bold text-xs text-left transition-colors cursor-pointer ${
+                  viewMode === 'profile'
+                    ? 'bg-[#28ada4] text-white shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                }`}
+              >
+                <Building2 className={`w-4 h-4 shrink-0 ${viewMode === 'profile' ? 'text-white' : 'text-[#28ada4]'}`} />
+                <span className="truncate">Company Profile</span>
+              </button>
+            </div>
+          </aside>
+
+          {/* Main Tab Content Area */}
+          <main className="flex-1 min-w-0 w-full px-4 lg:px-8 py-6">
+            <div className="max-w-7xl mx-auto">
+              {viewMode === 'profile' ? (
+                <CompanyProfilePage
+                  ownerDetails={ownerDetails}
+                  ships={ships}
+                  companyCrew={companyCrew}
+                  onBack={handleSelectFleetDirectory}
+                  onOpenEditModal={() => setIsOwnerModalOpen(true)}
+                  onSelectShip={(ship) => handleSelectShip(ship)}
+                  onUpdateOwnerDetails={handleSaveOwnerDetails}
+                />
+              ) : activeHomeTab === 'dashboard' ? (
+                <div className="mozuk-glass-card rounded-2xl p-12 border border-[var(--color-glass-border)] text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#28ada4]/10 border border-[#28ada4]/25 flex items-center justify-center text-[#28ada4] mx-auto">
+                    <LayoutDashboard className="w-6 h-6" />
+                  </div>
+                  <h2 className="font-['Space_Grotesk',sans-serif] font-extrabold text-xl text-[var(--text-main)]">
+                    Dashboard
+                  </h2>
+                  <p className="text-xs text-[var(--text-muted)] max-w-md mx-auto">
+                    Centralized fleet analytics, compliance alerts, and operational overview will be populated here.
+                  </p>
+                </div>
+              ) : activeHomeTab === 'fleet' ? (
+                <ShipList
+                  ships={ships}
+                  onSelectShip={(ship) => handleSelectShip(ship)}
+                  onRemoveShip={handleRemoveShip}
+                  onRegisterVessel={() => setIsAddModalOpen(true)}
+                />
+              ) : (
+                <CompanyCrewList
+                  companyCrew={companyCrew}
+                  ships={ships}
+                  onSelectShip={(ship) => handleSelectShip(ship)}
+                  onSelectCrewMember={(crew) => setSelectedCrewForProfile(crew)}
+                  onAddCrewMember={handleAddCompanyCrew}
+                  onUpdateCrewMember={handleUpdateCompanyCrew}
+                  onRemoveCrewMember={handleRemoveCompanyCrew}
+                />
+              )}
+            </div>
+          </main>
+        </div>
+      )}
 
       {/* Footer matching marine.mozuk.net */}
       <footer className="border-t border-[var(--color-glass-border)] bg-[var(--color-bg-alt)] py-8 text-xs text-[var(--text-muted)]">
