@@ -33,7 +33,8 @@ interface ShipPosition {
   headingDeg: number;
 }
 
-const CARTO_API_KEY = 'cb1_3s3u_1_405b6a6fd32e5256acc5e566';
+const CARTO_RASTER_URL =
+  'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_3s3u_1_405b6a6fd32e5256acc5e566';
 
 // Accurate maritime positions for default vessels + fallback maritime coordinates for any newly registered ships
 const DEFAULT_MARITIME_POSITIONS: Array<{
@@ -125,12 +126,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     };
   });
 
-  // Initialize Leaflet Map
+  // Initialize Leaflet Map with Carto Raster Voyager Key
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    const container = mapContainerRef.current;
+    if (!container) return;
     if (mapInstanceRef.current) return;
 
-    const map = L.map(mapContainerRef.current, {
+    const map = L.map(container, {
       center: [22, 18],
       zoom: 2,
       minZoom: 2,
@@ -140,43 +142,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       worldCopyJump: true,
     });
 
+    const layer = L.tileLayer(CARTO_RASTER_URL, {
+      maxZoom: 18,
+    }).addTo(map);
+
     const markersGroup = L.layerGroup().addTo(map);
     mapInstanceRef.current = map;
+    tileLayerRef.current = layer;
     markersLayerRef.current = markersGroup;
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       map.invalidateSize();
-    }, 150);
+    }, 100);
+
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    resizeObserver.observe(container);
 
     return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
       map.remove();
       mapInstanceRef.current = null;
       tileLayerRef.current = null;
       markersLayerRef.current = null;
     };
   }, []);
-
-  // Update Tile Layer on Theme Change using Carto API Key
-  useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
-
-    if (tileLayerRef.current) {
-      map.removeLayer(tileLayerRef.current);
-    }
-
-    const tileUrl =
-      theme === 'dark'
-        ? `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`
-        : `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${CARTO_API_KEY}`;
-
-    const layer = L.tileLayer(tileUrl, {
-      subdomains: 'abcd',
-      maxZoom: 18,
-    }).addTo(map);
-
-    tileLayerRef.current = layer;
-  }, [theme]);
 
   // Render Taneet Purple (#7b0b76) Dots with Pulsing Outline & Hover Ship Name Tooltip
   useEffect(() => {
@@ -461,8 +453,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* Interactive Accurate Map Container */}
-          <div className="relative w-full flex-1 min-h-[430px] bg-[var(--color-bg)] z-0">
-            <div ref={mapContainerRef} className="w-full h-full min-h-[430px] z-0" />
+          <div className="relative w-full h-[430px] bg-[var(--color-bg)] z-0">
+            <div
+              ref={mapContainerRef}
+              style={{ height: '430px', width: '100%' }}
+              className="w-full h-[430px] z-0"
+            />
           </div>
         </div>
 

@@ -344,3 +344,15 @@ textarea:focus {
 .leaflet-tooltip-top.taneet-ship-tooltip::before {
   border-top-color: #7b0b76 !important;
 }
+
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  font-family: 'Montserrat', sans-serif !important;
+  z-index: 1;
+}
+
+.leaflet-container img.leaflet-tile {
+  max-width: none !important;
+  max-height: none !important;
+}
