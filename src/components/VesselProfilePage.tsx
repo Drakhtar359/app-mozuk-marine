@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog, BallastWaterLog, SewageWaterLog, ProcurementOrder, getEffectiveVesselHistory } from '../types/vessel';
 import {
@@ -49,6 +49,8 @@ import {
   ShoppingCart,
   Package,
   Truck,
+  Upload,
+  Camera,
 } from 'lucide-react';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
 import { DateInput } from './DateInput';
@@ -147,6 +149,9 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   const [crewPassportExpiry, setCrewPassportExpiry] = useState('');
   const [crewSeamanBookExpiry, setCrewSeamanBookExpiry] = useState('');
   const [crewSignOnLocation, setCrewSignOnLocation] = useState('');
+  const [crewAvatarPreview, setCrewAvatarPreview] = useState('');
+  const [crewAvatarFileName, setCrewAvatarFileName] = useState('');
+  const crewAvatarInputRef = useRef<HTMLInputElement | null>(null);
 
   // Form states for Visitor Log
   const [visitorDate, setVisitorDate] = useState('');
@@ -354,7 +359,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
       nationality: crewNationality.trim() || 'Mozambican',
       signOnDate: formattedSignOn,
       signOnLocation: crewSignOnLocation.trim() || undefined,
-      avatarUrl: getCrewAvatarUrl({ id: newCrewId, name: crewName.trim() }),
+      avatarUrl: crewAvatarPreview || getCrewAvatarUrl({ id: newCrewId, name: crewName.trim() }),
       dateOfBirth: crewDateOfBirth ? formatDate(crewDateOfBirth) : undefined,
       passportNumber: crewPassportNumber.trim() || undefined,
       passportExpiry: crewPassportExpiry ? formatDate(crewPassportExpiry) : undefined,
@@ -385,6 +390,8 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     setCrewPassportExpiry('');
     setCrewSeamanBookExpiry('');
     setCrewSignOnLocation('');
+    setCrewAvatarPreview('');
+    setCrewAvatarFileName('');
     setIsAddCrewModalOpen(false);
   };
 
@@ -2992,6 +2999,74 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             ) : (
               /* TAB 2: REGISTER NEW CREW MEMBER FORM */
               <form onSubmit={handleAddCrew} className="p-6 space-y-4 text-xs">
+              {/* Profile Picture Upload */}
+              <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-[var(--color-bg)] border border-[var(--color-glass-border)] flex items-center justify-center shrink-0">
+                    {crewAvatarPreview ? (
+                      <img
+                        src={crewAvatarPreview}
+                        alt="Profile Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Camera className="w-5 h-5 text-[#28ada4]" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <label className="block text-[var(--text-main)] font-extrabold text-xs">
+                      Profile Picture
+                    </label>
+                    <p className="text-[11px] text-[var(--text-muted)] truncate">
+                      {crewAvatarFileName || 'Upload a portrait photo (PNG, JPG, WEBP)'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <input
+                    ref={crewAvatarInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setCrewAvatarFileName(file.name);
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          if (typeof reader.result === 'string') {
+                            setCrewAvatarPreview(reader.result);
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="hidden"
+                  />
+                  {crewAvatarPreview && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCrewAvatarPreview('');
+                        setCrewAvatarFileName('');
+                        if (crewAvatarInputRef.current) crewAvatarInputRef.current.value = '';
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 font-bold text-[11px] transition cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => crewAvatarInputRef.current?.click()}
+                    className="px-3 py-1.5 rounded-xl bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 font-extrabold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{crewAvatarPreview ? 'Change Photo' : 'Upload Photo'}</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-[var(--text-main)] font-bold mb-1">Full Name *</label>

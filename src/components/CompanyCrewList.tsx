@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CrewMember, Ship, VesselHistoryEntry, getEffectiveVesselHistory } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
@@ -35,6 +35,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Phone,
+  Upload,
+  Camera,
 } from 'lucide-react';
 
 interface CompanyCrewListProps {
@@ -90,9 +92,9 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
   const [passportExpiry, setPassportExpiry] = useState('');
   const [seamanBookNo, setSeamanBookNo] = useState('');
   const [seamanBookExpiry, setSeamanBookExpiry] = useState('');
-  const [signOnDate, setSignOnDate] = useState('');
-  const [signOnLocation, setSignOnLocation] = useState('');
-  const [targetShipId, setTargetShipId] = useState<string>('unassigned');
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [avatarFileName, setAvatarFileName] = useState<string>('');
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
 
   // Quick Assignment Form States
   const [quickShipId, setQuickShipId] = useState<string>('unassigned');
@@ -124,17 +126,14 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
     setPassportExpiry('');
     setSeamanBookNo('');
     setSeamanBookExpiry('');
-    setSignOnDate('');
-    setSignOnLocation('');
-    setTargetShipId('unassigned');
+    setAvatarPreview('');
+    setAvatarFileName('');
   };
 
   // Submit Register New Crew Member
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-
-    const selectedShip = ships.find((s) => s.id === targetShipId);
 
     const newCrewId = `crew-${Date.now()}`;
     const newCrew: CrewMember = {
@@ -150,20 +149,11 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
       passportExpiry: passportExpiry ? formatDate(passportExpiry) : undefined,
       seamanBookNo: seamanBookNo.trim() || undefined,
       seamanBookExpiry: seamanBookExpiry ? formatDate(seamanBookExpiry) : undefined,
-      signOnDate: formatDate(signOnDate || getTodayDDMMYYYY()),
-      signOnLocation: signOnLocation.trim() || undefined,
-      avatarUrl: getCrewAvatarUrl({ id: newCrewId, name: name.trim() }),
-      assignedShipId: selectedShip ? selectedShip.id : undefined,
-      assignedShipName: selectedShip ? selectedShip.name : undefined,
-      vesselHistory: selectedShip
-        ? [
-            {
-              shipName: selectedShip.name,
-              role: role.trim() || 'Officer',
-              startDate: formatDate(signOnDate || getTodayDDMMYYYY()),
-            },
-          ]
-        : [],
+      signOnDate: getTodayDDMMYYYY(),
+      avatarUrl: avatarPreview || getCrewAvatarUrl({ id: newCrewId, name: name.trim() }),
+      assignedShipId: undefined,
+      assignedShipName: undefined,
+      vesselHistory: [],
     };
 
     onAddCrewMember(newCrew);
@@ -743,6 +733,74 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
 
               {/* Form */}
               <form onSubmit={handleAddSubmit} className="p-6 space-y-4 text-xs">
+                {/* Profile Picture Upload */}
+                <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-[var(--color-bg)] border border-[var(--color-glass-border)] flex items-center justify-center shrink-0">
+                      {avatarPreview ? (
+                        <img
+                          src={avatarPreview}
+                          alt="Profile Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Camera className="w-5 h-5 text-[#28ada4]" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <label className="block text-[var(--text-main)] font-extrabold text-xs">
+                        Profile Picture
+                      </label>
+                      <p className="text-[11px] text-[var(--text-muted)] truncate">
+                        {avatarFileName || 'Upload a portrait photo (PNG, JPG, WEBP)'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <input
+                      ref={avatarInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setAvatarFileName(file.name);
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            if (typeof reader.result === 'string') {
+                              setAvatarPreview(reader.result);
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    {avatarPreview && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAvatarPreview('');
+                          setAvatarFileName('');
+                          if (avatarInputRef.current) avatarInputRef.current.value = '';
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 font-bold text-[11px] transition cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => avatarInputRef.current?.click()}
+                      className="px-3 py-1.5 rounded-xl bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 font-extrabold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{avatarPreview ? 'Change Photo' : 'Upload Photo'}</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Name, Email & Phone */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
@@ -819,41 +877,20 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                   </div>
                 </div>
 
-                {/* Nationality */}
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Nationality</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. British, Filipino, Greek"
-                    value={nationality}
-                    onChange={(e) => setNationality(e.target.value)}
-                    required
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
-                  />
-                </div>
-
-                {/* Vessel Assignment Selection */}
-                <div className="p-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-glass-border)] space-y-2">
-                  <label className="block text-[var(--text-main)] font-bold flex items-center gap-1.5 text-xs">
-                    <Anchor className="w-4 h-4 text-[var(--color-primary)]" />
-                    Initial Ship Assignment
-                  </label>
-                  <select
-                    value={targetShipId}
-                    onChange={(e) => setTargetShipId(e.target.value)}
-                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-[#28ada4] cursor-pointer"
-                  >
-                    <option value="unassigned">Unassigned Pool (Available for future assignment)</option>
-                    {ships.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        Assign to Vessel: {s.name} ({s.type || 'Vessel'})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Date of Birth & Passport */}
+                {/* Nationality & Date of Birth */}
                 <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[var(--text-main)] font-bold mb-1">Nationality</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. British, Filipino, Greek"
+                      value={nationality}
+                      onChange={(e) => setNationality(e.target.value)}
+                      required
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)]"
+                    />
+                  </div>
+
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">Date of Birth</label>
                     <DateInput
@@ -862,7 +899,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                     />
                   </div>
+                </div>
 
+                {/* Passport Number & Passport Expiry */}
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">Passport Number</label>
                     <input
@@ -873,10 +913,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)]"
                     />
                   </div>
-                </div>
 
-                {/* Passport Expiry & Seaman Book */}
-                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">Passport Expiry</label>
                     <DateInput
@@ -885,7 +922,10 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                     />
                   </div>
+                </div>
 
+                {/* Seaman Book Number & Seaman Book Expiry */}
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">Seaman Book Number</label>
                     <input
@@ -896,10 +936,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)]"
                     />
                   </div>
-                </div>
 
-                {/* Seaman Book Expiry & Sign-On Date */}
-                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1">Seaman Book Expiry</label>
                     <DateInput
@@ -908,27 +945,6 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                       inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
                     />
                   </div>
-
-                  <div>
-                    <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On Date</label>
-                    <DateInput
-                      value={signOnDate}
-                      onChange={(val) => setSignOnDate(val)}
-                      inputClassName="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                    />
-                  </div>
-                </div>
-
-                {/* Sign On City */}
-                <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Sign-On City / Port</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Rotterdam, Antwerp, Yokohama"
-                    value={signOnLocation}
-                    onChange={(e) => setSignOnLocation(e.target.value)}
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
-                  />
                 </div>
 
                 {/* Modal Actions */}
