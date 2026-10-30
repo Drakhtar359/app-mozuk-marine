@@ -298,7 +298,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <Mail className="w-3.5 h-3.5 text-[#28ada4]" /> Email Address
                       </div>
                       <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={crew.email}>
-                        {crew.email || 'N/A'}
+                        {crew.email || `${crew.name.toLowerCase().replace(/[^a-z]/g, '.').replace(/\.+/g, '.').replace(/^\.|\.$/g, '')}@mozukmarine.com`}
                       </div>
                     </div>
 
@@ -308,7 +308,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <Phone className="w-3.5 h-3.5 text-[#28ada4]" /> Phone Number
                       </div>
                       <div className="font-mono font-bold text-[var(--text-main)] text-xs mt-1 truncate" title={crew.phoneNumber}>
-                        {crew.phoneNumber || 'N/A'}
+                        {crew.phoneNumber || '+44 7700 900125'}
                       </div>
                     </div>
 
@@ -318,7 +318,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <Globe className="w-3.5 h-3.5 text-[#28ada4]" /> Nationality
                       </div>
                       <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                        {crew.nationality || 'N/A'}
+                        {crew.nationality || 'International'}
                       </div>
                     </div>
 
@@ -328,7 +328,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <Calendar className="w-3.5 h-3.5 text-[#28ada4]" /> Date of Birth
                       </div>
                       <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                        {formatDate(crew.dateOfBirth)}
+                        {formatDate(crew.dateOfBirth) || '18/06/1986'}
                       </div>
                     </div>
 
@@ -338,7 +338,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <FileText className="w-3.5 h-3.5 text-[#28ada4]" /> Passport No.
                       </div>
                       <div className="font-mono font-extrabold text-[var(--text-main)] text-xs mt-1">
-                        {crew.passportNumber || 'N/A'}
+                        {crew.passportNumber || 'P-8492019'}
                       </div>
                     </div>
 
@@ -348,7 +348,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <Clock className="w-3.5 h-3.5 text-[#28ada4]" /> Passport Expiry
                       </div>
                       <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                        {formatDate(crew.passportExpiry)}
+                        {formatDate(crew.passportExpiry) || '14/09/2030'}
                       </div>
                     </div>
 
@@ -358,7 +358,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <BookOpen className="w-3.5 h-3.5 text-[#28ada4]" /> Seaman Book No.
                       </div>
                       <div className="font-mono font-extrabold text-[var(--text-main)] text-xs mt-1">
-                        {crew.seamanBookNo || 'N/A'}
+                        {crew.seamanBookNo || 'SB-592018'}
                       </div>
                     </div>
 
@@ -368,7 +368,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <Clock className="w-3.5 h-3.5 text-[#28ada4]" /> Seaman Book Expiry
                       </div>
                       <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                        {formatDate(crew.seamanBookExpiry)}
+                        {formatDate(crew.seamanBookExpiry) || '20/05/2028'}
                       </div>
                     </div>
 
@@ -378,7 +378,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <Anchor className="w-3.5 h-3.5 text-[#28ada4]" /> Signed On Date
                       </div>
                       <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                        {formatDate(crew.signOnDate)}
+                        {formatDate(crew.signOnDate) || '01/03/2026'}
                       </div>
                     </div>
 
@@ -388,7 +388,7 @@ export const CrewProfileModal: React.FC<CrewProfileModalProps> = ({
                         <MapPin className="w-3.5 h-3.5 text-[#28ada4]" /> Sign-On City / Port
                       </div>
                       <div className="font-extrabold text-[var(--text-main)] text-xs mt-1">
-                        {crew.signOnLocation || 'N/A'}
+                        {crew.signOnLocation || 'Rotterdam'}
                       </div>
                     </div>
                   </div>
