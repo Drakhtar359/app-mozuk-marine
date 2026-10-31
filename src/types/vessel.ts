@@ -174,9 +174,11 @@ export interface ShipOwnerDetails {
   country: string;
   phoneNumber: string;
   subscriptionTier?: SubscriptionTier;
+  logoUrl?: string;
   contactPeople: CompanyContactPerson[];
   employees?: CompanyEmployee[];
   customers?: CompanyCustomer[];
+  employeeAccess?: Record<string, string[]>;
 }
 
 export const getEffectiveVesselHistory = (crew: CrewMember): VesselHistoryEntry[] => {

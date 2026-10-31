@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShipOwnerDetails, CompanyContactPerson, SubscriptionTier } from '../types/vessel';
+import { ShipOwnerDetails } from '../types/vessel';
 import {
   Building2,
   Globe,
   Phone,
-  UserCheck,
-  Plus,
-  Trash2,
   X,
   ShieldCheck,
-  Users,
-  Edit,
-  Check,
-  Crown,
+  Upload,
+  Image as ImageIcon,
+  Trash2,
+  Anchor,
+  Sparkles,
 } from 'lucide-react';
 
 interface ShipOwnerModalProps {
@@ -32,53 +30,51 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
   const [companyName, setCompanyName] = useState(ownerDetails.companyName || '');
   const [country, setCountry] = useState(ownerDetails.country || '');
   const [phoneNumber, setPhoneNumber] = useState(ownerDetails.phoneNumber || '');
-  const [subscriptionTier, setSubscriptionTier] = useState<SubscriptionTier>(
-    ownerDetails.subscriptionTier || 'Platinum'
-  );
-  const [contactPeople, setContactPeople] = useState<CompanyContactPerson[]>(
-    ownerDetails.contactPeople || []
-  );
-
-  // Track which contact row is currently being edited
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState(ownerDetails.logoUrl || '');
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setCompanyName(ownerDetails.companyName || '');
     setCountry(ownerDetails.country || '');
     setPhoneNumber(ownerDetails.phoneNumber || '');
-    setSubscriptionTier(ownerDetails.subscriptionTier || 'Platinum');
-    setContactPeople(ownerDetails.contactPeople || []);
-    setEditingId(null);
+    setLogoUrl(ownerDetails.logoUrl || '');
   }, [ownerDetails, isOpen]);
 
-  const handleAddContactPerson = () => {
-    const newPerson: CompanyContactPerson = {
-      id: `cp-${Date.now()}`,
-      fullName: '',
-      position: '',
-      country: country || 'Mozambique',
-      phoneNumber: '',
-      email: '',
-      description: '',
+  const handleFileSelect = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload a valid image file (PNG, JPG, SVG, WebP).');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setLogoUrl(e.target.result as string);
+      }
     };
-    setContactPeople((prev) => [...prev, newPerson]);
-    setEditingId(newPerson.id);
+    reader.readAsDataURL(file);
   };
 
-  const handleUpdateContactPerson = (
-    id: string,
-    field: keyof CompanyContactPerson,
-    value: string
-  ) => {
-    setContactPeople((prev) =>
-      prev.map((cp) => (cp.id === id ? { ...cp, [field]: value } : cp))
-    );
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileSelect(e.target.files[0]);
+    }
   };
 
-  const handleRemoveContactPerson = (id: string) => {
-    setContactPeople((prev) => prev.filter((cp) => cp.id !== id));
-    if (editingId === id) {
-      setEditingId(null);
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileSelect(e.dataTransfer.files[0]);
     }
   };
 
@@ -89,8 +85,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
       companyName: companyName.trim() || 'MOZUK MARINE SHIPPING SERVICES S.A.',
       country: country.trim() || 'Mozambique',
       phoneNumber: phoneNumber.trim() || '+258 21 300 450',
-      subscriptionTier: subscriptionTier || 'Platinum',
-      contactPeople: contactPeople.filter((cp) => cp.fullName.trim() !== ''),
+      logoUrl: logoUrl.trim() || undefined,
     });
     onClose();
   };
@@ -115,73 +110,145 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
             transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] my-auto"
+            className="relative z-10 bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] my-auto"
           >
             {/* Header */}
             <div className="px-6 py-4 border-b border-[var(--color-glass-border)] flex items-center justify-between bg-[var(--color-surface)] shrink-0">
               <div>
                 <h3 className="font-heading font-extrabold text-[var(--text-main)] text-base flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-[var(--color-primary)] shrink-0" />
-                  Edit Ship Owner & Manager Details
+                  Edit Company Details
                 </h3>
                 <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                  Update corporate owner profile, headquarters location, main phone line, and internal company contacts.
+                  Update corporate owner profile, branding logo, headquarters location, and phone line.
                 </p>
               </div>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
-                className="text-[var(--text-muted)] hover:text-[var(--text-main)] p-1.5 rounded-lg transition"
+                className="text-[var(--text-muted)] hover:text-[var(--text-main)] p-1.5 rounded-lg transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </motion.button>
             </div>
 
             {/* Modal Form Content */}
-            <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 text-xs flex-1">
-              {/* SECTION 1: MAIN COMPANY PROFILE */}
+            <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 text-xs flex-1">
+              {/* SECTION 1: COMPANY LOGO UPLOAD */}
               <div className="space-y-3">
+                <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1.5">
+                  <ImageIcon className="w-4 h-4 text-[#28ada4]" />
+                  Company Branding Logo
+                </label>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                />
+
+                {logoUrl ? (
+                  <div className="p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-glass-border)] flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-16 h-16 rounded-xl bg-[var(--color-bg-alt)] border border-[var(--color-glass-border-hover)] p-1.5 flex items-center justify-center shrink-0 shadow-sm overflow-hidden">
+                        <img
+                          src={logoUrl}
+                          alt="Company Logo Preview"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div>
+                        <div className="font-extrabold text-[var(--text-main)] text-xs">Custom Logo Uploaded</div>
+                        <div className="text-[11px] text-[var(--text-muted)]">Active across company profile and fleet credentials.</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3 py-1.5 rounded-lg bg-[#28ada4]/15 hover:bg-[#28ada4]/25 text-[#28ada4] border border-[#28ada4]/30 font-bold text-xs transition cursor-pointer"
+                      >
+                        Change
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setLogoUrl('')}
+                        className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition cursor-pointer"
+                        title="Remove Logo"
+                      >
+                        <Trash2 className="w-4 h-4 text-[#991b1b] dark:text-[#e05252]" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition ${
+                      isDragging
+                        ? 'border-[#28ada4] bg-[#28ada4]/10'
+                        : 'border-[var(--color-glass-border)] bg-[var(--color-bg)] hover:border-[#28ada4]/50'
+                    }`}
+                  >
+                    <Upload className="w-8 h-8 text-[#28ada4] mx-auto mb-2 opacity-80" />
+                    <div className="font-bold text-[var(--text-main)] text-xs mb-1">
+                      Click to upload company logo, or drag and drop image here
+                    </div>
+                    <div className="text-[11px] text-[var(--text-muted)]">
+                      Supported formats: PNG, JPG, SVG, WebP (Max 5MB)
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* SECTION 2: COMPANY GENERAL DETAILS */}
+              <div className="space-y-4 pt-2">
                 <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2 border-b border-[var(--color-glass-border)] pb-2">
                   <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" />
                   Company General Details
                 </h4>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {/* Company Name */}
-                  <div className="sm:col-span-3">
-                    <label className="block text-[var(--text-main)] font-bold mb-1">
-                      Company Name *
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. MOZUK MARINE SHIPPING SERVICES S.A."
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
-                      required
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold"
-                    />
-                  </div>
+                {/* Company Name */}
+                <div>
+                  <label className="block text-[var(--text-main)] font-bold mb-1">
+                    Company Registered Name <span className="text-[#28ada4]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. MOZUK MARINE SHIPPING SERVICES S.A."
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    required
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold focus:outline-none focus:border-[#28ada4]"
+                  />
+                </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Country */}
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
-                      <Globe className="w-3.5 h-3.5 text-[#28ada4]" /> Country *
+                      <Globe className="w-3.5 h-3.5 text-[#28ada4]" /> Registered Operating Country <span className="text-[#28ada4]">*</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Mozambique, United Kingdom"
+                      placeholder="e.g. Mozambique"
                       value={country}
                       onChange={(e) => setCountry(e.target.value)}
                       required
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)]"
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
                     />
                   </div>
 
                   {/* Main Phone Number */}
                   <div>
                     <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-[#28ada4]" /> Company Phone Number *
+                      <Phone className="w-3.5 h-3.5 text-[#28ada4]" /> Primary Phone Number <span className="text-[#28ada4]">*</span>
                     </label>
                     <input
                       type="tel"
@@ -189,229 +256,8 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       required
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)]"
+                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#28ada4]"
                     />
-                  </div>
-
-                  {/* Subscription Tier */}
-                  <div>
-                    <label className="block text-[var(--text-main)] font-bold mb-1 flex items-center gap-1">
-                      <Crown className="w-3.5 h-3.5 text-[#7b0b76]" /> Subscription Tier *
-                    </label>
-                    <select
-                      value={subscriptionTier}
-                      onChange={(e) => setSubscriptionTier(e.target.value as SubscriptionTier)}
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-semibold cursor-pointer"
-                    >
-                      <option value="Free">Free</option>
-                      <option value="Silver">Silver</option>
-                      <option value="Gold">Gold</option>
-                      <option value="Platinum">Platinum</option>
-                      <option value="Diamond">Diamond</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* SECTION 2: INTERNAL COMPANY CONTACTS TABLE (STATIC ROWS WITH EDIT & DELETE ON RIGHT) */}
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center justify-between border-b border-[var(--color-glass-border)] pb-2">
-                  <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
-                    <Users className="w-4 h-4 text-[var(--color-primary)]" />
-                    Internal Company Contacts Directory ({contactPeople.length})
-                  </h4>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
-                    type="button"
-                    onClick={handleAddContactPerson}
-                    className="px-3.5 py-1.5 rounded-xl bg-[#28ada4]/10 hover:bg-[#28ada4]/20 text-[#28ada4] border border-[#28ada4]/30 font-bold text-xs flex items-center gap-1.5 transition"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Add Contact Person
-                  </motion.button>
-                </div>
-
-                <div className="mozuk-glass-card rounded-2xl overflow-hidden border border-[var(--color-glass-border)]">
-                  <div className="w-full overflow-hidden">
-                    <table className="w-full table-fixed text-left text-xs">
-                      <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
-                        <tr>
-                          <th className="py-2.5 px-3 w-[17%]">Full Name</th>
-                          <th className="py-2.5 px-2.5 w-[17%]">Position / Role</th>
-                          <th className="py-2.5 px-2 w-[11%]">Country</th>
-                          <th className="py-2.5 px-2 w-[14%]">Phone Number</th>
-                          <th className="py-2.5 px-2.5 w-[17%]">Email Address</th>
-                          <th className="py-2.5 px-2.5 w-[14%]">Description</th>
-                          <th className="py-2.5 px-3 text-right w-[10%]">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[var(--color-glass-border)]">
-                        {contactPeople.length === 0 ? (
-                          <tr>
-                            <td colSpan={7} className="py-8 text-center text-[var(--text-muted)] text-xs">
-                              <UserCheck className="w-8 h-8 text-[var(--text-dim)] mx-auto mb-2 opacity-50" />
-                              No internal contact persons added yet. Click "+ Add Contact Person" to populate.
-                            </td>
-                          </tr>
-                        ) : (
-                          contactPeople.map((person) => {
-                            const isEditing = editingId === person.id;
-
-                            if (isEditing) {
-                              /* EDITING ROW FORM */
-                              return (
-                                <tr key={person.id} className="bg-[#28ada4]/5 align-middle">
-                                  <td className="py-2.5 px-3">
-                                    <input
-                                      type="text"
-                                      placeholder="e.g. Capt. Antonio Vance"
-                                      value={person.fullName}
-                                      onChange={(e) =>
-                                        handleUpdateContactPerson(person.id, 'fullName', e.target.value)
-                                      }
-                                      required
-                                      autoFocus
-                                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] font-semibold"
-                                    />
-                                  </td>
-
-                                  <td className="py-2.5 px-3">
-                                    <input
-                                      type="text"
-                                      placeholder="e.g. DPA / Operations"
-                                      value={person.position}
-                                      onChange={(e) =>
-                                        handleUpdateContactPerson(person.id, 'position', e.target.value)
-                                      }
-                                      required
-                                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)] font-semibold"
-                                    />
-                                  </td>
-
-                                  <td className="py-2.5 px-3">
-                                    <input
-                                      type="text"
-                                      placeholder="e.g. Mozambique"
-                                      value={person.country}
-                                      onChange={(e) =>
-                                        handleUpdateContactPerson(person.id, 'country', e.target.value)
-                                      }
-                                      required
-                                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)]"
-                                    />
-                                  </td>
-
-                                  <td className="py-2.5 px-3">
-                                    <input
-                                      type="tel"
-                                      placeholder="e.g. +258 84 999 1122"
-                                      value={person.phoneNumber}
-                                      onChange={(e) =>
-                                        handleUpdateContactPerson(person.id, 'phoneNumber', e.target.value)
-                                      }
-                                      required
-                                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[var(--text-main)]"
-                                    />
-                                  </td>
-
-                                  <td className="py-2.5 px-3">
-                                    <input
-                                      type="email"
-                                      placeholder="e.g. a.vance@mozukmarine.com"
-                                      value={person.email}
-                                      onChange={(e) =>
-                                        handleUpdateContactPerson(person.id, 'email', e.target.value)
-                                      }
-                                      required
-                                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[var(--text-main)]"
-                                    />
-                                  </td>
-
-                                  <td className="py-2.5 px-3">
-                                    <input
-                                      type="text"
-                                      placeholder="e.g. Primary emergency contact"
-                                      value={person.description || ''}
-                                      onChange={(e) =>
-                                        handleUpdateContactPerson(person.id, 'description', e.target.value)
-                                      }
-                                      className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-main)]"
-                                    />
-                                  </td>
-
-                                  <td className="py-2.5 px-3 text-right whitespace-nowrap">
-                                    <motion.button
-                                      whileHover={{ scale: 1.05 }}
-                                      whileTap={{ scale: 0.95 }}
-                                      type="button"
-                                      onClick={() => setEditingId(null)}
-                                      className="px-2.5 py-1 rounded-lg bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold hover:bg-[#28ada4]/25 transition inline-flex items-center gap-1 text-[11px]"
-                                      title="Done Editing"
-                                    >
-                                      <Check className="w-3.5 h-3.5" /> Done
-                                    </motion.button>
-                                  </td>
-                                </tr>
-                              );
-                            }
-
-                            /* STATIC ROW DISPLAY */
-                            return (
-                              <tr key={person.id} className="hover:bg-[var(--color-glass-border)] transition align-middle">
-                                <td className="py-3 px-3.5 font-extrabold text-[var(--text-main)] text-xs">
-                                  {person.fullName || '—'}
-                                </td>
-
-                                <td className="py-3 px-3.5 font-semibold text-[var(--color-primary)] text-xs">
-                                  {person.position || '—'}
-                                </td>
-
-                                <td className="py-3 px-3.5 font-semibold text-[var(--text-main)]">
-                                  {person.country || '—'}
-                                </td>
-
-                                <td className="py-3 px-3.5 font-mono text-[var(--text-main)] font-semibold whitespace-nowrap">
-                                  {person.phoneNumber || '—'}
-                                </td>
-
-                                <td className="py-3 px-3.5 font-mono text-[var(--text-main)]">
-                                  {person.email || '—'}
-                                </td>
-
-                                <td className="py-3 px-3.5 text-[var(--text-muted)] italic max-w-[200px] truncate" title={person.description || ''}>
-                                  {person.description || '—'}
-                                </td>
-
-                                <td className="py-3 px-3.5 text-right whitespace-nowrap">
-                                  <div className="flex items-center justify-end gap-1.5">
-                                    <motion.button
-                                      whileHover={{ scale: 1.1 }}
-                                      whileTap={{ scale: 0.9 }}
-                                      type="button"
-                                      onClick={() => setEditingId(person.id)}
-                                      className="p-1.5 text-[#28ada4] hover:bg-[#28ada4]/10 rounded-lg transition"
-                                      title="Edit Contact Person"
-                                    >
-                                      <Edit className="w-4 h-4" />
-                                    </motion.button>
-                                    <motion.button
-                                      whileHover={{ scale: 1.1 }}
-                                      whileTap={{ scale: 0.9 }}
-                                      type="button"
-                                      onClick={() => handleRemoveContactPerson(person.id)}
-                                      className="p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition"
-                                      title="Delete Contact Person"
-                                    >
-                                      <Trash2 className="w-4 h-4 text-[#991b1b] dark:text-[#e05252]" />
-                                    </motion.button>
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
                   </div>
                 </div>
               </div>
@@ -421,7 +267,7 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs"
+                  className="px-4 py-2 rounded-full btn-mozuk-secondary font-bold text-xs cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -429,9 +275,9 @@ export const ShipOwnerModal: React.FC<ShipOwnerModalProps> = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   type="submit"
-                  className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs shadow-md flex items-center gap-2"
+                  className="px-5 py-2 rounded-full btn-mozuk-primary font-bold text-xs shadow-md flex items-center gap-2 cursor-pointer"
                 >
-                  <ShieldCheck className="w-4 h-4" /> Save Owner Details
+                  <ShieldCheck className="w-4 h-4" /> Save Company Details
                 </motion.button>
               </div>
             </form>
