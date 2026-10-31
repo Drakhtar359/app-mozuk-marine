@@ -15,7 +15,7 @@ import {
   SlidersHorizontal,
   ChevronRight,
   ChevronDown,
-  UserPlus,
+  Plus,
   X,
   UserCheck,
   Wrench,
@@ -46,12 +46,17 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
 
   const employees = ownerDetails.employees || [];
 
-  // Default all-fleet access for senior operations staff if not configured yet
-  const employeeAccess: Record<string, string[]> = ownerDetails.employeeAccess || {
+  // Default access: max 2 shore employees per ship (emp-1 on all ships, emp-2 on first ship)
+  const rawEmployeeAccess: Record<string, string[]> = ownerDetails.employeeAccess || {
     'emp-1': ships.map((s) => s.id),
-    'emp-2': ships.map((s) => s.id),
-    'emp-3': ships.map((s) => s.id),
-    'emp-4': ships.map((s) => s.id),
+    'emp-2': ships.length > 0 ? [ships[0].id] : [],
+  };
+
+  // Helper to get the shore employees assigned to a ship (strictly capped at 2 shore members)
+  const getAssignedShoreEmployees = (shipId: string) => {
+    return employees
+      .filter((emp) => (rawEmployeeAccess[emp.id] || []).includes(shipId))
+      .slice(0, 2);
   };
 
   const toggleShipCollapse = (shipId: string) => {
@@ -61,18 +66,26 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
     }));
   };
 
-  const handleToggleShipAccess = (employeeId: string, shipId: string) => {
-    const currentShips = employeeAccess[employeeId] || [];
-    const isGranted = currentShips.includes(shipId);
+  const handleAssignEmployeeToShip = (employeeId: string, shipId: string) => {
+    const currentAssigned = getAssignedShoreEmployees(shipId);
+    if (currentAssigned.length >= 2) return;
 
-    const updatedShips = isGranted
-      ? currentShips.filter((id) => id !== shipId)
-      : [...currentShips, shipId];
+    // Build normalized access map respecting the 2-shore-member cap per ship
+    const updatedAccess: Record<string, string[]> = {};
+    employees.forEach((emp) => {
+      updatedAccess[emp.id] = [];
+    });
 
-    const updatedAccess = {
-      ...employeeAccess,
-      [employeeId]: updatedShips,
-    };
+    ships.forEach((s) => {
+      const assignedForS = getAssignedShoreEmployees(s.id).map((e) => e.id);
+      if (s.id === shipId && !assignedForS.includes(employeeId) && assignedForS.length < 2) {
+        assignedForS.push(employeeId);
+      }
+      assignedForS.forEach((empId) => {
+        if (!updatedAccess[empId]) updatedAccess[empId] = [];
+        updatedAccess[empId].push(s.id);
+      });
+    });
 
     if (onUpdateOwnerDetails) {
       onUpdateOwnerDetails({
@@ -80,15 +93,28 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         employeeAccess: updatedAccess,
       });
     }
+
+    // If this ship now has 2 shore members (total 4 with 2 crew), close the Add selector
+    if (currentAssigned.length + 1 >= 2) {
+      setAddingEmployeeForShipId(null);
+    }
   };
 
-  const handleGrantAllEmployeesToShip = (shipId: string) => {
-    const updatedAccess = { ...employeeAccess };
+  const handleRevokeEmployeeFromShip = (employeeId: string, shipId: string) => {
+    const updatedAccess: Record<string, string[]> = {};
     employees.forEach((emp) => {
-      const current = updatedAccess[emp.id] || [];
-      if (!current.includes(shipId)) {
-        updatedAccess[emp.id] = [...current, shipId];
-      }
+      updatedAccess[emp.id] = [];
+    });
+
+    ships.forEach((s) => {
+      const assignedForS = getAssignedShoreEmployees(s.id)
+        .map((e) => e.id)
+        .filter((id) => !(s.id === shipId && id === employeeId));
+
+      assignedForS.forEach((empId) => {
+        if (!updatedAccess[empId]) updatedAccess[empId] = [];
+        updatedAccess[empId].push(s.id);
+      });
     });
 
     if (onUpdateOwnerDetails) {
@@ -113,7 +139,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
         </div>
       </div>
 
-      {/* Main Company Overview Banner with Logo & Edit Button (Description Removed) */}
+      {/* Main Company Overview Banner with Logo & Edit Button */}
       <div className="mozuk-glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-xl border border-[var(--color-glass-border)]">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4 sm:gap-5">
@@ -213,19 +239,21 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                     c.role.toLowerCase().includes('chief engineer')
                   );
 
-                  const assignedEmployees = employees.filter((emp) =>
-                    (employeeAccess[emp.id] || []).includes(ship.id)
+                  // Strictly 2 crew members + up to 2 shore members (max 4 total)
+                  const assignedEmployees = getAssignedShoreEmployees(ship.id);
+                  const assignedIds = assignedEmployees.map((e) => e.id);
+                  const availableEmployeesToAdd = employees.filter(
+                    (emp) => !assignedIds.includes(emp.id)
                   );
-                  const unassignedEmployees = employees.filter(
-                    (emp) => !(employeeAccess[emp.id] || []).includes(ship.id)
-                  );
+
+                  const totalAccessCount = 2 + assignedEmployees.length; // 2 crew + up to 2 shore
+                  const canAddMoreShoreMembers = totalAccessCount < 4;
 
                   // Filter logic when searching
                   const shipMatches =
                     !q ||
                     ship.name.toLowerCase().includes(q) ||
-                    ship.imo.toLowerCase().includes(q) ||
-                    (ship.type || '').toLowerCase().includes(q);
+                    ship.imo.toLowerCase().includes(q);
 
                   const captainMatches =
                     !q ||
@@ -262,20 +290,22 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                   }
 
                   const isCollapsed = !!collapsedShips[ship.id] && !q;
-                  const totalAccessCount = 2 + assignedEmployees.length;
-                  const isAddingToThisShip = addingEmployeeForShipId === ship.id;
+                  const isAddingToThisShip =
+                    addingEmployeeForShipId === ship.id && canAddMoreShoreMembers;
 
                   return (
                     <React.Fragment key={ship.id}>
-                      {/* PARENT ROW: SHIP SECTION */}
+                      {/* PARENT ROW: SHIP SECTION (Only Ship Name and under it IMO, no counters) */}
                       <tr className="bg-[var(--color-bg-alt)]/80 hover:bg-[var(--color-bg-alt)] transition border-t-2 border-[var(--color-glass-border)]">
-                        <td className="py-3 px-3.5 align-middle" colSpan={2}>
+                        <td className="py-3 px-3.5 align-middle" colSpan={3}>
                           <div className="flex items-center gap-2.5">
                             <button
                               type="button"
                               onClick={() => toggleShipCollapse(ship.id)}
                               className="p-1 rounded-lg bg-[var(--color-bg)] border border-[var(--color-glass-border)] text-[var(--text-main)] hover:text-[#28ada4] hover:border-[#28ada4]/40 transition cursor-pointer shrink-0"
-                              title={isCollapsed ? 'Expand personnel rows' : 'Collapse personnel rows'}
+                              title={
+                                isCollapsed ? 'Expand personnel rows' : 'Collapse personnel rows'
+                              }
                             >
                               {isCollapsed ? (
                                 <ChevronRight className="w-4 h-4" />
@@ -289,113 +319,89 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                             </div>
 
                             <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  onClick={() => onSelectShip(ship)}
-                                  className="font-['Montserrat',sans-serif] font-black text-sm text-[var(--text-main)] hover:text-[#28ada4] transition cursor-pointer truncate"
-                                >
-                                  {ship.name}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-md bg-[var(--color-bg)] border border-[var(--color-glass-border)] text-[10px] font-mono text-[var(--text-muted)] shrink-0">
-                                  {ship.imo}
-                                </span>
+                              <div
+                                onClick={() => onSelectShip(ship)}
+                                className="font-['Montserrat',sans-serif] font-black text-sm text-[var(--text-main)] hover:text-[#28ada4] transition cursor-pointer truncate"
+                              >
+                                {ship.name}
                               </div>
-                              <div className="text-[11px] text-[var(--text-muted)] truncate mt-0.5">
-                                {ship.type} • Flag: {ship.flag || 'Mozambique'}
+                              <div className="text-[11px] font-mono text-[var(--text-muted)] truncate mt-0.5">
+                                {ship.imo}
                               </div>
                             </div>
                           </div>
                         </td>
 
-                        <td className="py-3 px-3 align-middle">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#28ada4]/12 border border-[#28ada4]/30 text-[#28ada4] text-[11px] font-bold">
-                              <UserCheck className="w-3.5 h-3.5" />
-                              {totalAccessCount} Authorized Personnel
-                            </span>
-                            <span className="text-[11px] text-[var(--text-muted)] font-medium">
-                              (2 Command Officers • {assignedEmployees.length} Shore Staff)
-                            </span>
-                          </div>
-                        </td>
-
                         <td className="py-3 px-3.5 align-middle text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setAddingEmployeeForShipId(isAddingToThisShip ? null : ship.id)
-                              }
-                              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold border transition flex items-center gap-1 cursor-pointer ${
-                                isAddingToThisShip
-                                  ? 'bg-[#28ada4] text-white border-[#28ada4]'
-                                  : 'bg-[var(--color-bg)] text-[#28ada4] border-[#28ada4]/40 hover:bg-[#28ada4]/15'
-                              }`}
-                            >
-                              <UserPlus className="w-3.5 h-3.5" />
-                              <span>Manage Access</span>
-                            </button>
-                          </div>
+                          {canAddMoreShoreMembers && (
+                            <div className="flex items-center justify-end">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setAddingEmployeeForShipId(isAddingToThisShip ? null : ship.id)
+                                }
+                                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition flex items-center gap-1 cursor-pointer ${
+                                  isAddingToThisShip
+                                    ? 'bg-[#28ada4] text-white border-[#28ada4]'
+                                    : 'bg-[var(--color-bg)] text-[#28ada4] border-[#28ada4]/40 hover:bg-[#28ada4]/15'
+                                }`}
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add</span>
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
 
-                      {/* INLINE EMPLOYEE ACCESS PICKER SUB-BAR (When "Manage Access" is clicked on this ship) */}
+                      {/* INLINE EMPLOYEE ASSIGNMENT ROW (When "Add" is clicked on a ship with < 4 members) */}
                       {isAddingToThisShip && (
                         <tr className="bg-[#28ada4]/5 border-l-4 border-l-[#28ada4]">
-                          <td colSpan={4} className="py-3 px-5">
+                          <td colSpan={4} className="py-2.5 px-5">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                               <div className="flex flex-wrap items-center gap-1.5">
                                 <span className="text-[11px] font-extrabold text-[var(--text-main)] mr-2">
-                                  Toggle Shore Personnel for {ship.name}:
+                                  Assign employee to {ship.name}:
                                 </span>
-                                {employees.map((emp) => {
-                                  const hasAccess = (employeeAccess[emp.id] || []).includes(ship.id);
-                                  return (
+                                {availableEmployeesToAdd.length === 0 ? (
+                                  <span className="text-[11px] text-[var(--text-muted)] italic">
+                                    No unassigned employees available.
+                                  </span>
+                                ) : (
+                                  availableEmployeesToAdd.map((emp) => (
                                     <button
                                       key={emp.id}
                                       type="button"
-                                      onClick={() => handleToggleShipAccess(emp.id, ship.id)}
-                                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition flex items-center gap-1.5 cursor-pointer ${
-                                        hasAccess
-                                          ? 'bg-[#28ada4] text-white border-[#28ada4] shadow-sm'
-                                          : 'bg-[var(--color-bg)] text-[var(--text-muted)] border-[var(--color-glass-border)] hover:text-[var(--text-main)]'
-                                      }`}
+                                      onClick={() => handleAssignEmployeeToShip(emp.id, ship.id)}
+                                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[var(--color-bg)] text-[var(--text-main)] border border-[var(--color-glass-border)] hover:border-[#28ada4] hover:text-[#28ada4] transition flex items-center gap-1.5 cursor-pointer shadow-sm"
                                     >
+                                      <Plus className="w-3 h-3 text-[#28ada4]" />
                                       <span>{emp.name}</span>
-                                      {hasAccess && <CheckCircle2 className="w-3 h-3 shrink-0" />}
+                                      <span className="text-[10px] text-[var(--text-muted)] font-normal">
+                                        ({emp.position})
+                                      </span>
                                     </button>
-                                  );
-                                })}
+                                  ))
+                                )}
                               </div>
 
-                              <div className="flex items-center gap-2 shrink-0">
-                                {unassignedEmployees.length > 0 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleGrantAllEmployeesToShip(ship.id)}
-                                    className="px-2.5 py-1 rounded-lg bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 text-[11px] font-bold hover:bg-[#28ada4]/25 transition cursor-pointer"
-                                  >
-                                    Grant All Staff
-                                  </button>
-                                )}
-                                <button
-                                  type="button"
-                                  onClick={() => setAddingEmployeeForShipId(null)}
-                                  className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer"
-                                  title="Close"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setAddingEmployeeForShipId(null)}
+                                className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] cursor-pointer self-end sm:self-center"
+                                title="Close"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
                             </div>
                           </td>
                         </tr>
                       )}
 
-                      {/* SUB-ROWS: PEOPLE WITH ACCESS ON THIS SHIP */}
+                      {/* SUB-ROWS: PEOPLE WITH ACCESS ON THIS SHIP (2 Crew + up to 2 Shore) */}
                       {!isCollapsed && (
                         <>
-                          {/* SUB-ROW 1: MASTER / CAPTAIN */}
+                          {/* SUB-ROW 1: MASTER / CAPTAIN (Crew Member 1) */}
                           {captainMatches && (
                             <tr className="bg-[var(--color-bg)]/50 hover:bg-[var(--color-glass-border)]/40 transition">
                               <td className="py-2.5 pl-9 pr-3 align-middle overflow-hidden border-l-4 border-l-[#28ada4]">
@@ -419,7 +425,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                   Master / Captain
                                 </div>
                                 <div className="text-[10px] text-[var(--text-muted)] font-semibold uppercase tracking-wider">
-                                  Shipboard Command
+                                  Crew Member
                                 </div>
                               </td>
 
@@ -448,7 +454,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                             </tr>
                           )}
 
-                          {/* SUB-ROW 2: CHIEF ENGINEER */}
+                          {/* SUB-ROW 2: CHIEF ENGINEER (Crew Member 2) */}
                           {engineerMatches && (
                             <tr className="bg-[var(--color-bg)]/50 hover:bg-[var(--color-glass-border)]/40 transition">
                               <td className="py-2.5 pl-9 pr-3 align-middle overflow-hidden border-l-4 border-l-[#28ada4]">
@@ -474,7 +480,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                   Chief Engineer
                                 </div>
                                 <div className="text-[10px] text-[var(--text-muted)] font-semibold uppercase tracking-wider">
-                                  Shipboard Command
+                                  Crew Member
                                 </div>
                               </td>
 
@@ -503,7 +509,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                             </tr>
                           )}
 
-                          {/* SUB-ROWS 3+: SHORE-BASED EMPLOYEES WITH ACCESS TO THIS SHIP */}
+                          {/* SUB-ROWS 3 & 4: SHORE MEMBERS (Max 2 per ship) */}
                           {matchingAssignedEmployees.map((emp) => (
                             <tr
                               key={`${ship.id}-${emp.id}`}
@@ -531,7 +537,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                                   {emp.position}
                                 </div>
                                 <div className="text-[10px] text-[var(--text-muted)] font-semibold uppercase tracking-wider">
-                                  Shore Personnel
+                                  Shore Member
                                 </div>
                               </td>
 
@@ -552,11 +558,11 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
                               <td className="py-2.5 px-3.5 align-middle text-right">
                                 <button
                                   type="button"
-                                  onClick={() => handleToggleShipAccess(emp.id, ship.id)}
+                                  onClick={() => handleRevokeEmployeeFromShip(emp.id, ship.id)}
                                   className="px-2.5 py-1 rounded-lg bg-[var(--color-bg-alt)] hover:bg-[#991b1b]/15 text-[var(--text-muted)] hover:text-[#ef4444] border border-[var(--color-glass-border)] hover:border-[#991b1b]/40 text-[10px] font-bold transition cursor-pointer"
-                                  title={`Revoke ${emp.name}'s access to ${ship.name}`}
+                                  title={`Remove ${emp.name} from ${ship.name}`}
                                 >
-                                  Revoke Access
+                                  Remove
                                 </button>
                               </td>
                             </tr>
