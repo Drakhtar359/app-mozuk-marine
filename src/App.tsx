@@ -8,11 +8,12 @@ import { ShipList } from './components/ShipList';
 import { VesselProfilePage } from './components/VesselProfilePage';
 import { CompanyCrewList } from './components/CompanyCrewList';
 import { CompanyProfilePage } from './components/CompanyProfilePage';
+import { CompanyContactsPage } from './components/CompanyContactsPage';
 import { DashboardView } from './components/DashboardView';
 import { NotFoundPage } from './components/NotFoundPage';
 import { DEFAULT_CREW_AVATARS, getCrewAvatarUrl } from './utils/crewAvatars';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen, Contact } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -586,7 +587,7 @@ export function App() {
   });
 
   const [viewMode, setViewMode] = useState<'fleet' | 'profile' | '404'>('fleet');
-  const [activeHomeTab, setActiveHomeTab] = useState<'dashboard' | 'fleet' | 'crew'>('fleet');
+  const [activeHomeTab, setActiveHomeTab] = useState<'dashboard' | 'fleet' | 'crew' | 'contacts'>('fleet');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [attemptedPath, setAttemptedPath] = useState<string>('');
   const [selectedShipId, setSelectedShipId] = useState<string | null>(null);
@@ -652,7 +653,7 @@ export function App() {
     setActiveHomeTab('fleet');
   };
 
-  const handleSelectNavTab = (tab: 'dashboard' | 'fleet' | 'crew') => {
+  const handleSelectNavTab = (tab: 'dashboard' | 'fleet' | 'crew' | 'contacts') => {
     if (window.location.pathname !== '/') {
       window.history.pushState({ view: 'fleet' }, '', '/');
     }
@@ -672,6 +673,12 @@ export function App() {
       if (pathname === 'company-profile') {
         setSelectedShipId(null);
         setViewMode('profile');
+        return;
+      }
+      if (pathname === 'contacts' || pathname === 'company-contacts') {
+        setSelectedShipId(null);
+        setViewMode('fleet');
+        setActiveHomeTab('contacts');
         return;
       }
 
@@ -972,6 +979,22 @@ export function App() {
             <Users className="w-4 h-4 shrink-0" />
             {!isSidebarCollapsed && <span className="truncate">COMPANY CREW</span>}
           </button>
+
+          <button
+            type="button"
+            onClick={() => handleSelectNavTab('contacts')}
+            title="COMPANY CONTACTS"
+            className={`w-full h-11 flex items-center ${
+              isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+            } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+              !selectedShip && viewMode === 'fleet' && activeHomeTab === 'contacts'
+                ? 'bg-[#28ada4] text-white'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+            }`}
+          >
+            <Contact className="w-4 h-4 shrink-0" />
+            {!isSidebarCollapsed && <span className="truncate">COMPANY CONTACTS</span>}
+          </button>
         </div>
 
         {/* Bottom of Vertical Navigation Bar: Company Profile (exact h-11 box-border with border-t) */}
@@ -1053,7 +1076,7 @@ export function App() {
                 onRemoveShip={handleRemoveShip}
                 onRegisterVessel={() => setIsAddModalOpen(true)}
               />
-            ) : (
+            ) : activeHomeTab === 'crew' ? (
               <CompanyCrewList
                 companyCrew={companyCrew}
                 ships={ships}
@@ -1062,6 +1085,11 @@ export function App() {
                 onAddCrewMember={handleAddCompanyCrew}
                 onUpdateCrewMember={handleUpdateCompanyCrew}
                 onRemoveCrewMember={handleRemoveCompanyCrew}
+              />
+            ) : (
+              <CompanyContactsPage
+                ownerDetails={ownerDetails}
+                onUpdateOwnerDetails={handleSaveOwnerDetails}
               />
             )}
           </div>
