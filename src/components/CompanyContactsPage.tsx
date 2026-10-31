@@ -474,7 +474,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
             <span>Employees</span>
           </button>
 
-          {/* Tab 3: Contacts & Company Directory */}
+          {/* Tab 3: External Contacts */}
           <button
             onClick={() => setActiveTab('contacts')}
             className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
@@ -490,7 +490,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
               />
             )}
             <UserCheck className="w-4 h-4 text-[#28ada4]" />
-            <span>Contacts & Company Directory</span>
+            <span>External Contacts</span>
           </button>
         </div>
 
@@ -503,11 +503,8 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
                 <div>
                   <h3 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
                     <Globe className="w-5 h-5 text-[#28ada4]" />
-                    Customers Directory ({filteredCustomers.length})
+                    Customers
                   </h3>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    Vessel charterers, cargo owners, port logistics partners, and commercial maritime clients.
-                  </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
@@ -632,11 +629,8 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
                 <div>
                   <h3 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
                     <Briefcase className="w-5 h-5 text-[#28ada4]" />
-                    Employees ({employeesList.length})
+                    Employees
                   </h3>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    Shore-based corporate personnel, superintendents, operations leads, and company staff.
-                  </p>
                 </div>
 
                 <motion.button
@@ -745,18 +739,15 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
             </div>
           )}
 
-          {/* TAB 3: CONTACTS & COMPANY DIRECTORY */}
+          {/* TAB 3: EXTERNAL CONTACTS */}
           {activeTab === 'contacts' && (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="font-['Montserrat',sans-serif] font-extrabold text-xl text-[var(--text-main)] flex items-center gap-2">
                     <UserCheck className="w-5 h-5 text-[#28ada4]" />
-                    Contacts & Company Directory ({filteredContactPeople.length})
+                    External Contacts
                   </h3>
-                  <p className="text-xs text-[var(--text-muted)]">
-                    Authorized company representatives, DPAs, technical superintendents, and crewing directors.
-                  </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
@@ -801,8 +792,8 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
                           <td colSpan={6} className="py-10 text-center text-[var(--text-muted)]">
                             <UserCheck className="w-8 h-8 mx-auto mb-2 opacity-50 text-[var(--text-dim)]" />
                             {contactPeopleList.length === 0
-                              ? 'No internal contacts listed. Click "+ Register Contact" to add team members.'
-                              : 'No internal contacts match your search query.'}
+                              ? 'No external contacts listed. Click "+ Register Contact" to add contacts.'
+                              : 'No external contacts match your search query.'}
                           </td>
                         </tr>
                       ) : (
@@ -1260,10 +1251,10 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
                   </div>
                   <div>
                     <h3 className="font-['Montserrat',sans-serif] font-extrabold text-base text-[var(--text-main)]">
-                      {editingContactId ? 'Edit Directory Contact' : 'Register Directory Contact'}
+                      {editingContactId ? 'Edit External Contact' : 'Register External Contact'}
                     </h3>
                     <p className="text-xs text-[var(--text-muted)]">
-                      Add designated person ashore, superintendent, or management representative.
+                      Add designated person ashore, superintendent, or partner representative.
                     </p>
                   </div>
                 </div>
