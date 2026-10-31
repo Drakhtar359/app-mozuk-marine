@@ -439,7 +439,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
           {/* Tab 1: Customers */}
           <button
             onClick={() => setActiveTab('customers')}
-            className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'customers'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                 : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -448,7 +448,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
             {activeTab === 'customers' && (
               <motion.div
                 layoutId="activeFolderTabBottomLine"
-                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-b-full z-30"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-none z-30"
               />
             )}
             <Globe className="w-4 h-4 text-[#28ada4]" />
@@ -458,7 +458,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
           {/* Tab 2: Employees */}
           <button
             onClick={() => setActiveTab('employees')}
-            className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'employees'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                 : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -467,7 +467,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
             {activeTab === 'employees' && (
               <motion.div
                 layoutId="activeFolderTabBottomLine"
-                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-b-full z-30"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-none z-30"
               />
             )}
             <Briefcase className="w-4 h-4 text-[#28ada4]" />
@@ -477,7 +477,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
           {/* Tab 3: Contacts & Company Directory */}
           <button
             onClick={() => setActiveTab('contacts')}
-            className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'contacts'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                 : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -486,7 +486,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
             {activeTab === 'contacts' && (
               <motion.div
                 layoutId="activeFolderTabBottomLine"
-                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-b-full z-30"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-[#28ada4] rounded-none z-30"
               />
             )}
             <UserCheck className="w-4 h-4 text-[#28ada4]" />

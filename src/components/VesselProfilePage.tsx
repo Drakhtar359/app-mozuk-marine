@@ -1309,7 +1309,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-0.5 border-b border-[var(--color-glass-border)]">
               <button
                 onClick={() => setActiveMaintTab('active')}
-                className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                   activeMaintTab === 'active'
                     ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                     : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -1318,7 +1318,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 {activeMaintTab === 'active' && (
                   <motion.div
                     layoutId="activeMaintTabBottomLine"
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                   />
                 )}
                 <Wrench className="w-4 h-4 text-[#28ada4]" />
@@ -1327,7 +1327,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
               <button
                 onClick={() => setActiveMaintTab('logs')}
-                className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                   activeMaintTab === 'logs'
                     ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                     : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -1336,7 +1336,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 {activeMaintTab === 'logs' && (
                   <motion.div
                     layoutId="activeMaintTabBottomLine"
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                   />
                 )}
                 <CheckCircle2 className="w-4 h-4 text-[#28ada4]" />
@@ -1345,7 +1345,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
               <button
                 onClick={() => setActiveMaintTab('procurement')}
-                className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                   activeMaintTab === 'procurement'
                     ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                     : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -1354,7 +1354,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                 {activeMaintTab === 'procurement' && (
                   <motion.div
                     layoutId="activeMaintTabBottomLine"
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                   />
                 )}
                 <ShoppingCart className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" />
@@ -1703,7 +1703,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-0.5 border-b border-[var(--color-glass-border)]">
             <button
               onClick={() => setActiveDocTab('certifications')}
-              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+              className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                 activeDocTab === 'certifications'
                   ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                   : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -1712,7 +1712,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {activeDocTab === 'certifications' && (
                 <motion.div
                   layoutId="activeDocTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                 />
               )}
               <ShieldCheck className="w-4 h-4 text-[#28ada4]" />
@@ -1721,7 +1721,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
             <button
               onClick={() => setActiveDocTab('technical_documentation')}
-              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+              className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                 activeDocTab === 'technical_documentation'
                   ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                   : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -1730,7 +1730,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {activeDocTab === 'technical_documentation' && (
                 <motion.div
                   layoutId="activeDocTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                 />
               )}
               <FileText className="w-4 h-4 text-[var(--text-main)]" />
@@ -1739,7 +1739,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
             <button
               onClick={() => setActiveDocTab('misc')}
-              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+              className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                 activeDocTab === 'misc'
                   ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                   : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -1748,7 +1748,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {activeDocTab === 'misc' && (
                 <motion.div
                   layoutId="activeDocTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                 />
               )}
               <Folder className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" />
@@ -2008,7 +2008,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-0.5 border-b border-[var(--color-glass-border)]">
             <button
               onClick={() => setActiveLogbookTab('visitors')}
-              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+              className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                 activeLogbookTab === 'visitors'
                   ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                   : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -2017,7 +2017,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {activeLogbookTab === 'visitors' && (
                 <motion.div
                   layoutId="activeLogbookTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                 />
               )}
               <ClipboardList className="w-4 h-4 text-[var(--color-primary)]" />
@@ -2026,7 +2026,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
             <button
               onClick={() => setActiveLogbookTab('ballast')}
-              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+              className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                 activeLogbookTab === 'ballast'
                   ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                   : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -2035,7 +2035,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {activeLogbookTab === 'ballast' && (
                 <motion.div
                   layoutId="activeLogbookTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                 />
               )}
               <Droplets className="w-4 h-4 text-[#28ada4]" />
@@ -2044,7 +2044,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
 
             <button
               onClick={() => setActiveLogbookTab('sewage')}
-              className={`relative px-5 sm:px-6 py-3.5 rounded-t-2xl font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+              className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                 activeLogbookTab === 'sewage'
                   ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                   : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
@@ -2053,7 +2053,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
               {activeLogbookTab === 'sewage' && (
                 <motion.div
                   layoutId="activeLogbookTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-b-full z-30"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
                 />
               )}
               <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" />
