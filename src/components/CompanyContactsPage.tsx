@@ -432,13 +432,13 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
         </div>
       </div>
 
-      {/* Section Tabs (Divided equally across full width of the table) */}
+      {/* Section Tabs (Divided equally across full width of the table, curved on top-left and top-right to match container) */}
       <div className="pt-2">
-        <div className="grid grid-cols-3 w-full -mb-px relative z-10">
+        <div className="grid grid-cols-3 w-full -mb-px relative z-10 rounded-t-2xl">
           {/* Tab 1: Customers */}
           <button
             onClick={() => setActiveTab('customers')}
-            className={`relative py-3.5 px-4 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2.5 border border-b-0 border-[var(--color-glass-border)] cursor-pointer ${
+            className={`relative py-3.5 px-4 rounded-tl-2xl rounded-tr-none rounded-b-none font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2.5 border border-b-0 border-[var(--color-glass-border)] cursor-pointer ${
               activeTab === 'customers'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                 : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] z-0 opacity-80 hover:opacity-100'
@@ -476,7 +476,7 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
           {/* Tab 3: External Contacts */}
           <button
             onClick={() => setActiveTab('contacts')}
-            className={`relative py-3.5 px-4 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2.5 border border-b-0 border-l-0 border-[var(--color-glass-border)] cursor-pointer ${
+            className={`relative py-3.5 px-4 rounded-tr-2xl rounded-tl-none rounded-b-none font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2.5 border border-b-0 border-l-0 border-[var(--color-glass-border)] cursor-pointer ${
               activeTab === 'contacts'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                 : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] z-0 opacity-80 hover:opacity-100'
