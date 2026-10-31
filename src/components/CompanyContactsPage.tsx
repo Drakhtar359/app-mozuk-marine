@@ -432,17 +432,16 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
         </div>
       </div>
 
-      {/* Folder Directory Tabs Container */}
+      {/* Section Tabs (Divided equally across full width of the table) */}
       <div className="pt-2">
-        {/* Folder Flap Handles */}
-        <div className="flex items-end gap-2 px-2 -mb-px relative z-10 overflow-x-auto flex-nowrap">
+        <div className="grid grid-cols-3 w-full -mb-px relative z-10">
           {/* Tab 1: Customers */}
           <button
             onClick={() => setActiveTab('customers')}
-            className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`relative py-3.5 px-4 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2.5 border border-b-0 border-[var(--color-glass-border)] cursor-pointer ${
               activeTab === 'customers'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
-                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] z-0 opacity-80 hover:opacity-100'
             }`}
           >
             {activeTab === 'customers' && (
@@ -458,10 +457,10 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
           {/* Tab 2: Employees */}
           <button
             onClick={() => setActiveTab('employees')}
-            className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`relative py-3.5 px-4 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2.5 border border-b-0 border-l-0 border-[var(--color-glass-border)] cursor-pointer ${
               activeTab === 'employees'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
-                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] z-0 opacity-80 hover:opacity-100'
             }`}
           >
             {activeTab === 'employees' && (
@@ -477,10 +476,10 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
           {/* Tab 3: External Contacts */}
           <button
             onClick={() => setActiveTab('contacts')}
-            className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`relative py-3.5 px-4 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center justify-center gap-2.5 border border-b-0 border-l-0 border-[var(--color-glass-border)] cursor-pointer ${
               activeTab === 'contacts'
                 ? 'bg-[var(--color-bg-alt)] text-[#28ada4] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
-                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+                : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] z-0 opacity-80 hover:opacity-100'
             }`}
           >
             {activeTab === 'contacts' && (
@@ -494,8 +493,8 @@ export const CompanyContactsPage: React.FC<CompanyContactsPageProps> = ({
           </button>
         </div>
 
-        {/* Folder Content Body Container */}
-        <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
+        {/* Content Body Container */}
+        <div className="mozuk-glass-card rounded-b-2xl rounded-t-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
           {/* TAB 1: CUSTOMERS */}
           {activeTab === 'customers' && (
             <div className="space-y-4">
