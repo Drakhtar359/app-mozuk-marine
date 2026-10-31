@@ -430,11 +430,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </h2>
             </div>
 
-            <div className="flex items-center gap-2 text-[10px] font-bold">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#7b0b76] text-white shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                Hover markers for vessel name
-              </span>
+            <div className="text-[11px] italic text-[var(--text-muted)] font-medium">
+              Hover markers for vessel name
             </div>
           </div>
 
@@ -466,48 +463,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div
                 key={item.id}
                 onClick={() => item.ship && onSelectShip(item.ship)}
-                className="px-3.5 py-2.5 hover:bg-[#7b0b76]/[0.06] dark:hover:bg-[#7b0b76]/15 transition cursor-pointer flex items-start justify-between gap-3 group"
+                className="px-3.5 py-2 hover:bg-[#7b0b76]/[0.06] dark:hover:bg-[#7b0b76]/15 transition cursor-pointer flex items-center justify-between gap-3 group"
               >
-                <div className="flex items-start gap-2.5 min-w-0">
-                  {/* Severity Indicator */}
-                  <div
-                    className={`mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center shrink-0 border ${
-                      item.severity === 'alarm'
-                        ? 'bg-[#7b0b76] text-white border-[#7b0b76]'
-                        : item.severity === 'warning'
-                        ? 'bg-[#7b0b76]/15 text-[#7b0b76] border-[#7b0b76]/35'
-                        : 'bg-[#28ada4]/15 text-[#28ada4] border-[#28ada4]/35'
-                    }`}
-                  >
-                    {item.severity === 'alarm' ? (
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                    ) : item.severity === 'warning' ? (
-                      <FileWarning className="w-3.5 h-3.5" />
-                    ) : (
-                      <Bell className="w-3.5 h-3.5" />
-                    )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    {/* Ship Name in Teal */}
+                    <span className="text-[10px] font-extrabold text-[#28ada4] uppercase tracking-wider shrink-0">
+                      {item.shipName}
+                    </span>
+                    <span className="text-[10px] text-[var(--text-muted)] opacity-40">•</span>
+                    <span className="text-[10px] text-[var(--text-muted)] truncate">
+                      {item.subtitle}
+                    </span>
                   </div>
 
-                  <div className="min-w-0">
-                    {/* Ship Name in Teal (Tags removed) */}
-                    <div className="text-[10px] font-extrabold text-[#28ada4] uppercase tracking-wider truncate">
-                      {item.shipName}
-                    </div>
-
-                    <div className="font-bold text-xs text-[var(--text-main)] truncate mt-0.5 group-hover:text-[#28ada4] transition">
-                      {item.title}
-                    </div>
-                    <div className="text-[10px] text-[var(--text-muted)] truncate">
-                      {item.subtitle}
-                    </div>
+                  <div className="font-bold text-xs text-[var(--text-main)] truncate mt-0.5 group-hover:text-[#28ada4] transition">
+                    {item.title}
                   </div>
                 </div>
 
-                <div className="text-right shrink-0 flex flex-col items-end gap-1">
-                  <span className="text-[10px] font-bold text-[var(--text-muted)] whitespace-nowrap">
+                <div className="text-right shrink-0 flex items-center gap-2">
+                  <span className="text-[10px] font-semibold text-[var(--text-muted)] font-mono whitespace-nowrap">
                     {item.timestamp}
                   </span>
-                  <ExternalLink className="w-3 h-3 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 group-hover:text-[#28ada4] transition" />
+                  <ExternalLink className="w-3 h-3 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 group-hover:text-[#28ada4] transition shrink-0" />
                 </div>
               </div>
             ))}
