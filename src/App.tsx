@@ -944,7 +944,7 @@ export function App() {
           <button
             type="button"
             onClick={() => handleSelectNavTab('fleet')}
-            title="REGISTERED FLEET DIRECTORY"
+            title="REGISTERED FLEET"
             className={`w-full h-11 flex items-center ${
               isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
             } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
@@ -954,13 +954,13 @@ export function App() {
             }`}
           >
             <Anchor className="w-4 h-4 shrink-0" />
-            {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET DIRECTORY</span>}
+            {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET</span>}
           </button>
 
           <button
             type="button"
             onClick={() => handleSelectNavTab('crew')}
-            title="COMPANY MASTER CREW ROSTER"
+            title="COMPANY CREW"
             className={`w-full h-11 flex items-center ${
               isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
             } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
@@ -970,7 +970,7 @@ export function App() {
             }`}
           >
             <Users className="w-4 h-4 shrink-0" />
-            {!isSidebarCollapsed && <span className="truncate">COMPANY MASTER CREW ROSTER</span>}
+            {!isSidebarCollapsed && <span className="truncate">COMPANY CREW</span>}
           </button>
         </div>
 
