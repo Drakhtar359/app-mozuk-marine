@@ -491,9 +491,6 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({
             <Building2 className="w-5 h-5 text-[var(--color-primary)] shrink-0" />
             Company Profile & Manager Details
           </h2>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Registered vessel owner, manager contacts, shore-based personnel, and commercial partners.
-          </p>
         </div>
 
         {/* Subscription Tier Block */}
