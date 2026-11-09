@@ -978,9 +978,9 @@ export function App() {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.15 }}
-                className="w-full overflow-hidden border-l-4 border-[#28ada4]"
+                className="w-full overflow-hidden"
               >
-                {/* Ship Menu Header Item - White on Teal when active */}
+                {/* Ship Menu Header Item - White on Teal when active with Left Teal Line */}
                 <button
                   type="button"
                   onClick={() => {
@@ -989,7 +989,7 @@ export function App() {
                   title={selectedShip.name}
                   className={`w-full h-10 flex items-center ${
                     isSidebarCollapsed ? 'justify-center px-0' : 'gap-2.5 pl-6 pr-4'
-                  } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[#28ada4] text-white`}
+                  } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[#28ada4] text-white border-l-4 border-[#28ada4]`}
                 >
                   <ShipIcon className="w-4 h-4 text-white shrink-0" />
                   {!isSidebarCollapsed && (
@@ -997,7 +997,7 @@ export function App() {
                   )}
                 </button>
 
-                {/* Subsections under the Ship Menu */}
+                {/* Subsections under the Ship Menu with Continuous Left Teal Line */}
                 <div className="w-full flex flex-col bg-white">
                   {[
                     { id: 'crew' as const, label: 'Crew', icon: Users },
@@ -1018,7 +1018,7 @@ export function App() {
                         title={`${selectedShip.name} - ${sub.label}`}
                         className={`w-full h-9 flex items-center ${
                           isSidebarCollapsed ? 'justify-center px-0' : 'gap-2 pl-9 pr-4'
-                        } rounded-none font-['Montserrat',sans-serif] font-bold text-[10.5px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+                        } rounded-none font-['Montserrat',sans-serif] font-bold text-[10.5px] uppercase tracking-wider text-left transition-colors cursor-pointer border-l-4 border-[#28ada4] ${
                           isActive
                             ? 'bg-[#28ada4]/15 text-[#1a827a]'
                             : 'bg-white text-black hover:bg-gray-100'
