@@ -13,7 +13,7 @@ import { DashboardView } from './components/DashboardView';
 import { NotFoundPage } from './components/NotFoundPage';
 import { DEFAULT_CREW_AVATARS, getCrewAvatarUrl } from './utils/crewAvatars';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen, Contact } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen, Contact, ChevronDown } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -948,21 +948,58 @@ export function App() {
             {!isSidebarCollapsed && <span className="truncate">DASHBOARD</span>}
           </button>
 
-          <button
-            type="button"
-            onClick={() => handleSelectNavTab('fleet')}
-            title="REGISTERED FLEET"
-            className={`w-full h-11 flex items-center ${
-              isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
-            } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
-              (selectedShip || (viewMode === 'fleet' && activeHomeTab === 'fleet'))
-                ? 'bg-[#28ada4] text-white'
-                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-            }`}
-          >
-            <Anchor className="w-4 h-4 shrink-0" />
-            {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET</span>}
-          </button>
+          {/* REGISTERED FLEET Parent Nav Section with Selected Ship Sub-Category */}
+          <div className="w-full">
+            <button
+              type="button"
+              onClick={() => handleSelectNavTab('fleet')}
+              title="REGISTERED FLEET"
+              className={`w-full h-11 flex items-center ${
+                isSidebarCollapsed ? 'justify-center px-0' : 'justify-between px-4'
+              } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+                !selectedShip && viewMode === 'fleet' && activeHomeTab === 'fleet'
+                  ? 'bg-[#28ada4] text-white'
+                  : selectedShip
+                  ? 'text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+              }`}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <Anchor className={`w-4 h-4 shrink-0 ${selectedShip ? 'text-[#28ada4]' : ''}`} />
+                {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET</span>}
+              </div>
+              {!isSidebarCollapsed && selectedShip && (
+                <ChevronDown className="w-3.5 h-3.5 text-[#28ada4] shrink-0" />
+              )}
+            </button>
+
+            {/* Sub-category for Selected Ship */}
+            {selectedShip && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.15 }}
+                className="w-full overflow-hidden"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectShip(selectedShip);
+                  }}
+                  title={selectedShip.name}
+                  className={`w-full h-10 flex items-center ${
+                    isSidebarCollapsed ? 'justify-center px-0' : 'gap-2.5 pl-8 pr-4'
+                  } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[#28ada4] text-white border-l-4 border-[#1e8f87]`}
+                >
+                  <ShipIcon className="w-3.5 h-3.5 shrink-0" />
+                  {!isSidebarCollapsed && (
+                    <span className="truncate">{selectedShip.name}</span>
+                  )}
+                </button>
+              </motion.div>
+            )}
+          </div>
 
           <button
             type="button"
