@@ -91,8 +91,8 @@ const StandardCrewCard: React.FC<StandardCrewCardProps> = ({ member, onSelect, o
       } rounded-2xl flex items-center h-24 hover:shadow-md hover:border-[#28ada4] transition-all group cursor-pointer text-left select-none`}
       title="Click to view full crew profile"
     >
-      {/* Left side Image Container with Standardized Dimensions & White Gradient */}
-      <div className="relative w-24 h-full shrink-0 overflow-hidden bg-[#7b0b76]/5 flex items-center justify-center">
+      {/* Left side Image Container with Standardized Dimensions & Vertical Separator Line */}
+      <div className="relative w-24 h-full shrink-0 overflow-hidden bg-[#7b0b76]/5 flex items-center justify-center border-r border-gray-200/90">
         {showImage ? (
           <img
             src={avatarUrl}
@@ -107,12 +107,10 @@ const StandardCrewCard: React.FC<StandardCrewCardProps> = ({ member, onSelect, o
             <User className="w-10 h-10 text-[#7b0b76] stroke-[1.6]" />
           </div>
         )}
-        {/* White gradient overlay fading smoothly towards the right side */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-white pointer-events-none" />
       </div>
 
       {/* Right side Info: Big Name, Rank Under, Nationality & Sign-on */}
-      <div className="flex-1 py-2.5 pr-8 pl-1.5 min-w-0 z-10 flex flex-col justify-center">
+      <div className="flex-1 py-2.5 pr-8 pl-3.5 min-w-0 z-10 flex flex-col justify-center">
         <h4 className="font-['Montserrat',sans-serif] font-black text-sm sm:text-base text-black tracking-tight truncate leading-tight group-hover:text-[#28ada4] transition-colors">
           {member.name}
         </h4>
