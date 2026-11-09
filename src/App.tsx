@@ -971,14 +971,14 @@ export function App() {
               {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET</span>}
             </button>
 
-            {/* Sub-category for Selected Ship & its Subsections */}
+            {/* Sub-category for Selected Ship & its Subsections with Continuous Left Teal Line */}
             {selectedShip && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.15 }}
-                className="w-full overflow-hidden"
+                className="w-full overflow-hidden border-l-4 border-[#28ada4]"
               >
                 {/* Ship Menu Header Item - White on Teal when active */}
                 <button
@@ -1020,7 +1020,7 @@ export function App() {
                           isSidebarCollapsed ? 'justify-center px-0' : 'gap-2 pl-9 pr-4'
                         } rounded-none font-['Montserrat',sans-serif] font-bold text-[10.5px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
                           isActive
-                            ? 'bg-[#28ada4]/15 text-[#1a827a] border-l-4 border-[#28ada4]'
+                            ? 'bg-[#28ada4]/15 text-[#1a827a]'
                             : 'bg-white text-black hover:bg-gray-100'
                         }`}
                       >
