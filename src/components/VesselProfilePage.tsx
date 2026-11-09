@@ -97,7 +97,7 @@ const StandardCrewCard: React.FC<StandardCrewCardProps> = ({ member, onSelect, o
           <img
             src={avatarUrl}
             alt={member.name}
-            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover object-top"
             loading="lazy"
             onError={() => setImgError(true)}
           />

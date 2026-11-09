@@ -510,7 +510,7 @@ export const CompanyCrewList: React.FC<CompanyCrewListProps> = ({
                           <CrewAvatar
                             crew={crew}
                             size="sm"
-                            className="group-hover:scale-105 group-hover:border-[#7b0b76]/50 transition-all shadow-sm shrink-0"
+                            className="group-hover:border-[#7b0b76]/50 transition-all shadow-sm shrink-0"
                           />
                           <div className="leading-tight min-w-0 flex-1">
                             <h4 className="font-extrabold text-[var(--text-main)] text-xs truncate transition">
