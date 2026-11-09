@@ -13,7 +13,7 @@ import { DashboardView } from './components/DashboardView';
 import { NotFoundPage } from './components/NotFoundPage';
 import { DEFAULT_CREW_AVATARS, getCrewAvatarUrl } from './utils/crewAvatars';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen, Contact, ChevronDown } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen, Contact, ChevronDown, BookOpen } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -591,6 +591,7 @@ export function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [attemptedPath, setAttemptedPath] = useState<string>('');
   const [selectedShipId, setSelectedShipId] = useState<string | null>(null);
+  const [activeShipTab, setActiveShipTab] = useState<'crew' | 'maintenance' | 'documents' | 'logbooks'>('crew');
   const [selectedCrewForProfile, setSelectedCrewForProfile] = useState<CrewMember | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
@@ -619,7 +620,10 @@ export function App() {
   const selectedShip = ships.find((s) => s.id === selectedShipId) || null;
 
   // URL & IMO Navigation Routing logic
-  const handleSelectShip = (ship: Ship | null) => {
+  const handleSelectShip = (
+    ship: Ship | null,
+    initialTab: 'crew' | 'maintenance' | 'documents' | 'logbooks' = 'crew'
+  ) => {
     if (ship) {
       const imoSlug = ship.imo ? ship.imo.replace(/[^0-9]/g, '') || ship.imo.toLowerCase().trim().replace(/\s+/g, '-') : ship.id;
       const targetPath = `/${imoSlug}`;
@@ -627,6 +631,7 @@ export function App() {
         window.history.pushState({ shipId: ship.id }, '', targetPath);
       }
       setSelectedShipId(ship.id);
+      setActiveShipTab(initialTab);
       setViewMode('fleet');
     } else {
       if (window.location.pathname !== '/') {
@@ -973,7 +978,7 @@ export function App() {
               )}
             </button>
 
-            {/* Sub-category for Selected Ship */}
+            {/* Sub-category for Selected Ship & its Subsections */}
             {selectedShip && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
@@ -982,21 +987,82 @@ export function App() {
                 transition={{ duration: 0.15 }}
                 className="w-full overflow-hidden"
               >
+                {/* Ship Menu Header Item */}
                 <button
                   type="button"
                   onClick={() => {
-                    handleSelectShip(selectedShip);
+                    handleSelectShip(selectedShip, 'crew');
                   }}
                   title={selectedShip.name}
-                  className={`w-full h-10 flex items-center ${
-                    isSidebarCollapsed ? 'justify-center px-0' : 'gap-2.5 pl-8 pr-4'
-                  } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[#28ada4] text-white border-l-4 border-[#1e8f87]`}
+                  className={`w-full h-9 flex items-center ${
+                    isSidebarCollapsed ? 'justify-center px-0' : 'justify-between pl-6 pr-3'
+                  } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[var(--color-bg-alt)] text-[var(--text-main)] border-l-4 border-[#28ada4]`}
                 >
-                  <ShipIcon className="w-3.5 h-3.5 shrink-0" />
+                  <div className="flex items-center gap-2 min-w-0">
+                    <ShipIcon className="w-3.5 h-3.5 text-[#28ada4] shrink-0" />
+                    {!isSidebarCollapsed && (
+                      <span className="truncate font-extrabold">{selectedShip.name}</span>
+                    )}
+                  </div>
                   {!isSidebarCollapsed && (
-                    <span className="truncate">{selectedShip.name}</span>
+                    <ChevronDown className="w-3 h-3 text-[#28ada4] shrink-0" />
                   )}
                 </button>
+
+                {/* Subsections under the Ship Menu */}
+                <div className="w-full flex flex-col py-0.5 bg-[var(--color-bg-alt)]/40 border-l-2 border-[#28ada4]/30 ml-2">
+                  {[
+                    { id: 'crew' as const, label: 'Crew', icon: Users, count: selectedShip.crew.length },
+                    { id: 'maintenance' as const, label: 'Maintenance', icon: Wrench, count: selectedShip.maintenance.length },
+                    { id: 'documents' as const, label: 'Documents', icon: FileCheck, count: selectedShip.documents.length },
+                    {
+                      id: 'logbooks' as const,
+                      label: 'Logbooks',
+                      icon: BookOpen,
+                      count:
+                        (selectedShip.visitors?.length || 0) +
+                        (selectedShip.ballastWaterLogs?.length || 0) +
+                        (selectedShip.sewageWaterLogs?.length || 0),
+                    },
+                  ].map((sub) => {
+                    const isActive = activeShipTab === sub.id;
+                    const IconComp = sub.icon;
+                    return (
+                      <button
+                        key={sub.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveShipTab(sub.id);
+                          setViewMode('fleet');
+                        }}
+                        title={`${selectedShip.name} - ${sub.label} (${sub.count})`}
+                        className={`w-full h-8 flex items-center ${
+                          isSidebarCollapsed ? 'justify-center px-0' : 'justify-between pl-7 pr-3'
+                        } rounded-none font-['Montserrat',sans-serif] font-bold text-[10px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+                          isActive
+                            ? 'bg-[#28ada4] text-white shadow-sm'
+                            : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <IconComp className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-[var(--text-muted)]'}`} />
+                          {!isSidebarCollapsed && (
+                            <span className="truncate">{sub.label}</span>
+                          )}
+                        </div>
+                        {!isSidebarCollapsed && (
+                          <span
+                            className={`text-[9px] font-mono px-1.5 py-0.2 rounded ${
+                              isActive ? 'bg-white/20 text-white' : 'bg-[var(--color-bg)] text-[var(--text-muted)]'
+                            }`}
+                          >
+                            {sub.count}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               </motion.div>
             )}
           </div>
@@ -1077,6 +1143,8 @@ export function App() {
                   onUpdateShip={handleUpdateShip}
                   onAssignExistingCrewToShip={handleAssignExistingCrewToShip}
                   onUnassignCrewFromShip={handleUnassignCrewFromShip}
+                  activeTab={activeShipTab}
+                  onTabChange={(tab) => setActiveShipTab(tab)}
                 />
               </motion.div>
             ) : viewMode === '404' ? (

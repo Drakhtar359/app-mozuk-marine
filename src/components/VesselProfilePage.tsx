@@ -66,6 +66,8 @@ interface VesselProfilePageProps {
   onUpdateShip: (updatedShip: Ship) => void;
   onAssignExistingCrewToShip?: (crewId: string, role?: string, signOnDate?: string, signOnLocation?: string) => void;
   onUnassignCrewFromShip?: (crewId: string) => void;
+  activeTab?: 'crew' | 'maintenance' | 'documents' | 'logbooks';
+  onTabChange?: (tab: 'crew' | 'maintenance' | 'documents' | 'logbooks') => void;
 }
 
 export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
@@ -75,8 +77,15 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
   onUpdateShip,
   onAssignExistingCrewToShip,
   onUnassignCrewFromShip,
+  activeTab: controlledActiveTab,
+  onTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'logbooks'>('crew');
+  const [internalActiveTab, setInternalActiveTab] = useState<'crew' | 'documents' | 'maintenance' | 'logbooks'>('crew');
+  const activeTab = controlledActiveTab || internalActiveTab;
+  const setActiveTab = (tab: 'crew' | 'documents' | 'maintenance' | 'logbooks') => {
+    setInternalActiveTab(tab);
+    if (onTabChange) onTabChange(tab);
+  };
   const [activeLogbookTab, setActiveLogbookTab] = useState<'visitors' | 'ballast' | 'sewage'>('visitors');
   const [activeDocTab, setActiveDocTab] = useState<'certifications' | 'technical_documentation' | 'misc'>('certifications');
   const [activeMaintTab, setActiveMaintTab] = useState<'active' | 'logs' | 'procurement'>('active');
