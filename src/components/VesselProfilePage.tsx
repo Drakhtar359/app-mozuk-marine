@@ -764,6 +764,84 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     }
   };
 
+  // Helper to render crew member cards with left image, white gradient to the right, big name, and rank under
+  const renderCrewCard = (
+    member: CrewMember,
+    options?: { isMaster?: boolean }
+  ) => {
+    const avatarUrl = getCrewAvatarUrl(member);
+    const isMaster = options?.isMaster;
+
+    return (
+      <div
+        key={member.id}
+        onClick={() => setSelectedCrewMember(member)}
+        className={`relative overflow-hidden bg-white border ${
+          isMaster
+            ? 'border-[#7b0b76]/40 shadow-xl'
+            : 'border-gray-200 shadow-sm hover:border-[#28ada4]'
+        } rounded-2xl flex items-center min-h-[96px] hover:shadow-md transition-all group cursor-pointer text-left`}
+        title="Click to view full crew profile"
+      >
+        {/* Left side Image with White Gradient towards the right */}
+        <div
+          className={`relative ${
+            isMaster ? 'w-28 sm:w-36' : 'w-24 sm:w-28'
+          } h-full self-stretch shrink-0 overflow-hidden bg-gray-100`}
+        >
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={member.name}
+              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center font-black text-xl text-gray-400 bg-gray-200">
+              {member.name.charAt(0)}
+            </div>
+          )}
+          {/* White gradient overlay fading smoothly towards the right side */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-white pointer-events-none" />
+        </div>
+
+        {/* Right side Info: Big Name, Rank under */}
+        <div className="flex-1 py-3 pr-8 pl-1 sm:pl-2 min-w-0 z-10 flex flex-col justify-center">
+          <h4
+            className={`font-['Montserrat',sans-serif] font-black ${
+              isMaster ? 'text-lg sm:text-xl text-black' : 'text-sm sm:text-base text-black'
+            } tracking-tight truncate leading-tight group-hover:text-[#28ada4] transition-colors`}
+          >
+            {member.name}
+          </h4>
+          <div
+            className={`font-bold uppercase tracking-wider mt-0.5 truncate ${
+              isMaster ? 'text-xs text-[#7b0b76]' : 'text-[11px] text-[#28ada4]'
+            }`}
+          >
+            {member.role}
+          </div>
+          <div className="text-[10.5px] text-gray-500 font-medium mt-1 truncate">
+            {member.nationality} • Signed on: {formatDate(member.signOnDate)}
+          </div>
+        </div>
+
+        {/* Delete / Remove Button on Hover */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRemoveCrew(member.id);
+          }}
+          className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition opacity-0 group-hover:opacity-100 z-20 cursor-pointer shadow-sm"
+          title={`Remove ${member.name}`}
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Ship Basic Specifications Header Card */}
@@ -873,54 +951,12 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           <div className="relative">
             {/* TOP COMMAND NODE: MASTER / CAPTAIN */}
             <div className="flex flex-col items-center">
-              <div className="w-full max-w-md mozuk-glass-card rounded-2xl p-5 border border-[#7b0b76]/40 shadow-xl relative">
+              <div className="w-full max-w-md">
                 {masterCrew.length > 0 ? (
-                  masterCrew.map((master) => (
-                    <div
-                      key={master.id}
-                      onClick={() => setSelectedCrewMember(master)}
-                      className="pt-2 text-center relative group cursor-pointer hover:bg-[var(--color-bg-alt)]/60 rounded-xl p-3 transition border border-transparent hover:border-[#7b0b76]/50 shadow-sm"
-                      title="Click to view full crew profile"
-                    >
-                      <CrewAvatar
-                        crew={master}
-                        size="lg"
-                        className="mx-auto mb-2 shadow-lg group-hover:scale-105 transition-transform border-2 border-[#7b0b76]"
-                      />
-                      <h3 className="font-['Montserrat',sans-serif] font-extrabold text-lg text-[var(--text-main)] group-hover:text-[#7b0b76] dark:group-hover:text-[#7b0b76] transition">
-                        {master.name}
-                      </h3>
-                      <div className="text-xs text-[#7b0b76] dark:text-[#7b0b76] font-bold uppercase tracking-wider mt-0.5">
-                        {master.role}
-                      </div>
-                      <div className="text-[11px] text-[var(--text-muted)] mt-1 flex items-center justify-center gap-3">
-                        <span>Nationality: <strong className="text-[var(--text-main)]">{master.nationality}</strong></span>
-                        <span>Signed On: <strong className="text-[var(--text-main)]">{formatDate(master.signOnDate)}</strong></span>
-                      </div>
-                      {master.seamanBookNo && (
-                        <div className="text-[10px] font-mono text-[var(--text-muted)] mt-1">
-                          Seaman Book: {master.seamanBookNo}
-                        </div>
-                      )}
-                      <div className="text-[10px] text-[#7b0b76]/80 dark:text-[#7b0b76]/80 font-semibold mt-2 opacity-0 group-hover:opacity-100 transition">
-                        🔍 Click to open full profile
-                      </div>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveCrew(master.id);
-                        }}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition opacity-0 group-hover:opacity-100"
-                        title="Remove Master"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
-                      </button>
-                    </div>
-                  ))
+                  masterCrew.map((master) => renderCrewCard(master, { isMaster: true }))
                 ) : (
-                  <div className="py-4 text-center">
-                    <p className="text-xs text-[var(--text-muted)] mb-3">No Master / Captain assigned to this vessel</p>
+                  <div className="py-6 px-4 text-center bg-white border border-dashed border-gray-300 rounded-2xl shadow-sm">
+                    <p className="text-xs text-gray-500 mb-3 font-medium">No Master / Captain assigned to this vessel</p>
                     <button
                       onClick={() => {
                         handleDepartmentChange('master');
@@ -992,42 +1028,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         No deck officers or crew assigned.
                       </div>
                     ) : (
-                      deckCrew.map((member) => (
-                        <div
-                          key={member.id}
-                          onClick={() => setSelectedCrewMember(member)}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-[var(--color-primary)] transition group cursor-pointer shadow-sm hover:shadow-md"
-                          title="Click to view full crew profile"
-                        >
-                          <div className="flex items-start gap-2.5">
-                            <CrewAvatar
-                              crew={member}
-                              size="sm"
-                              className="shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
-                            />
-                            <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-main)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
-                                {member.role}
-                              </span>
-                              <div className="text-[11px] text-[var(--text-muted)] mt-1">
-                                {member.nationality} • Signed on: {formatDate(member.signOnDate)}
-                              </div>
-                            </div>
-                          </div>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveCrew(member.id);
-                            }}
-                            className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition opacity-0 group-hover:opacity-100"
-                            title="Remove crew member"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
-                          </button>
-                        </div>
-                      ))
+                      deckCrew.map((member) => renderCrewCard(member))
                     )}
                   </div>
 
@@ -1074,42 +1075,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         No engine officers or crew assigned.
                       </div>
                     ) : (
-                      engineCrew.map((member) => (
-                        <div
-                          key={member.id}
-                          onClick={() => setSelectedCrewMember(member)}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-[var(--color-primary)] transition group cursor-pointer shadow-sm hover:shadow-md"
-                          title="Click to view full crew profile"
-                        >
-                          <div className="flex items-start gap-2.5">
-                            <CrewAvatar
-                              crew={member}
-                              size="sm"
-                              className="shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
-                            />
-                            <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-main)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
-                                {member.role}
-                              </span>
-                              <div className="text-[11px] text-[var(--text-muted)] mt-1">
-                                {member.nationality} • Signed on: {formatDate(member.signOnDate)}
-                              </div>
-                            </div>
-                          </div>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveCrew(member.id);
-                            }}
-                            className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition opacity-0 group-hover:opacity-100"
-                            title="Remove crew member"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
-                          </button>
-                        </div>
-                      ))
+                      engineCrew.map((member) => renderCrewCard(member))
                     )}
                   </div>
 
@@ -1156,42 +1122,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
                         No galley staff or mess crew assigned.
                       </div>
                     ) : (
-                      kitchenCrew.map((member) => (
-                        <div
-                          key={member.id}
-                          onClick={() => setSelectedCrewMember(member)}
-                          className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-[var(--color-primary)] transition group cursor-pointer shadow-sm hover:shadow-md"
-                          title="Click to view full crew profile"
-                        >
-                          <div className="flex items-start gap-2.5">
-                            <CrewAvatar
-                              crew={member}
-                              size="sm"
-                              className="shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
-                            />
-                            <div>
-                              <h4 className="font-bold text-[var(--text-main)] text-xs transition">{member.name}</h4>
-                              <span className="inline-block px-2 py-0.5 rounded bg-[var(--color-surface)] text-[var(--text-main)] font-semibold text-[10px] mt-0.5 border border-[var(--color-glass-border)]">
-                                {member.role}
-                              </span>
-                              <div className="text-[11px] text-[var(--text-muted)] mt-1">
-                                {member.nationality} • Signed on: {formatDate(member.signOnDate)}
-                              </div>
-                            </div>
-                          </div>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveCrew(member.id);
-                            }}
-                            className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition opacity-0 group-hover:opacity-100"
-                            title="Remove crew member"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-[#991b1b] dark:text-[#e05252]" />
-                          </button>
-                        </div>
-                      ))
+                      kitchenCrew.map((member) => renderCrewCard(member))
                     )}
                   </div>
 
