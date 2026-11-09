@@ -1020,13 +1020,15 @@ export function App() {
                           isSidebarCollapsed ? 'justify-center px-0' : 'gap-2 pl-9 pr-4'
                         } rounded-none font-['Montserrat',sans-serif] font-bold text-[10.5px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
                           isActive
-                            ? 'bg-[#28ada4] text-white'
+                            ? 'bg-[#28ada4]/15 text-[#1a827a] border-l-4 border-[#28ada4]'
                             : 'bg-white text-black hover:bg-gray-100'
                         }`}
                       >
-                        <IconComp className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-black'}`} />
+                        <IconComp className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#28ada4]' : 'text-black'}`} />
                         {!isSidebarCollapsed && (
-                          <span className="truncate">{sub.label}</span>
+                          <span className={`truncate ${isActive ? 'text-[#1a827a] font-extrabold' : 'text-black'}`}>
+                            {sub.label}
+                          </span>
                         )}
                       </button>
                     );
