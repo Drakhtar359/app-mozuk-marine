@@ -971,71 +971,102 @@ export function App() {
               {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET</span>}
             </button>
 
-            {/* Sub-category for Selected Ship & its Subsections with Continuous Left Teal Line */}
-            {selectedShip && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.15 }}
-                className="w-full overflow-hidden"
-              >
-                {/* Ship Menu Header Item - White on Teal when active with Left Teal Line */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleSelectShip(selectedShip, 'crew');
-                  }}
-                  title={selectedShip.name}
-                  className={`w-full h-10 flex items-center ${
-                    isSidebarCollapsed ? 'justify-center px-0' : 'gap-2.5 pl-6 pr-4'
-                  } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[#28ada4] text-white border-l-4 border-[#28ada4]`}
+            {/* Sub-category for Selected Ship & its Subsections with Continuous Left Teal Line & Animations */}
+            <AnimatePresence initial={false}>
+              {selectedShip && (
+                <motion.div
+                  key={`ship-nav-section-${selectedShip.id}`}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                  className="w-full overflow-hidden"
                 >
-                  <ShipIcon className="w-4 h-4 text-white shrink-0" />
-                  {!isSidebarCollapsed && (
-                    <span className="truncate font-extrabold text-white">{selectedShip.name}</span>
-                  )}
-                </button>
+                  <motion.div
+                    initial={{ y: -8, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -8, opacity: 0 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                  >
+                    {/* Ship Menu Header Item - White on Teal when active with Left Teal Line */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleSelectShip(selectedShip, 'crew');
+                      }}
+                      title={selectedShip.name}
+                      className={`w-full h-10 flex items-center ${
+                        isSidebarCollapsed ? 'justify-center px-0' : 'gap-2.5 pl-6 pr-4'
+                      } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[#28ada4] text-white border-l-4 border-[#28ada4]`}
+                    >
+                      <ShipIcon className="w-4 h-4 text-white shrink-0" />
+                      {!isSidebarCollapsed && (
+                        <span className="truncate font-extrabold text-white">{selectedShip.name}</span>
+                      )}
+                    </button>
 
-                {/* Subsections under the Ship Menu with Continuous Left Teal Line */}
-                <div className="w-full flex flex-col bg-white">
-                  {[
-                    { id: 'crew' as const, label: 'Crew', icon: Users },
-                    { id: 'maintenance' as const, label: 'Maintenance', icon: Wrench },
-                    { id: 'documents' as const, label: 'Documents', icon: FileCheck },
-                    { id: 'logbooks' as const, label: 'Logbooks', icon: BookOpen },
-                  ].map((sub) => {
-                    const isActive = activeShipTab === sub.id;
-                    const IconComp = sub.icon;
-                    return (
-                      <button
-                        key={sub.id}
-                        type="button"
-                        onClick={() => {
-                          setActiveShipTab(sub.id);
-                          setViewMode('fleet');
-                        }}
-                        title={`${selectedShip.name} - ${sub.label}`}
-                        className={`w-full h-9 flex items-center ${
-                          isSidebarCollapsed ? 'justify-center px-0' : 'gap-2 pl-9 pr-4'
-                        } rounded-none font-['Montserrat',sans-serif] font-bold text-[10.5px] uppercase tracking-wider text-left transition-colors cursor-pointer border-l-4 border-[#28ada4] ${
-                          isActive
-                            ? 'bg-[#28ada4]/15 text-[#1a827a]'
-                            : 'bg-white text-black hover:bg-gray-100'
-                        }`}
-                      >
-                        <IconComp className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#28ada4]' : 'text-black'}`} />
-                        {!isSidebarCollapsed && (
-                          <span className={`truncate ${isActive ? 'text-[#1a827a] font-extrabold' : 'text-black'}`}>
-                            {sub.label}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
+                    {/* Subsections under the Ship Menu with Continuous Left Teal Line & Sliding Highlight */}
+                    <div className="w-full flex flex-col bg-white">
+                      {[
+                        { id: 'crew' as const, label: 'Crew', icon: Users },
+                        { id: 'maintenance' as const, label: 'Maintenance', icon: Wrench },
+                        { id: 'documents' as const, label: 'Documents', icon: FileCheck },
+                        { id: 'logbooks' as const, label: 'Logbooks', icon: BookOpen },
+                      ].map((sub) => {
+                        const isActive = activeShipTab === sub.id;
+                        const IconComp = sub.icon;
+                        return (
+                          <button
+                            key={sub.id}
+                            type="button"
+                            onClick={() => {
+                              setActiveShipTab(sub.id);
+                              setViewMode('fleet');
+                            }}
+                            title={`${selectedShip.name} - ${sub.label}`}
+                            className={`relative w-full h-9 flex items-center ${
+                              isSidebarCollapsed ? 'justify-center px-0' : 'gap-2 pl-9 pr-4'
+                            } rounded-none font-['Montserrat',sans-serif] font-bold text-[10.5px] uppercase tracking-wider text-left transition-colors cursor-pointer border-l-4 border-[#28ada4] ${
+                              isActive
+                                ? 'text-[#1a827a]'
+                                : 'bg-white text-black hover:bg-gray-100'
+                            }`}
+                          >
+                            {/* Sliding Light Teal Highlight Pill */}
+                            {isActive && (
+                              <motion.div
+                                layoutId="activeShipSubHighlight"
+                                transition={{
+                                  type: 'spring',
+                                  stiffness: 450,
+                                  damping: 32,
+                                }}
+                                className="absolute inset-0 bg-[#28ada4]/15 z-0"
+                              />
+                            )}
+
+                            <IconComp
+                              className={`w-3.5 h-3.5 shrink-0 relative z-10 transition-colors duration-200 ${
+                                isActive ? 'text-[#28ada4]' : 'text-black'
+                              }`}
+                            />
+                            {!isSidebarCollapsed && (
+                              <span
+                                className={`truncate relative z-10 transition-colors duration-200 ${
+                                  isActive ? 'text-[#1a827a] font-extrabold' : 'text-black'
+                                }`}
+                              >
+                                {sub.label}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <button
