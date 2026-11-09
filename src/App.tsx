@@ -910,16 +910,16 @@ export function App() {
       <aside
         className={`fixed top-[60px] left-0 bottom-0 z-20 ${
           isSidebarCollapsed ? 'w-14' : 'w-60 xl:w-64'
-        } bg-[var(--color-surface)] border-r border-[var(--color-glass-border)] flex flex-col justify-between p-0 select-none transition-[width] duration-200 ease-in-out overflow-hidden`}
+        } bg-white text-black border-r border-gray-200 flex flex-col justify-between p-0 select-none transition-[width] duration-200 ease-in-out overflow-hidden shadow-sm`}
       >
         <div>
           <div
             className={`h-11 flex items-center ${
               isSidebarCollapsed ? 'justify-center px-0' : 'justify-between px-4'
-            } border-b border-[var(--color-glass-border)]`}
+            } border-b border-gray-200 bg-white`}
           >
             {!isSidebarCollapsed && (
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] truncate">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-black truncate">
                 Navigation Menu
               </span>
             )}
@@ -927,7 +927,7 @@ export function App() {
               type="button"
               onClick={() => setIsSidebarCollapsed((prev) => !prev)}
               title={isSidebarCollapsed ? 'Expand Navigation Menu' : 'Collapse Navigation Menu'}
-              className="p-1.5 text-[var(--text-muted)] hover:text-[#28ada4] transition-colors cursor-pointer shrink-0"
+              className="p-1.5 text-black hover:text-[#28ada4] transition-colors cursor-pointer shrink-0"
             >
               {isSidebarCollapsed ? (
                 <PanelLeftOpen className="w-4 h-4" />
@@ -946,7 +946,7 @@ export function App() {
             } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
               !selectedShip && viewMode === 'fleet' && activeHomeTab === 'dashboard'
                 ? 'bg-[#28ada4] text-white'
-                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                : 'bg-white text-black hover:bg-gray-100'
             }`}
           >
             <LayoutDashboard className="w-4 h-4 shrink-0" />
@@ -960,22 +960,15 @@ export function App() {
               onClick={() => handleSelectNavTab('fleet')}
               title="REGISTERED FLEET"
               className={`w-full h-11 flex items-center ${
-                isSidebarCollapsed ? 'justify-center px-0' : 'justify-between px-4'
+                isSidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
               } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
                 !selectedShip && viewMode === 'fleet' && activeHomeTab === 'fleet'
                   ? 'bg-[#28ada4] text-white'
-                  : selectedShip
-                  ? 'text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                  : 'bg-white text-black hover:bg-gray-100'
               }`}
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <Anchor className={`w-4 h-4 shrink-0 ${selectedShip ? 'text-[#28ada4]' : ''}`} />
-                {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET</span>}
-              </div>
-              {!isSidebarCollapsed && selectedShip && (
-                <ChevronDown className="w-3.5 h-3.5 text-[#28ada4] shrink-0" />
-              )}
+              <Anchor className="w-4 h-4 shrink-0" />
+              {!isSidebarCollapsed && <span className="truncate">REGISTERED FLEET</span>}
             </button>
 
             {/* Sub-category for Selected Ship & its Subsections */}
@@ -987,43 +980,30 @@ export function App() {
                 transition={{ duration: 0.15 }}
                 className="w-full overflow-hidden"
               >
-                {/* Ship Menu Header Item */}
+                {/* Ship Menu Header Item - White on Teal when active */}
                 <button
                   type="button"
                   onClick={() => {
                     handleSelectShip(selectedShip, 'crew');
                   }}
                   title={selectedShip.name}
-                  className={`w-full h-9 flex items-center ${
-                    isSidebarCollapsed ? 'justify-center px-0' : 'justify-between pl-6 pr-3'
-                  } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[var(--color-bg-alt)] text-[var(--text-main)] border-l-4 border-[#28ada4]`}
+                  className={`w-full h-10 flex items-center ${
+                    isSidebarCollapsed ? 'justify-center px-0' : 'gap-2.5 pl-6 pr-4'
+                  } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer bg-[#28ada4] text-white`}
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <ShipIcon className="w-3.5 h-3.5 text-[#28ada4] shrink-0" />
-                    {!isSidebarCollapsed && (
-                      <span className="truncate font-extrabold">{selectedShip.name}</span>
-                    )}
-                  </div>
+                  <ShipIcon className="w-4 h-4 text-white shrink-0" />
                   {!isSidebarCollapsed && (
-                    <ChevronDown className="w-3 h-3 text-[#28ada4] shrink-0" />
+                    <span className="truncate font-extrabold text-white">{selectedShip.name}</span>
                   )}
                 </button>
 
                 {/* Subsections under the Ship Menu */}
-                <div className="w-full flex flex-col py-0.5 bg-[var(--color-bg-alt)]/40 border-l-2 border-[#28ada4]/30 ml-2">
+                <div className="w-full flex flex-col bg-white">
                   {[
-                    { id: 'crew' as const, label: 'Crew', icon: Users, count: selectedShip.crew.length },
-                    { id: 'maintenance' as const, label: 'Maintenance', icon: Wrench, count: selectedShip.maintenance.length },
-                    { id: 'documents' as const, label: 'Documents', icon: FileCheck, count: selectedShip.documents.length },
-                    {
-                      id: 'logbooks' as const,
-                      label: 'Logbooks',
-                      icon: BookOpen,
-                      count:
-                        (selectedShip.visitors?.length || 0) +
-                        (selectedShip.ballastWaterLogs?.length || 0) +
-                        (selectedShip.sewageWaterLogs?.length || 0),
-                    },
+                    { id: 'crew' as const, label: 'Crew', icon: Users },
+                    { id: 'maintenance' as const, label: 'Maintenance', icon: Wrench },
+                    { id: 'documents' as const, label: 'Documents', icon: FileCheck },
+                    { id: 'logbooks' as const, label: 'Logbooks', icon: BookOpen },
                   ].map((sub) => {
                     const isActive = activeShipTab === sub.id;
                     const IconComp = sub.icon;
@@ -1035,29 +1015,18 @@ export function App() {
                           setActiveShipTab(sub.id);
                           setViewMode('fleet');
                         }}
-                        title={`${selectedShip.name} - ${sub.label} (${sub.count})`}
-                        className={`w-full h-8 flex items-center ${
-                          isSidebarCollapsed ? 'justify-center px-0' : 'justify-between pl-7 pr-3'
-                        } rounded-none font-['Montserrat',sans-serif] font-bold text-[10px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
+                        title={`${selectedShip.name} - ${sub.label}`}
+                        className={`w-full h-9 flex items-center ${
+                          isSidebarCollapsed ? 'justify-center px-0' : 'gap-2 pl-9 pr-4'
+                        } rounded-none font-['Montserrat',sans-serif] font-bold text-[10.5px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
                           isActive
-                            ? 'bg-[#28ada4] text-white shadow-sm'
-                            : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                            ? 'bg-[#28ada4] text-white'
+                            : 'bg-white text-black hover:bg-gray-100'
                         }`}
                       >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <IconComp className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-[var(--text-muted)]'}`} />
-                          {!isSidebarCollapsed && (
-                            <span className="truncate">{sub.label}</span>
-                          )}
-                        </div>
+                        <IconComp className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-black'}`} />
                         {!isSidebarCollapsed && (
-                          <span
-                            className={`text-[9px] font-mono px-1.5 py-0.2 rounded ${
-                              isActive ? 'bg-white/20 text-white' : 'bg-[var(--color-bg)] text-[var(--text-muted)]'
-                            }`}
-                          >
-                            {sub.count}
-                          </span>
+                          <span className="truncate">{sub.label}</span>
                         )}
                       </button>
                     );
@@ -1076,7 +1045,7 @@ export function App() {
             } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
               !selectedShip && viewMode === 'fleet' && activeHomeTab === 'crew'
                 ? 'bg-[#28ada4] text-white'
-                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                : 'bg-white text-black hover:bg-gray-100'
             }`}
           >
             <Users className="w-4 h-4 shrink-0" />
@@ -1092,7 +1061,7 @@ export function App() {
             } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
               !selectedShip && viewMode === 'fleet' && activeHomeTab === 'contacts'
                 ? 'bg-[#28ada4] text-white'
-                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                : 'bg-white text-black hover:bg-gray-100'
             }`}
           >
             <Contact className="w-4 h-4 shrink-0" />
@@ -1101,7 +1070,7 @@ export function App() {
         </div>
 
         {/* Bottom of Vertical Navigation Bar: Company Profile (exact h-11 box-border with border-t) */}
-        <div className="mt-auto h-11 shrink-0 border-t border-[var(--color-glass-border)] flex items-stretch">
+        <div className="mt-auto h-11 shrink-0 border-t border-gray-200 bg-white flex items-stretch">
           <button
             type="button"
             onClick={handleSelectCompanyProfile}
@@ -1111,10 +1080,10 @@ export function App() {
             } rounded-none font-['Montserrat',sans-serif] font-bold text-[11px] uppercase tracking-wider text-left transition-colors cursor-pointer ${
               !selectedShip && viewMode === 'profile'
                 ? 'bg-[#28ada4] text-white'
-                : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
+                : 'bg-white text-black hover:bg-gray-100'
             }`}
           >
-            <Building2 className={`w-4 h-4 shrink-0 ${!selectedShip && viewMode === 'profile' ? 'text-white' : 'text-[#28ada4]'}`} />
+            <Building2 className={`w-4 h-4 shrink-0 ${!selectedShip && viewMode === 'profile' ? 'text-white' : 'text-black'}`} />
             {!isSidebarCollapsed && <span className="truncate">COMPANY PROFILE</span>}
           </button>
         </div>

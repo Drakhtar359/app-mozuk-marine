@@ -846,67 +846,6 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         </div>
       </div>
 
-      {/* Main Sections Tabs Container (4 top-level tabs) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 border border-[var(--color-glass-border)] bg-[var(--color-surface)] rounded-2xl p-2">
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          onClick={() => setActiveTab('crew')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Montserrat',sans-serif] font-bold text-xs transition w-full ${
-            activeTab === 'crew'
-              ? 'btn-mozuk-primary shadow-lg'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-          }`}
-        >
-          <Users className="w-4 h-4 shrink-0" />
-          <span className="truncate">Crew Command Hierarchy ({ship.crew.length})</span>
-        </motion.button>
-
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          onClick={() => setActiveTab('maintenance')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Montserrat',sans-serif] font-bold text-xs transition w-full ${
-            activeTab === 'maintenance'
-              ? 'btn-mozuk-primary shadow-lg'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-          }`}
-        >
-          <Wrench className="w-4 h-4 shrink-0" />
-          <span className="truncate">Maintenance & Repair Log ({ship.maintenance.length})</span>
-        </motion.button>
-
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          onClick={() => setActiveTab('documents')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Montserrat',sans-serif] font-bold text-xs transition w-full ${
-            activeTab === 'documents'
-              ? 'btn-mozuk-primary shadow-lg'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-          }`}
-        >
-          <FileCheck className="w-4 h-4 shrink-0" />
-          <span className="truncate">Technical Documents ({ship.documents.length})</span>
-        </motion.button>
-
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-          onClick={() => setActiveTab('logbooks')}
-          className={`flex items-center justify-start gap-2.5 py-2.5 px-4 rounded-xl font-['Montserrat',sans-serif] font-bold text-xs transition w-full ${
-            activeTab === 'logbooks'
-              ? 'btn-mozuk-primary shadow-lg'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--color-glass-border)]'
-          }`}
-        >
-          <BookOpen className="w-4 h-4 shrink-0" />
-          <span className="truncate">
-            Ship Logbooks & Registries ({ (ship.visitors?.length || 0) + (ship.ballastWaterLogs?.length || 0) + (ship.sewageWaterLogs?.length || 0) })
-          </span>
-        </motion.button>
-      </div>
-
       {/* SECTION 1: CREW COMMAND TREE HIERARCHY */}
       {activeTab === 'crew' && (
         <div className="space-y-8">
