@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ship, CrewMember, TechnicalDoc, MaintenanceLog, VesselHistoryEntry, VisitorLog, BallastWaterLog, SewageWaterLog, ProcurementOrder, getEffectiveVesselHistory } from '../types/vessel';
+import { BallastWaterRecordBook } from './BallastWaterRecordBook';
 import {
   ArrowLeft,
   User,
@@ -67,8 +68,8 @@ interface VesselProfilePageProps {
   onUpdateShip: (updatedShip: Ship) => void;
   onAssignExistingCrewToShip?: (crewId: string, role?: string, signOnDate?: string, signOnLocation?: string) => void;
   onUnassignCrewFromShip?: (crewId: string) => void;
-  activeTab?: 'crew' | 'maintenance' | 'documents' | 'logbooks';
-  onTabChange?: (tab: 'crew' | 'maintenance' | 'documents' | 'logbooks') => void;
+  activeTab?: 'crew' | 'maintenance' | 'documents' | 'logbooks' | 'ballast';
+  onTabChange?: (tab: 'crew' | 'maintenance' | 'documents' | 'logbooks' | 'ballast') => void;
 }
 
 interface StandardCrewCardProps {
@@ -2216,229 +2217,14 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
         );
       })()}
 
-      {/* SUB-TAB 2: BALLAST WATER RECORD BOOK */}
-      {activeLogbookTab === 'ballast' && (() => {
-        const allBallastLogs = ship.ballastWaterLogs || [];
-
-        const totalBallasted = allBallastLogs
-          .filter((l) => l.operation === 'Ballasting')
-          .reduce((acc, l) => acc + l.volumeM3, 0);
-
-        const totalDeballasted = allBallastLogs
-          .filter((l) => l.operation === 'Deballasting')
-          .reduce((acc, l) => acc + l.volumeM3, 0);
-
-        const filteredLogs = allBallastLogs.filter((log) => {
-          if (ballastFilterOp !== 'all' && log.operation !== ballastFilterOp) {
-            return false;
-          }
-          if (ballastSearchTerm.trim()) {
-            const q = ballastSearchTerm.toLowerCase();
-            const matchTanks = log.tanks.toLowerCase().includes(q);
-            const matchGps = log.gpsCoordinates.toLowerCase().includes(q);
-            const matchOfficer = log.officerInCharge.toLowerCase().includes(q);
-            const matchRemarks = (log.remarks || '').toLowerCase().includes(q);
-            if (!matchTanks && !matchGps && !matchOfficer && !matchRemarks) return false;
-          }
-          return true;
-        });
-
-        return (
-          <div className="space-y-6">
-            {/* Section Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-glass-border)] pb-4">
-              <div>
-                <h2 className="font-['Montserrat',sans-serif] font-bold text-xl text-[var(--text-main)] flex items-center gap-2">
-                  <Droplets className="w-5 h-5 text-[#28ada4]" />
-                  Ballast Water Record Book (IMO BWM Convention)
-                </h2>
-                <p className="text-xs text-[var(--text-muted)] mt-1">
-                  Official digital logbook for ballast water operations (ballasting, deballasting, internal transfer & BWM exchange) in compliance with IMO D-2 standards.
-                </p>
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setIsAddBallastModalOpen(true)}
-                className="px-4 py-2 rounded-full btn-mozuk-primary font-bold text-xs flex items-center gap-2 shrink-0 shadow-sm"
-              >
-                <Plus className="w-4 h-4" /> Log Ballast Operation
-              </motion.button>
-            </div>
-
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-              <div className="mozuk-glass-card p-4 rounded-xl border border-[var(--color-glass-border)]">
-                <div className="text-[var(--text-muted)] font-bold text-[11px] uppercase">Total Operations Logged</div>
-                <div className="font-extrabold text-[var(--text-main)] text-xl font-mono mt-1">
-                  {allBallastLogs.length}
-                </div>
-              </div>
-
-              <div className="mozuk-glass-card p-4 rounded-xl border border-[#28ada4]/30 bg-[#28ada4]/10">
-                <div className="text-[#28ada4] font-bold text-[11px] uppercase flex items-center gap-1">
-                  <Waves className="w-3.5 h-3.5" /> Total Volume Ballasted
-                </div>
-                <div className="font-extrabold text-[#28ada4] text-xl font-mono mt-1">
-                  {totalBallasted.toLocaleString()} m³
-                </div>
-              </div>
-
-              <div className="mozuk-glass-card p-4 rounded-xl border border-[#7b0b76]/30 bg-[#7b0b76]/10">
-                <div className="text-[#7b0b76] dark:text-[#7b0b76] font-bold text-[11px] uppercase flex items-center gap-1">
-                  <RotateCcw className="w-3.5 h-3.5" /> Total Volume Deballasted
-                </div>
-                <div className="font-extrabold text-[#7b0b76] dark:text-[#7b0b76] text-xl font-mono mt-1">
-                  {totalDeballasted.toLocaleString()} m³
-                </div>
-              </div>
-
-              <div className="mozuk-glass-card p-4 rounded-xl border border-[var(--color-glass-border)] bg-[var(--color-surface)]">
-                <div className="text-[var(--text-muted)] font-bold text-[11px] uppercase flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#28ada4]" /> BWTS Compliance Status
-                </div>
-                <div className="font-extrabold text-[#28ada4] text-xs mt-1">
-                  Mozuk UV System Operational (IMO D-2)
-                </div>
-              </div>
-            </div>
-
-            {/* Filter Bar */}
-            <div className="mozuk-glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto flex-1">
-                <div className="relative flex-1 sm:w-64">
-                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    placeholder="Search tanks, GPS, officer or remarks..."
-                    value={ballastSearchTerm}
-                    onChange={(e) => setBallastSearchTerm(e.target.value)}
-                    className="w-full bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl pl-9 pr-3.5 py-2 text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#28ada4] transition"
-                  />
-                </div>
-
-                <select
-                  value={ballastFilterOp}
-                  onChange={(e) => setBallastFilterOp(e.target.value)}
-                  className="bg-[var(--color-bg-alt)] border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--text-main)] font-bold focus:outline-none cursor-pointer"
-                >
-                  <option value="all">All Operations</option>
-                  <option value="Ballasting">Ballasting</option>
-                  <option value="Deballasting">Deballasting</option>
-                  <option value="Internal Transfer">Internal Transfer</option>
-                  <option value="Ballast Exchange (BWM)">Ballast Exchange (BWM)</option>
-                </select>
-              </div>
-
-              {(ballastSearchTerm !== '' || ballastFilterOp !== 'all') && (
-                <button
-                  onClick={() => {
-                    setBallastSearchTerm('');
-                    setBallastFilterOp('all');
-                  }}
-                  className="px-3 py-1.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-bold text-xs flex items-center gap-1.5 transition shrink-0"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" /> Clear Filters
-                </button>
-              )}
-            </div>
-
-            {/* Table */}
-            <div className="mozuk-glass-card rounded-2xl overflow-hidden shadow-lg">
-              <table className="w-full table-fixed text-left text-xs">
-                <thead className="bg-[var(--color-bg-alt)] text-[var(--text-main)] text-[10px] uppercase border-b border-[var(--color-glass-border)] font-extrabold tracking-wider">
-                  <tr>
-                    <th className="py-2.5 px-3 w-[14%]">Date & Time</th>
-                    <th className="py-2.5 px-2 w-[15%]">Operation</th>
-                    <th className="py-2.5 px-2.5 w-[14%]">Tank(s)</th>
-                    <th className="py-2.5 px-2 w-[10%]">Volume</th>
-                    <th className="py-2.5 px-2.5 w-[16%]">GPS / Location</th>
-                    <th className="py-2.5 px-2 w-[12%]">Treatment</th>
-                    <th className="py-2.5 px-2 w-[12%]">Officer</th>
-                    <th className="py-2.5 px-3 w-[7%] text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--color-glass-border)]">
-                  {filteredLogs.length === 0 ? (
-                    <tr>
-                      <td colSpan={8} className="py-8 text-center text-[var(--text-muted)] text-xs">
-                        No ballast water operations recorded match criteria.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredLogs.map((log) => {
-                      return (
-                        <tr key={log.id} className="hover:bg-[var(--color-glass-border)] transition">
-                          <td className="py-2.5 px-3 font-mono font-bold text-[var(--text-main)] truncate">
-                            {formatDate(log.date)} {log.time ? `@ ${log.time}` : ''}
-                          </td>
-
-                          <td className="py-2.5 px-2 overflow-hidden">
-                            {log.operation === 'Ballasting' && (
-                              <span className="px-2 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px] inline-block truncate max-w-full">
-                                Ballasting
-                              </span>
-                            )}
-                            {log.operation === 'Deballasting' && (
-                              <span className="px-2 py-0.5 rounded-full bg-[#7b0b76]/15 text-[#7b0b76] dark:text-[#7b0b76] border border-[#7b0b76]/30 font-bold text-[10px] inline-block truncate max-w-full">
-                                Deballasting
-                              </span>
-                            )}
-                            {log.operation === 'Internal Transfer' && (
-                              <span className="px-2 py-0.5 rounded-full bg-[var(--color-surface)] text-[var(--text-main)] border border-[var(--color-glass-border)] font-bold text-[10px] inline-block truncate max-w-full">
-                                Internal Transfer
-                              </span>
-                            )}
-                            {log.operation === 'Ballast Exchange (BWM)' && (
-                              <span className="px-2 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 font-bold text-[10px] inline-block truncate max-w-full">
-                                BWM Exchange
-                              </span>
-                            )}
-                          </td>
-
-                          <td className="py-2.5 px-2.5 font-extrabold text-[var(--text-main)] truncate" title={log.tanks}>
-                            {log.tanks}
-                          </td>
-
-                          <td className="py-2.5 px-2 font-mono font-extrabold text-[#28ada4] text-xs truncate">
-                            {log.volumeM3.toLocaleString()} m³
-                          </td>
-
-                          <td className="py-2.5 px-2.5 text-[var(--text-main)] font-mono text-[11px] overflow-hidden">
-                            <div className="flex items-center gap-1 min-w-0" title={log.gpsCoordinates}>
-                              <MapPin className="w-3 h-3 text-[var(--color-primary)] shrink-0" />
-                              <span className="truncate">{log.gpsCoordinates}</span>
-                            </div>
-                          </td>
-
-                          <td className="py-2.5 px-2 text-[var(--text-muted)] font-semibold truncate">
-                            {log.treatmentMethod || 'Mozuk BWTS UV'}
-                          </td>
-
-                          <td className="py-2.5 px-2 text-[var(--text-main)] font-bold truncate">
-                            {log.officerInCharge}
-                          </td>
-
-                          <td className="py-2.5 px-3 text-right">
-                            <button
-                              onClick={() => handleRemoveBallastLog(log.id)}
-                              className="p-1 rounded bg-[#991b1b]/15 hover:bg-[#991b1b]/25 text-[#991b1b] dark:text-[#e05252] border border-[#991b1b]/30 hover:border-[#991b1b]/50 transition inline-flex items-center"
-                              title="Delete record"
-                            >
-                              <Trash2 className="w-3 h-3 text-[#991b1b] dark:text-[#e05252]" />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
-      })()}
+      {/* SUB-TAB 2: BALLAST WATER RECORD BOOK (IMO MEPC.372(80) & MEPC.369(80)) */}
+      {activeLogbookTab === 'ballast' && (
+        <BallastWaterRecordBook
+          ship={ship}
+          companyCrew={companyCrew}
+          onUpdateShip={onUpdateShip}
+        />
+      )}
 
       {/* SUB-TAB 3: SEWAGE & GREY WATER RECORD BOOK */}
       {activeLogbookTab === 'sewage' && (() => {
@@ -2674,6 +2460,15 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     </div>
   </div>
 )}
+
+      {/* DIRECT TAB: BALLAST WATER RECORD BOOK (eBWRB) */}
+      {activeTab === 'ballast' && (
+        <BallastWaterRecordBook
+          ship={ship}
+          companyCrew={companyCrew}
+          onUpdateShip={onUpdateShip}
+        />
+      )}
 
       {/* MODAL 1: ADD CREW MEMBER */}
       <AnimatePresence>

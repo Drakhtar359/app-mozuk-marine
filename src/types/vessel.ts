@@ -74,16 +74,40 @@ export interface VisitorLog {
   location: string;
 }
 
+export type IMOBallastCode = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H';
+
+export interface ElectronicSignature {
+  signedBy: string;
+  rank: string;
+  signedAt: string;
+  signatureToken: string;
+  role: 'ballast_officer' | 'master';
+}
+
 export interface BallastWaterLog {
   id: string;
+  entryNumber?: number;
   date: string;
   time: string;
-  operation: 'Ballasting' | 'Deballasting' | 'Internal Transfer' | 'Ballast Exchange (BWM)';
+  imoCode?: IMOBallastCode;
+  imoItem?: string; // e.g. "A-1, A-2, A-3", "C-1, C-2"
+  operation: 'Ballasting' | 'Deballasting' | 'Internal Transfer' | 'Ballast Exchange (BWM)' | string;
+  operationDescription?: string;
   tanks: string;
   volumeM3: number;
   gpsCoordinates: string;
+  distanceFromLandNm?: number;
+  depthMeters?: number;
+  salinityPpt?: number;
   treatmentMethod?: string;
   officerInCharge: string;
+  officerSignature?: ElectronicSignature;
+  masterCountersignature?: ElectronicSignature;
+  status?: 'draft' | 'signed_by_officer' | 'countersigned_by_master';
+  isCorrection?: boolean;
+  correctsEntryId?: string;
+  correctionReason?: string;
+  superseded?: boolean;
   remarks?: string;
 }
 

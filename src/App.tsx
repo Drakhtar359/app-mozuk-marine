@@ -13,7 +13,7 @@ import { DashboardView } from './components/DashboardView';
 import { NotFoundPage } from './components/NotFoundPage';
 import { DEFAULT_CREW_AVATARS, getCrewAvatarUrl } from './utils/crewAvatars';
 import { formatDate, getTodayDDMMYYYY } from './utils/dateFormatter';
-import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen, Contact, ChevronDown, BookOpen } from 'lucide-react';
+import { Plus, Sun, Moon, ShieldCheck, Wrench, Users, FileCheck, Ship as ShipIcon, Building2, Globe, Phone, Edit, LogOut, LayoutDashboard, Anchor, PanelLeftClose, PanelLeftOpen, Contact, ChevronDown, BookOpen, Droplets } from 'lucide-react';
 
 export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -235,39 +235,105 @@ export function App() {
       ballastWaterLogs: [
         {
           id: 'bw1',
+          entryNumber: 3,
           date: '24/09/2026',
           time: '08:30',
+          imoCode: 'C',
+          imoItem: 'C-1, C-2, C-3, C-4',
           operation: 'Deballasting',
+          operationDescription: 'Discharge of ballast water to sea during bulk cargo loading at Rotterdam Berth 4.',
           tanks: 'Fore Peak Tank (FPT) & DBT 1P/1S',
           volumeM3: 450,
           gpsCoordinates: "51° 55' N, 003° 02' E (Rotterdam Port)",
-          treatmentMethod: 'UV Disinfection (Mozuk BWTS)',
+          distanceFromLandNm: 0,
+          depthMeters: 18,
+          salinityPpt: 30.5,
+          treatmentMethod: 'UV Disinfection (Mozuk BWTS D-2 Compliant)',
           officerInCharge: 'Chief Officer Alexey Ivanov',
-          remarks: 'Deballasting during cargo loading at Rotterdam Berth 4.',
+          officerSignature: {
+            signedBy: 'Alexey Ivanov',
+            rank: 'Chief Officer',
+            signedAt: '24/09/2026 09:15',
+            signatureToken: 'EBWRB-SIG-7M89K2-ROT4',
+            role: 'ballast_officer',
+          },
+          masterCountersignature: {
+            signedBy: 'Capt. Marcus Vance',
+            rank: 'Master / Captain',
+            signedAt: '24/09/2026 18:30',
+            signatureToken: 'EBWRB-MTR-99X402-ROT4',
+            role: 'master',
+          },
+          status: 'countersigned_by_master',
+          remarks: 'Deballasting during cargo loading at Rotterdam Berth 4. D-2 standard validated.',
         },
         {
           id: 'bw2',
+          entryNumber: 2,
           date: '20/09/2026',
           time: '14:15',
+          imoCode: 'A',
+          imoItem: 'A-1, A-2, A-3, A-4',
           operation: 'Ballasting',
+          operationDescription: 'Uptake of ballast water from sea via main sea chest for trim & sea passage stability.',
           tanks: 'Aft Peak Tank (APT) & DBT 2P/2S',
           volumeM3: 620,
           gpsCoordinates: "52° 10' N, 002° 45' E",
-          treatmentMethod: 'UV Disinfection (Mozuk BWTS)',
+          distanceFromLandNm: 45,
+          depthMeters: 42,
+          salinityPpt: 34.8,
+          treatmentMethod: 'UV Disinfection (Mozuk BWTS D-2 Compliant)',
           officerInCharge: 'Second Officer Kenji Sato',
+          officerSignature: {
+            signedBy: 'Kenji Sato',
+            rank: 'Second Officer',
+            signedAt: '20/09/2026 15:00',
+            signatureToken: 'EBWRB-SIG-44P109-SEA2',
+            role: 'ballast_officer',
+          },
+          masterCountersignature: {
+            signedBy: 'Capt. Marcus Vance',
+            rank: 'Master / Captain',
+            signedAt: '20/09/2026 20:00',
+            signatureToken: 'EBWRB-MTR-88A902-SEA2',
+            role: 'master',
+          },
+          status: 'countersigned_by_master',
           remarks: 'Ballasting for vessel stability prior to North Sea passage.',
         },
         {
           id: 'bw3',
+          entryNumber: 1,
           date: '15/09/2026',
           time: '22:00',
-          operation: 'Ballast Exchange (BWM)',
+          imoCode: 'B',
+          imoItem: 'B-1, B-2, B-3',
+          operation: 'Internal Transfer',
+          operationDescription: 'Internal redistribution from DBT 3P to DBT 3S for listing correction and hull stress mitigation.',
           tanks: 'DBT 3P & 3S',
           volumeM3: 350,
           gpsCoordinates: "48° 30' N, 006° 15' W (Atlantic Ocean)",
-          treatmentMethod: 'Sequential Exchange & UV Filtered',
+          distanceFromLandNm: 220,
+          depthMeters: 2800,
+          salinityPpt: 35.2,
+          treatmentMethod: 'Mozuk Active In-Tank Circulation & UV',
           officerInCharge: 'Chief Officer Alexey Ivanov',
-          remarks: 'Flow-through ballast exchange performed in deep sea (>200m depth).',
+          officerSignature: {
+            signedBy: 'Alexey Ivanov',
+            rank: 'Chief Officer',
+            signedAt: '15/09/2026 23:10',
+            signatureToken: 'EBWRB-SIG-33F501-ATL1',
+            role: 'ballast_officer',
+          },
+          masterCountersignature: {
+            signedBy: 'Capt. Marcus Vance',
+            rank: 'Master / Captain',
+            signedAt: '16/09/2026 08:00',
+            signatureToken: 'EBWRB-MTR-12B980-ATL1',
+            role: 'master',
+          },
+          status: 'countersigned_by_master',
+          remarks: 'Internal ballast transfer performed in deep Atlantic waters (>2000m depth).',
         },
       ],
       sewageWaterLogs: [
@@ -380,15 +446,64 @@ export function App() {
       ballastWaterLogs: [
         {
           id: 'bw201',
+          entryNumber: 2,
           date: '22/09/2026',
           time: '10:00',
+          imoCode: 'C',
+          imoItem: 'C-1, C-2, C-3, C-4',
           operation: 'Deballasting',
+          operationDescription: 'Deballasting via BWTS treatment to maintain permissible air draft during container discharge.',
           tanks: 'Double Bottom Tanks #1 to #4',
           volumeM3: 1200,
           gpsCoordinates: "53° 33' N, 009° 59' E (Hamburg Port)",
-          treatmentMethod: 'UV Disinfection (Mozuk BWTS)',
+          distanceFromLandNm: 0,
+          depthMeters: 16,
+          salinityPpt: 18.2,
+          treatmentMethod: 'UV Disinfection (Mozuk BWTS D-2 Compliant)',
           officerInCharge: 'Chief Officer Carlos Mendez',
-          remarks: 'Deballasting during mega-container discharge operation.',
+          officerSignature: {
+            signedBy: 'Carlos Mendez',
+            rank: 'Chief Officer',
+            signedAt: '22/09/2026 11:30',
+            signatureToken: 'EBWRB-SIG-901MND-HAM9',
+            role: 'ballast_officer',
+          },
+          masterCountersignature: {
+            signedBy: 'Capt. Marcus Vance',
+            rank: 'Master / Captain',
+            signedAt: '22/09/2026 19:00',
+            signatureToken: 'EBWRB-MTR-772VNC-HAM9',
+            role: 'master',
+          },
+          status: 'countersigned_by_master',
+          remarks: 'Deballasting during mega-container discharge operation at Hamburg Berth 9.',
+        },
+        {
+          id: 'bw202',
+          entryNumber: 1,
+          date: '18/09/2026',
+          time: '16:00',
+          imoCode: 'A',
+          imoItem: 'A-1, A-2, A-3, A-4',
+          operation: 'Ballasting',
+          operationDescription: 'Ballast water uptake at sea for heavy weather transit ballast adjustment.',
+          tanks: 'Aft Peak Tank (APT) & Wing Tanks 2P/2S',
+          volumeM3: 850,
+          gpsCoordinates: "54° 12' N, 006° 45' E",
+          distanceFromLandNm: 60,
+          depthMeters: 38,
+          salinityPpt: 33.1,
+          treatmentMethod: 'UV Disinfection (Mozuk BWTS D-2 Compliant)',
+          officerInCharge: 'Chief Officer Carlos Mendez',
+          officerSignature: {
+            signedBy: 'Carlos Mendez',
+            rank: 'Chief Officer',
+            signedAt: '18/09/2026 17:15',
+            signatureToken: 'EBWRB-SIG-551MND-NSEA',
+            role: 'ballast_officer',
+          },
+          status: 'signed_by_officer',
+          remarks: 'Awaiting Master final countersignature upon daily log closing.',
         },
       ],
       sewageWaterLogs: [
@@ -591,7 +706,7 @@ export function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [attemptedPath, setAttemptedPath] = useState<string>('');
   const [selectedShipId, setSelectedShipId] = useState<string | null>(null);
-  const [activeShipTab, setActiveShipTab] = useState<'crew' | 'maintenance' | 'documents' | 'logbooks'>('crew');
+  const [activeShipTab, setActiveShipTab] = useState<'crew' | 'maintenance' | 'documents' | 'logbooks' | 'ballast'>('crew');
   const [selectedCrewForProfile, setSelectedCrewForProfile] = useState<CrewMember | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false);
@@ -622,7 +737,7 @@ export function App() {
   // URL & IMO Navigation Routing logic
   const handleSelectShip = (
     ship: Ship | null,
-    initialTab: 'crew' | 'maintenance' | 'documents' | 'logbooks' = 'crew'
+    initialTab: 'crew' | 'maintenance' | 'documents' | 'logbooks' | 'ballast' = 'crew'
   ) => {
     if (ship) {
       const imoSlug = ship.imo ? ship.imo.replace(/[^0-9]/g, '') || ship.imo.toLowerCase().trim().replace(/\s+/g, '-') : ship.id;
@@ -1012,6 +1127,7 @@ export function App() {
                         { id: 'maintenance' as const, label: 'Maintenance', icon: Wrench },
                         { id: 'documents' as const, label: 'Documents', icon: FileCheck },
                         { id: 'logbooks' as const, label: 'Logbooks', icon: BookOpen },
+                        { id: 'ballast' as const, label: 'Ballast Book', icon: Droplets },
                       ].map((sub) => {
                         const isActive = activeShipTab === sub.id;
                         const IconComp = sub.icon;
