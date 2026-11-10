@@ -1,7 +1,14 @@
 import React, { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ship, CrewMember, BallastWaterLog, IMOBallastCode, ElectronicSignature } from '../types/vessel';
 import { formatDate, getTodayDDMMYYYY } from '../utils/dateFormatter';
+
+export const BWTS_TREATMENT_OPTIONS = [
+  'BWTS : Ballast Water Treatment System',
+  'BWTS ByPass',
+  'No BWTS',
+] as const;
 import {
   Droplets,
   Plus,
@@ -159,7 +166,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
   const [newGps, setNewGps] = useState('51° 55\' N, 003° 02\' E (Rotterdam Port)');
   const [newDistNm, setNewDistNm] = useState('');
   const [newDepthM, setNewDepthM] = useState('');
-  const [newTreatmentMethod, setNewTreatmentMethod] = useState('Mozuk UV System Operational (IMO D-2 Compliant)');
+  const [newTreatmentMethod, setNewTreatmentMethod] = useState<string>('BWTS : Ballast Water Treatment System');
   const [newOfficerName, setNewOfficerName] = useState('Chief Officer Alexey Ivanov');
   const [newOfficerRank, setNewOfficerRank] = useState('Chief Officer');
   const [newRemarks, setNewRemarks] = useState('');
@@ -451,39 +458,384 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
     setCorrectedRemarks('');
   };
 
+  const parseDateToTime = (dateStr?: string): number | null => {
+    if (!dateStr) return null;
+    const trimmed = dateStr.trim();
+    const dmy = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (dmy) {
+      return new Date(parseInt(dmy[3], 10), parseInt(dmy[2], 10) - 1, parseInt(dmy[1], 10)).getTime();
+    }
+    const ymd = trimmed.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (ymd) {
+      return new Date(parseInt(ymd[1], 10), parseInt(ymd[2], 10) - 1, parseInt(ymd[3], 10)).getTime();
+    }
+    const parsed = new Date(trimmed).getTime();
+    return isNaN(parsed) ? null : parsed;
+  };
+
   // Filter logs for PDF Export
   const logsForPdf = useMemo(() => {
     let result = [...allLogs];
     if (pdfDateRange === 'last7') {
       const now = new Date();
-      const cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).getTime();
       result = result.filter((l) => {
-        const parts = l.date.split('/');
-        if (parts.length === 3) {
-          const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-          return d >= cutoff;
-        }
-        return true;
+        const t = parseDateToTime(l.date);
+        return t !== null ? t >= cutoff : true;
       });
     } else if (pdfDateRange === 'last30') {
       const now = new Date();
-      const cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).getTime();
       result = result.filter((l) => {
-        const parts = l.date.split('/');
-        if (parts.length === 3) {
-          const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-          return d >= cutoff;
-        }
+        const t = parseDateToTime(l.date);
+        return t !== null ? t >= cutoff : true;
+      });
+    } else if (pdfDateRange === 'custom') {
+      const startMs = parseDateToTime(pdfStartDate);
+      const endMs = parseDateToTime(pdfEndDate);
+      result = result.filter((l) => {
+        const t = parseDateToTime(l.date);
+        if (t === null) return true;
+        if (startMs !== null && t < startMs) return false;
+        if (endMs !== null && t > endMs + 86399999) return false;
         return true;
       });
     }
     // Return chronologically for official book printing (earliest to latest)
     return result.sort((a, b) => (a.entryNumber || 0) - (b.entryNumber || 0));
-  }, [allLogs, pdfDateRange]);
+  }, [allLogs, pdfDateRange, pdfStartDate, pdfEndDate]);
 
-  // Handler: Trigger Browser Window Print for PDF
+  // Handler: Print ONLY the official eBWRB Data & Table (not the whole website) via a dedicated clean iframe
   const handlePrintPdf = () => {
-    window.print();
+    const rowsHtml =
+      logsForPdf.length === 0
+        ? `<tr><td colspan="8" style="text-align:center; padding: 24px; color: #64748b;">No ballast water operations recorded for the selected date range.</td></tr>`
+        : logsForPdf
+            .map(
+              (log) => `
+          <tr class="${log.superseded ? 'superseded' : ''}">
+            <td class="center mono bold">#${log.entryNumber}</td>
+            <td class="mono">
+              <div class="bold">${formatDate(log.date)}</div>
+              <div class="sub">${log.time} UTC</div>
+            </td>
+            <td>
+              <div class="bold">Code ${log.imoCode}</div>
+              <div class="mono sub">${log.imoItem || `${log.imoCode}-1`}</div>
+              ${log.isCorrection ? `<div class="badge-corr">CORRECTIVE ENTRY</div>` : ''}
+              ${log.superseded ? `<div class="badge-sup">SUPERSEDED</div>` : ''}
+            </td>
+            <td>
+              <div class="bold">${log.operationDescription || log.operation}</div>
+              <div class="sub"><strong>Tanks:</strong> ${log.tanks}</div>
+              <div class="sub"><strong>Treatment:</strong> ${log.treatmentMethod || 'BWTS : Ballast Water Treatment System'}</div>
+              ${log.remarks ? `<div class="remarks">&ldquo;${log.remarks}&rdquo;</div>` : ''}
+            </td>
+            <td class="right mono bold teal">${log.volumeM3 ? log.volumeM3.toLocaleString() : '-'}</td>
+            <td class="mono">
+              <div>${log.gpsCoordinates}</div>
+              ${
+                log.distanceFromLandNm || log.depthMeters
+                  ? `<div class="sub">${log.distanceFromLandNm ? `${log.distanceFromLandNm} nm` : ''}${
+                      log.distanceFromLandNm && log.depthMeters ? ' • ' : ''
+                    }${log.depthMeters ? `${log.depthMeters} m` : ''}</div>`
+                  : ''
+              }
+            </td>
+            <td>
+              ${
+                log.officerSignature
+                  ? `<div class="bold">${log.officerSignature.signedBy}</div>
+                     <div class="sub">${log.officerSignature.rank}</div>
+                     <div class="mono token">${log.officerSignature.signatureToken}</div>
+                     <div class="sub">${log.officerSignature.signedAt}</div>`
+                  : `<span class="sub">Unsigned</span>`
+              }
+            </td>
+            <td class="right">
+              ${
+                log.masterCountersignature
+                  ? `<div class="bold purple">${log.masterCountersignature.signedBy}</div>
+                     <div class="sub">${log.masterCountersignature.rank}</div>
+                     <div class="mono token">${log.masterCountersignature.signatureToken}</div>
+                     <div class="sub">${log.masterCountersignature.signedAt}</div>`
+                  : `<span class="pending">Pending</span>`
+              }
+            </td>
+          </tr>
+        `
+            )
+            .join('');
+
+    const htmlDocument = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>eBWRB - ${ship.name} (${ship.imo})</title>
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 12mm;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .header-top {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #475569;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin: 4px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: #0f172a;
+    }
+    .header-sub {
+      font-size: 10px;
+      font-weight: 700;
+      color: #1a827a;
+      text-transform: uppercase;
+    }
+    .particulars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      margin-bottom: 14px;
+    }
+    .particulars-label {
+      font-size: 8.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      display: block;
+    }
+    .particulars-value {
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-bottom: 18px;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 7px;
+      vertical-align: top;
+      text-align: left;
+      word-wrap: break-word;
+    }
+    thead th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    tr {
+      page-break-inside: avoid;
+    }
+    tr.superseded {
+      background: #fef2f2;
+      color: #94a3b8;
+      text-decoration: line-through;
+    }
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .bold { font-weight: 700; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .sub { font-size: 9.5px; color: #475569; margin-top: 2px; }
+    .token { font-size: 8.5px; color: #64748b; margin-top: 2px; }
+    .remarks { font-size: 9.5px; font-style: italic; color: #64748b; margin-top: 3px; }
+    .teal { color: #1a827a; }
+    .purple { color: #7b0b76; }
+    .pending { color: #d97706; font-weight: 700; font-style: italic; font-size: 9.5px; }
+    .badge-corr {
+      display: inline-block;
+      margin-top: 3px;
+      padding: 1px 4px;
+      font-size: 8px;
+      font-weight: 800;
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #f59e0b;
+      border-radius: 3px;
+    }
+    .badge-sup {
+      display: inline-block;
+      margin-top: 3px;
+      padding: 1px 4px;
+      font-size: 8px;
+      font-weight: 800;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #ef4444;
+      border-radius: 3px;
+    }
+    .cert-box {
+      page-break-inside: avoid;
+      border: 2px solid #0f172a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      background: #f8fafc;
+    }
+    .cert-title {
+      font-size: 10.5px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .cert-text {
+      font-size: 10px;
+      color: #334155;
+      margin: 0 0 10px 0;
+    }
+    .cert-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      border-top: 1px solid #cbd5e1;
+      padding-top: 10px;
+      align-items: center;
+    }
+    .stamp-box {
+      border: 1.5px dashed #94a3b8;
+      border-radius: 6px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-top">International Maritime Organization (IMO) — BWM Convention 2004 (Regulation B-2)</div>
+    <div class="header-title">ELECTRONIC BALLAST WATER RECORD BOOK (eBWRB)</div>
+    <div class="header-sub">Certified Electronic Record System in Compliance with IMO Resolutions MEPC.372(80) &amp; MEPC.369(80)</div>
+  </div>
+
+  <div class="particulars">
+    <div>
+      <span class="particulars-label">Name of Ship</span>
+      <span class="particulars-value">${ship.name}</span>
+    </div>
+    <div>
+      <span class="particulars-label">IMO Number</span>
+      <span class="particulars-value mono">${ship.imo}</span>
+    </div>
+    <div>
+      <span class="particulars-label">Flag / Port of Registry</span>
+      <span class="particulars-value">${ship.flag || 'Marshall Islands'}</span>
+    </div>
+    <div>
+      <span class="particulars-label">Gross Tonnage</span>
+      <span class="particulars-value mono">${ship.grossTonnage ? ship.grossTonnage.toLocaleString() : '32,500'} GT</span>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 5%; text-align: center;">No.</th>
+        <th style="width: 11%;">Date/Time (UTC)</th>
+        <th style="width: 10%;">Code &amp; Item</th>
+        <th style="width: 28%;">Record of Operations / Tanks / Treatment</th>
+        <th style="width: 8%; text-align: right;">Vol (m³)</th>
+        <th style="width: 14%;">Position / Port</th>
+        <th style="width: 12%;">Officer Signature</th>
+        <th style="width: 12%; text-align: right;">Master Countersign</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rowsHtml}
+    </tbody>
+  </table>
+
+  <div class="cert-box">
+    <div class="cert-title">Master Certification of True Copy (IMO MEPC.372(80) §6)</div>
+    <p class="cert-text">
+      I, the undersigned Master of M/V <strong>${ship.name}</strong>, IMO: <strong>${ship.imo}</strong>, hereby certify that this transcript is a true, unaltered, and authenticated copy of the electronic Ballast Water Record Book entries, extracted in accordance with Regulation B-2 of the BWM Convention.
+    </p>
+    <div class="cert-grid">
+      <div>
+        <span class="particulars-label">Master Signature</span>
+        <div class="bold purple" style="font-size: 12px; margin-top: 4px;">${masterCrewMember?.name || 'Capt. Marcus Vance'}</div>
+        <div class="sub">Master / Captain, ${ship.name}</div>
+      </div>
+      <div>
+        <span class="particulars-label">Date of Certification</span>
+        <div class="mono bold" style="font-size: 12px; margin-top: 4px;">${getTodayDDMMYYYY()}</div>
+        <div class="sub">Official Electronic Timestamp</div>
+      </div>
+      <div class="stamp-box">
+        OFFICIAL SHIP STAMP / EMBOSSED SEAL
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (doc) {
+      doc.open();
+      doc.write(htmlDocument);
+      doc.close();
+      setTimeout(() => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        setTimeout(() => {
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+          }
+        }, 2000);
+      }, 200);
+    }
   };
 
   return (
@@ -498,7 +850,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="font-['Montserrat',sans-serif] font-black text-xl sm:text-2xl text-[var(--text-main)] tracking-tight">
-                  Ballast Water Record Book (eBWRB)
+                  Electronic Ballast Water Record Book (eBWRB)
                 </h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#28ada4]/15 text-[#28ada4] border border-[#28ada4]/30 text-[10.5px] font-extrabold uppercase tracking-wide">
                   IMO MEPC.372(80) &amp; MEPC.369(80)
@@ -526,23 +878,6 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
             >
               <Printer className="w-4 h-4 text-[#28ada4]" /> Export to PDF
             </motion.button>
-
-            {/* Master Batch Countersign Button (if pending items) */}
-            {stats.pendingMasterCountersign > 0 && (
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => {
-                  setIsBatchCountersign(true);
-                  setSelectedLogForCountersign(null);
-                  setIsCountersignModalOpen(true);
-                }}
-                className="px-4 py-2.5 rounded-full bg-[#7b0b76] text-white font-bold text-xs flex items-center gap-2 shadow-md hover:bg-[#60085d] transition cursor-pointer"
-                title="Countersign all pending entries as Master"
-              >
-                <Lock className="w-3.5 h-3.5" /> Countersign Batch ({stats.pendingMasterCountersign})
-              </motion.button>
-            )}
 
             {/* Log New Ballast Operation Button */}
             <motion.button
@@ -766,6 +1101,11 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
                         <div className="text-[11px] font-bold text-[#28ada4] flex items-center gap-1">
                           <span>Tanks:</span> <span className="font-medium text-[var(--text-main)]">{log.tanks}</span>
                         </div>
+                        {log.treatmentMethod && (
+                          <div className="text-[10.5px] font-semibold text-[var(--text-muted)]">
+                            <span className="text-[#7b0b76] dark:text-[#7b0b76] font-bold">Treatment:</span> {log.treatmentMethod}
+                          </div>
+                        )}
                         {log.remarks && (
                           <div className="text-[10.5px] text-[var(--text-muted)] italic leading-tight">
                             &ldquo;{log.remarks}&rdquo;
@@ -886,11 +1226,15 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* MODAL 1: LOG NEW BALLAST OPERATION (IMO CODES A TO H & SIGNATURE 1)       */}
+      {/* PORTAL MODALS (Rendered at document.body above all tabs & page elements)  */}
       {/* ========================================================================= */}
-      <AnimatePresence>
-        {isAddModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <>
+            {/* MODAL 1: LOG NEW BALLAST OPERATION (IMO CODES A TO H & SIGNATURE 1) */}
+            <AnimatePresence>
+              {isAddModalOpen && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1093,14 +1437,19 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[var(--text-main)] font-bold mb-1">Treatment Method (BWTS D-2) *</label>
-                  <input
-                    type="text"
+                  <label className="block text-[var(--text-main)] font-bold mb-1">Treatment Method *</label>
+                  <select
                     value={newTreatmentMethod}
                     onChange={(e) => setNewTreatmentMethod(e.target.value)}
                     required
-                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2 text-xs text-[var(--text-main)]"
-                  />
+                    className="w-full bg-[var(--color-bg)] border border-[var(--color-glass-border)] rounded-xl px-3.5 py-2.5 text-xs text-[var(--text-main)] font-bold focus:outline-none focus:border-[#28ada4] cursor-pointer"
+                  >
+                    {BWTS_TREATMENT_OPTIONS.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* 6. Officer Electronic Signature Block (Signature 1) */}
@@ -1162,7 +1511,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
       {/* ========================================================================= */}
       <AnimatePresence>
         {isCountersignModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1258,7 +1607,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
       {/* ========================================================================= */}
       <AnimatePresence>
         {isCorrectionModalOpen && selectedLogForCorrection && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1366,7 +1715,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
       {/* ========================================================================= */}
       <AnimatePresence>
         {isPdfModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-2 sm:p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1386,7 +1735,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
                   <Printer className="w-5 h-5 text-[#28ada4]" />
                   <div>
                     <h3 className="font-['Montserrat',sans-serif] font-black text-slate-900 text-base">
-                      Export Ballast Water Record Book to PDF
+                      Export Electronic Ballast Water Record Book (eBWRB) to PDF
                     </h3>
                     <p className="text-[11px] text-slate-500">
                       Official Certified True Copy for Port State Control (PSC) &amp; Flag State Administration
@@ -1394,7 +1743,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {/* Date Filter Selector */}
                   <select
                     value={pdfDateRange}
@@ -1404,7 +1753,26 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
                     <option value="all">Complete Record Book (All Entries)</option>
                     <option value="last7">Last 7 Days</option>
                     <option value="last30">Last 30 Days</option>
+                    <option value="custom">Custom Date Range</option>
                   </select>
+
+                  {pdfDateRange === 'custom' && (
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="date"
+                        value={pdfStartDate}
+                        onChange={(e) => setPdfStartDate(e.target.value)}
+                        className="px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-mono text-slate-800 bg-white"
+                      />
+                      <span className="text-xs text-slate-500 font-bold">to</span>
+                      <input
+                        type="date"
+                        value={pdfEndDate}
+                        onChange={(e) => setPdfEndDate(e.target.value)}
+                        className="px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-mono text-slate-800 bg-white"
+                      />
+                    </div>
+                  )}
 
                   <button
                     onClick={handlePrintPdf}
@@ -1415,7 +1783,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
 
                   <button
                     onClick={() => setIsPdfModalOpen(false)}
-                    className="text-slate-500 hover:text-slate-800 p-1.5"
+                    className="text-slate-500 hover:text-slate-800 p-1.5 cursor-pointer"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -1430,7 +1798,7 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
                     International Maritime Organization (IMO) — BWM Convention 2004 (Regulation B-2)
                   </div>
                   <h1 className="text-xl sm:text-2xl font-black font-['Montserrat',sans-serif] tracking-tight uppercase">
-                    BALLAST WATER RECORD BOOK (eBWRB)
+                    ELECTRONIC BALLAST WATER RECORD BOOK (eBWRB)
                   </h1>
                   <div className="text-xs font-bold text-[#1a827a] uppercase tracking-wide">
                     Certified Electronic Record System in Compliance with IMO Resolutions MEPC.372(80) &amp; MEPC.369(80)
@@ -1488,6 +1856,9 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
                           <td className="py-2 px-3 border-r border-slate-200">
                             <div className="font-bold text-slate-900">{log.operationDescription || log.operation}</div>
                             <div className="text-[10px] text-slate-600">Tanks: {log.tanks}</div>
+                            <div className="text-[10px] text-slate-600">
+                              Treatment: {log.treatmentMethod || 'BWTS : Ballast Water Treatment System'}
+                            </div>
                             {log.remarks && (
                               <div className="text-[9.5px] italic text-slate-500 mt-0.5">&ldquo;{log.remarks}&rdquo;</div>
                             )}
@@ -1569,6 +1940,9 @@ export const BallastWaterRecordBook: React.FC<BallastWaterRecordBookProps> = ({
           </div>
         )}
       </AnimatePresence>
+          </>,
+          document.body
+        )}
     </div>
   );
 };

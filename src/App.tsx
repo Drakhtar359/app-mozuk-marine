@@ -248,7 +248,7 @@ export function App() {
           distanceFromLandNm: 0,
           depthMeters: 18,
           salinityPpt: 30.5,
-          treatmentMethod: 'UV Disinfection (Mozuk BWTS D-2 Compliant)',
+          treatmentMethod: 'BWTS : Ballast Water Treatment System',
           officerInCharge: 'Chief Officer Alexey Ivanov',
           officerSignature: {
             signedBy: 'Alexey Ivanov',
@@ -282,7 +282,7 @@ export function App() {
           distanceFromLandNm: 45,
           depthMeters: 42,
           salinityPpt: 34.8,
-          treatmentMethod: 'UV Disinfection (Mozuk BWTS D-2 Compliant)',
+          treatmentMethod: 'BWTS : Ballast Water Treatment System',
           officerInCharge: 'Second Officer Kenji Sato',
           officerSignature: {
             signedBy: 'Kenji Sato',
@@ -316,7 +316,7 @@ export function App() {
           distanceFromLandNm: 220,
           depthMeters: 2800,
           salinityPpt: 35.2,
-          treatmentMethod: 'Mozuk Active In-Tank Circulation & UV',
+          treatmentMethod: 'BWTS : Ballast Water Treatment System',
           officerInCharge: 'Chief Officer Alexey Ivanov',
           officerSignature: {
             signedBy: 'Alexey Ivanov',
@@ -459,7 +459,7 @@ export function App() {
           distanceFromLandNm: 0,
           depthMeters: 16,
           salinityPpt: 18.2,
-          treatmentMethod: 'UV Disinfection (Mozuk BWTS D-2 Compliant)',
+          treatmentMethod: 'BWTS : Ballast Water Treatment System',
           officerInCharge: 'Chief Officer Carlos Mendez',
           officerSignature: {
             signedBy: 'Carlos Mendez',
@@ -493,7 +493,7 @@ export function App() {
           distanceFromLandNm: 60,
           depthMeters: 38,
           salinityPpt: 33.1,
-          treatmentMethod: 'UV Disinfection (Mozuk BWTS D-2 Compliant)',
+          treatmentMethod: 'BWTS : Ballast Water Treatment System',
           officerInCharge: 'Chief Officer Carlos Mendez',
           officerSignature: {
             signedBy: 'Carlos Mendez',
@@ -1127,7 +1127,6 @@ export function App() {
                         { id: 'maintenance' as const, label: 'Maintenance', icon: Wrench },
                         { id: 'documents' as const, label: 'Documents', icon: FileCheck },
                         { id: 'logbooks' as const, label: 'Logbooks', icon: BookOpen },
-                        { id: 'ballast' as const, label: 'Ballast Book', icon: Droplets },
                       ].map((sub) => {
                         const isActive = activeShipTab === sub.id;
                         const IconComp = sub.icon;

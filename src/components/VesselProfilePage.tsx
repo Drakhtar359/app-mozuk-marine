@@ -159,7 +159,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
     setInternalActiveTab(tab);
     if (onTabChange) onTabChange(tab);
   };
-  const [activeLogbookTab, setActiveLogbookTab] = useState<'visitors' | 'ballast' | 'sewage'>('visitors');
+  const [activeLogbookTab, setActiveLogbookTab] = useState<'visitors' | 'ballast' | 'sewage'>('ballast');
   const [activeDocTab, setActiveDocTab] = useState<'certifications' | 'technical_documentation' | 'misc'>('certifications');
   const [activeMaintTab, setActiveMaintTab] = useState<'active' | 'logs' | 'procurement'>('active');
   const [maintenanceFilter, setMaintenanceFilter] = useState<'all' | 'open' | 'in_progress' | 'completed'>('all');
@@ -1248,7 +1248,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </div>
 
             {/* Folder Content Body Container */}
-            <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
+            <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative">
               {/* SUB-TAB 1: ACTIVE MAINTENANCE */}
               {activeMaintTab === 'active' && (
                 <div className="space-y-5">
@@ -1642,7 +1642,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           </div>
 
           {/* Folder Content Body Container */}
-          <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
+          <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative">
             {/* SUB-TAB 1: CERTIFICATIONS */}
             {activeDocTab === 'certifications' && (
               <div className="space-y-4">
@@ -1892,17 +1892,35 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           {/* Folder Sub-Tabs Bar */}
           <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-0.5 border-b border-[var(--color-glass-border)]">
             <button
+              onClick={() => setActiveLogbookTab('ballast')}
+              className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
+                activeLogbookTab === 'ballast'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-10 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
+              }`}
+            >
+              {activeLogbookTab === 'ballast' && (
+                <motion.div
+                  layoutId="activeLogbookTabBottomLine"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-10"
+                />
+              )}
+              <Droplets className="w-4 h-4 text-[#28ada4]" />
+              <span>Electronic Ballast Water Record Book (eBWRB)</span>
+            </button>
+
+            <button
               onClick={() => setActiveLogbookTab('visitors')}
               className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                 activeLogbookTab === 'visitors'
-                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-10 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                   : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
               }`}
             >
               {activeLogbookTab === 'visitors' && (
                 <motion.div
                   layoutId="activeLogbookTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-10"
                 />
               )}
               <ClipboardList className="w-4 h-4 text-[var(--color-primary)]" />
@@ -1910,35 +1928,17 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
             </button>
 
             <button
-              onClick={() => setActiveLogbookTab('ballast')}
-              className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
-                activeLogbookTab === 'ballast'
-                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
-                  : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
-              }`}
-            >
-              {activeLogbookTab === 'ballast' && (
-                <motion.div
-                  layoutId="activeLogbookTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
-                />
-              )}
-              <Droplets className="w-4 h-4 text-[#28ada4]" />
-              <span>Ballast Water Record Book</span>
-            </button>
-
-            <button
               onClick={() => setActiveLogbookTab('sewage')}
               className={`relative px-5 sm:px-6 py-3.5 rounded-none font-extrabold text-xs transition-all duration-200 flex items-center gap-2.5 border border-b-0 whitespace-nowrap shrink-0 ${
                 activeLogbookTab === 'sewage'
-                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-20 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
+                  ? 'bg-[var(--color-bg-alt)] text-[var(--color-primary)] border-[var(--color-glass-border-hover)] z-10 shadow-[0_-4px_16px_rgba(40,173,164,0.12)]'
                   : 'bg-[var(--color-bg)]/60 hover:bg-[var(--color-bg-alt)]/80 text-[var(--text-muted)] hover:text-[var(--text-main)] border-[var(--color-glass-border)] z-0 opacity-80 hover:opacity-100'
               }`}
             >
               {activeLogbookTab === 'sewage' && (
                 <motion.div
                   layoutId="activeLogbookTabBottomLine"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-30"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--color-primary)] rounded-none z-10"
                 />
               )}
               <Recycle className="w-4 h-4 text-[#7b0b76] dark:text-[#7b0b76]" />
@@ -1947,7 +1947,7 @@ export const VesselProfilePage: React.FC<VesselProfilePageProps> = ({
           </div>
 
           {/* Folder Content Container */}
-          <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative z-0">
+          <div className="mozuk-glass-card rounded-b-2xl rounded-tr-2xl rounded-tl-none p-6 sm:p-8 border border-[var(--color-glass-border)] shadow-xl relative">
             {/* SUB-TAB 1: VISITOR LOGBOOK */}
             {activeLogbookTab === 'visitors' && (() => {
         const allVisitors = ship.visitors || [];
